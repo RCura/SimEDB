@@ -19,6 +19,7 @@ library(shiny)
 library(readr)
 library(dplyr)
 library(tidyr)
+library(magrittr)
 
 # Plots
 library(ggplot2)
@@ -40,7 +41,7 @@ library(sp)
 
 ```{r load files, include = FALSE}
 basePath <- "../GAMA/transition8/outputs/"
-currExperiment <- "base2_compo5_2quat"
+currExperiment <- "base2_compo5_2_6"
 parameters_file <- sprintf("%s%s_parameters_TMD.csv", basePath, currExperiment)
 global_file <- sprintf("%s%s_results_TMD.csv", basePath, currExperiment)
 seigneurs_file <- sprintf("%s%s_results_TMD_seigneurs.csv", basePath, currExperiment)
@@ -115,17 +116,28 @@ global_raw <- global_raw %>%
   select(-CFinit)
 ```
 
-```{r reactive filtered datasets, include = FALSE}
+```{r reactive base datasets, include = FALSE}
 goodSeeds <- reactive({
   fullFP_raw %>%
     group_by(Seed) %>%
     summarise(Complet = n_distinct(Annee)) %>%
     filter(Complet == 18) %>%
     select(Seed) %>%
-    unlist(use.names = FALSE) %>%
-    sample(size = input$nbReplications)
+    unlist(use.names = FALSE) #%>%
+    #sample(size = input$nbReplications)
 })
 
+parameters_data <- reactive({
+  nonUniqueParams <- parameters_raw %>%
+    gather(key = "Var", value = "Value") %>%
+    group_by(Var, Value) %>%
+    mutate(Freq = n()) %>%
+    filter(Freq != nrow(parameters_raw)) %>%
+    extract2("Var") %>%
+    unique(.)
+  
+  parameters_raw %>% select_( .dots = nonUniqueParams)
+  })
 global_data <- reactive(global_raw %>% filter(Seed %in% goodSeeds())) 
 seigneurs_data <- reactive(seigneurs_raw %>% filter(Seed %in% goodSeeds())) 
 agregats_data <- reactive(agregats_raw %>% filter(Seed %in% goodSeeds())) 
@@ -133,6 +145,24 @@ poles_data <- reactive(poles_raw %>% filter(Seed %in% goodSeeds()))
 paroisses_data <- reactive(paroisses_raw %>% filter(Seed %in% goodSeeds())) 
 fullFP_data <- reactive(fullFP_raw %>% filter(Seed %in% goodSeeds())) 
 summFP_data <- reactive(summFP_raw %>% filter(Seed %in% goodSeeds())) 
+```
+
+```{r reactive filtered datasets, include = FALSE}
+filtredSeeds <- reactive({
+if (length(input$parcoords_brushed_row_names) > 0){
+  goodSeeds()[input$parcoords_brushed_row_names,]
+} else {
+  goodSeeds()
+}
+  })
+  
+global_subset <- reactive(global_data() %>% filter(Seed %in% filtredSeeds())) 
+seigneurs_subset <- reactive(seigneurs_data() %>% filter(Seed %in% filtredSeeds())) 
+agregats_subset <- reactive(agregats_data() %>% filter(Seed %in% filtredSeeds())) 
+poles_subset <- reactive(poles_data() %>% filter(Seed %in% filtredSeeds())) 
+paroisses_subset <- reactive(paroisses_data()%>% filter(Seed %in% filtredSeeds())) 
+fullFP_subset <- reactive(fullFP_data() %>% filter(Seed %in% filtredSeeds())) 
+summFP_subset <- reactive(summFP_data() %>% filter(Seed %in% filtredSeeds()))  
 ```
 
 
@@ -143,6 +173,8 @@ Settings {.sidebar}
 sliderInput("nbReplications", 
             label = "Nb de réplications à analyser",
              min = 5, max = 50, value = 20)
+
+
 ```
 
 Objectifs et Paramètres
@@ -150,7 +182,22 @@ Objectifs et Paramètres
 
 Column
 -------------------------------------
-    
+
+### Sélection des paramètres
+```{r parameters input}
+fillCol(height = 300, 
+  parcoordsOutput("parcoords", height = "100%")
+)
+
+output$parcoords <- renderParcoords({
+    parcoords(parameters_data() %>% select(-myseed),
+            rownames=FALSE,
+            brushMode="1d",
+            reorderable = TRUE)
+})
+```
+
+
 ### Tableau des objectifs
     
 ```{r summary table, include = FALSE}
@@ -171,7 +218,6 @@ summary_table <- reactive({
     separate(Freq,  into = c("Indice", "Valeur"),  sep = ":") %>%
     mutate(Valeur = as.numeric(Valeur)) %>%
     spread(Indice, Valeur) %>%
-   
     rename(Indice = Var2, Q1 = `1st Qu.`, Q3 = `3rd Qu.`, Max = `Max.   `, Min = `Min.   `, Moyenne = `Mean   `, `Médiane` = `Median `) %>%
     mutate(StDev = as.numeric(ecarts_types())) %>%
     arrange(order(names(ecarts_types()))) %>%
@@ -185,7 +231,38 @@ summary_table <- reactive({
 
 ```
 
-```{r print summary}
+```{r summary table2, include = FALSE}
+ecarts_types2 <- reactive({
+  global_subset() %>%
+    filter(Annee == 1160) %>%
+  select(NbAgregats,NbChateaux, NbGrosChateaux, NbEglisesParoissiales, DistPpvEglises, TxFpIsoles,RatioChargeFiscale) %>%
+  sapply(sd, simplify = TRUE)
+})
+
+summary_table2 <- reactive({
+  global_subset() %>%
+    filter(Annee == 1160) %>%
+    select(NbAgregats,NbChateaux, NbGrosChateaux, NbEglisesParoissiales, DistPpvEglises, TxFpIsoles,RatioChargeFiscale) %>%
+    summary() %>%
+    as.data.frame(stringsAsFactors = FALSE) %>%
+    select(Var2, Freq) %>%
+    separate(Freq,  into = c("Indice", "Valeur"),  sep = ":") %>%
+    mutate(Valeur = as.numeric(Valeur)) %>%
+    spread(Indice, Valeur) %>%
+    rename(Indice = Var2, Q1 = `1st Qu.`, Q3 = `3rd Qu.`, Max = `Max.   `, Min = `Min.   `, Moyenne = `Mean   `, `Médiane` = `Median `) %>%
+    mutate(StDev = as.numeric(ecarts_types2())) %>%
+    arrange(order(names(ecarts_types2()))) %>%
+    mutate(Objectif = c(200, 50, 10, 300, 3000, 0.2, 3)) %>%
+    mutate(Ecart = (Moyenne / Objectif) -  1 ) %>%
+    select(Indice, Objectif,Moyenne, Ecart, `Médiane`, Q1, Q3, StDev, Min, Max) %>%
+    mutate(Indice = c("Nombre d'agrégats", "Nombre de châteaux",  "Nombre de gros châteaux",
+                      "Nombre d'églises paroissiales", "Distance moyenne entre églises",  
+                      "Proportion de FP isolés", "Augmentation de la charge fiscale (ratio)"))
+})
+
+```
+
+```{r print summary all}
 renderFormattable({
   
   arrondir <- formatter("span", 
@@ -208,15 +285,35 @@ renderFormattable({
 ))
 })
 ```
-
-```
+> Toutes les simulation
 
 
 ### Chart 2
 
-```{r}
-
+```{r print summary select}
+renderFormattable({
+  
+  arrondir <- formatter("span", 
+  style = function(x) style(round(x, digits = 2)))
+  
+  formattable(summary_table2(), list(
+      Objectif = formatter("span", style = function(x){as.integer(x)}),
+      Moyenne = arrondir,
+      Ecart = formatter("span", style = function(x){
+        ifelse(abs(x) > 0.3,  style(color = "red", font.weight = "bold"),
+               ifelse(abs(x) < 0.1, style(color = "green", font.weight = "bold"), NA))},
+        function(x) percent(x)),
+      `Médiane` = arrondir,
+      Q1 = arrondir,
+      Q3 = arrondir,
+      StDev = formatter("span", style = function(x) style(round(x, digits = 2))),
+      Min = formatter("span", style = function(x){as.integer(x)}),
+      Max = formatter("span", style = function(x){as.integer(x)})
+      
+))
+})
 ```
+> Simulations sélectionnées
 
 
 Seigneurs
