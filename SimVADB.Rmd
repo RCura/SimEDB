@@ -20,6 +20,7 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(magrittr)
+library(data.table)
 
 # Plots
 library(ggplot2)
@@ -163,6 +164,12 @@ poles_subset <- reactive(poles_data() %>% filter(Seed %in% filtredSeeds()))
 paroisses_subset <- reactive(paroisses_data()%>% filter(Seed %in% filtredSeeds())) 
 fullFP_subset <- reactive(fullFP_data() %>% filter(Seed %in% filtredSeeds())) 
 summFP_subset <- reactive(summFP_data() %>% filter(Seed %in% filtredSeeds()))  
+
+paroisses_geom <- reactive({
+  setDT(paroisses_data())[,strsplit(gsub('\\[{|}\\]','', Geom, perl=T), '}, *{', perl=T), .(Seed, Annee, IdParoisse)] %>%
+    separate(V1, into = c("X", "Y", "Z"), convert = TRUE,  sep = ",") %>%
+    mutate(UID = id(list(Seed, Annee, IdParoisse)))
+})
 ```
 
 
@@ -322,6 +329,7 @@ Seigneurs
 ### Chart 2
     
 ```{r}
+renderDataTable(paroisses_geom())
 ```
 
 Châteaux
