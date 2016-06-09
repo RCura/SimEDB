@@ -88,11 +88,6 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                                             fluidRow(
                                               column(6,plotOutput("polesRT")),
                                               column(6, plotOutput("polesRTFilter"))
-                                            )),
-                                   tabPanel("Attractivité",
-                                            fluidRow(
-                                              column(6,plotOutput("polesAttrac")),
-                                              column(6, plotOutput("polesAttracFilter"))
                                             ))
                        )),
               tabPanel("Paroisses",

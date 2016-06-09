@@ -12,6 +12,7 @@ suppressPackageStartupMessages({
   library(tibble)
   library(magrittr)
   library(data.table)
+  library(purrr)
   
   # Plots
   library(ggplot2)
