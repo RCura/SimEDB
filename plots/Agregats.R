@@ -17,46 +17,46 @@ output$agregatsNbFilter <- renderPlot({
     ggtitle("Évolution du nombre d'agrégats")
 })
 
-output$agregatsCompo <- renderPlot({
-  agBreaks <- c(-1,29,49,99,1000)
-  agLabels <- c("<30","30-49", "50-99", ">100")
+# output$agregatsPoles <- renderPlot({
+#   
+#   nombre_agregats <- JIAP_agregats %>% group_by(Annee, seed) %>% summarise(nb = n())
+#   
+#   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
+#     geom_tufteboxplot() +
+#     xlab("Temps") + ylab("Nombre d'agrégats") +
+#     ggtitle("Évolution du nombre d'agrégats")
+# })
+# 
+# output$agregatsPolesFilter <- renderPlot({
+#   nombre_agregats <- filtred$agregats %>% group_by(Annee, seed) %>% summarise(nb = n())
+#   
+#   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
+#     geom_tufteboxplot() +
+#     xlab("Temps") + ylab("Nombre d'agrégats") +
+#     ggtitle("Évolution du nombre d'agrégats")
+# })
+
+output$agregatsCA <- renderPlot({
   
+  nombre_agregats <- JIAP_agregats %>%
+    filter(Communaute) %>%
+    group_by(Annee, seed) %>% summarise(nb = n())
   
-  compoAgregats <- JIAP_agregats %>%
-    filter(Annee %in% c(820, 940, 1040, 1160)) %>%
-    mutate(NbFPBreaks =  cut(NbFpContenus, breaks = agBreaks, labels =  agLabels)) %>%
-    group_by(seed, Annee, NbFPBreaks) %>%
-    summarise(Freq = n()) %>%
-    tbl_df()
-  
-  ggplot(compoAgregats, aes(NbFPBreaks,  Freq)) +
+  ggplot(nombre_agregats, aes(factor(Annee), nb)) +
     geom_tufteboxplot() +
-    facet_wrap(~Annee, scale="free", nrow=1) +
-    xlab("Nombre de Foyers Paysans contenus") +
-    ylab("Fréquence") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    ggtitle("Évolution de la composition (en FP) des agrégats")
+    xlab("Temps") + ylab("Nombre d'agrégats") +
+    ggtitle("Évolution du nombre d'agrégats ayant une CA")
 })
 
-output$agregatsCompoFilter <- renderPlot({
-  agBreaks <- c(-1,29,49,99,1000)
-  agLabels <- c("<30","30-49", "50-99", ">100")
+output$agregatsCAFilter <- renderPlot({
+  nombre_agregats <- filtred$agregats %>%
+    filter(Communaute) %>%
+    group_by(Annee, seed) %>% summarise(nb = n())
   
-  
-  compoAgregats <- filtred$agregats %>%
-    filter(Annee %in% c(820, 940, 1040, 1160)) %>%
-    mutate(NbFPBreaks =  cut(NbFpContenus, breaks = agBreaks, labels =  agLabels)) %>%
-    group_by(seed, Annee, NbFPBreaks) %>%
-    summarise(Freq = n()) %>%
-    tbl_df()
-  
-  ggplot(compoAgregats, aes(NbFPBreaks,  Freq)) +
+  ggplot(nombre_agregats, aes(factor(Annee), nb)) +
     geom_tufteboxplot() +
-    facet_wrap(~Annee, scale="free", nrow=1) +
-    xlab("Nombre de Foyers Paysans contenus") +
-    ylab("Fréquence") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    ggtitle("Évolution de la composition (en FP) des agrégats")
+    xlab("Temps") + ylab("Nombre d'agrégats") +
+    ggtitle("Évolution du nombre d'agrégats ayant une CA")
 })
 
 output$agregatsRT <- renderPlot({

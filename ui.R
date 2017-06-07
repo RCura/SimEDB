@@ -1,12 +1,16 @@
 library(shiny)
 
 shinyUI(fluidPage(theme = shinytheme("cerulean"),
-  titlePanel("SimVADB"),
-  textOutput("dataVolume",inline =  TRUE),
   fluidRow(
-    column(8, parcoordsOutput("paramParCoords", width = "100%", height = "300px")),
-    column(4, dataTableOutput("paramLegend"), height = "300px")
+    column(8, titlePanel("SimVADB")),
+    column(4,fileInput("simResultsFiles", label = "Sorties de simulation", multiple = TRUE))
+  ),             
+  textOutput("dataVolume",inline =  TRUE),
+  
+  fluidRow(
+    parcoordsOutput("paramParCoords", width = "100%", height = "300px")
   ),
+  fluidRow(dataTableOutput("paramLegend"), height = "300px"),
   
   tabsetPanel(id = "detailPlots",type = "pills",
               tabPanel("Objectifs généraux",
@@ -38,10 +42,15 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                                               column(6,plotOutput("agregatsNb")),
                                               column(6, plotOutput("agregatsNbFilter"))
                                               )),
-                                   tabPanel("Composition",
+                                   tabPanel("Pôles TODO",
                                             fluidRow(
-                                              column(6,plotOutput("agregatsCompo")),
-                                              column(6, plotOutput("agregatsCompoFilter"))
+                                              column(6,plotOutput("agregatsPoles")),
+                                              column(6, plotOutput("agregatsPolesFilter"))
+                                            )),
+                                   tabPanel("Communauté",
+                                            fluidRow(
+                                              column(6,plotOutput("agregatsCA")),
+                                              column(6, plotOutput("agregatsCAFilter"))
                                             )),
                                     tabPanel("Hiérarchie",
                                              fluidRow(
@@ -79,11 +88,21 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                                               column(6,plotOutput("polesNb")),
                                               column(6, plotOutput("polesNbFilter"))
                                             )),
-                                   tabPanel("Composition",
+                                   tabPanel("Pôles d'agrégats",
+                                            fluidRow(
+                                              column(6,plotOutput("polesAgregats")),
+                                              column(6, plotOutput("polesAgregatsFilter"))
+                                            )),
+                                   tabPanel("Attracteurs",
                                             fluidRow(
                                               column(6,plotOutput("polesCompo")),
                                               column(6, plotOutput("polesCompoFilter"))
                                             )),
+                                   tabPanel("Attractivité",
+                                            fluidRow(
+                                              column(6,plotOutput("polesAttrac")),
+                                              column(6, plotOutput("polesAttracFilter"))
+                                            )),                                   
                                    tabPanel("Hiérarchie",
                                             fluidRow(
                                               column(6,plotOutput("polesRT")),
