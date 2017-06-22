@@ -29,5 +29,6 @@ suppressPackageStartupMessages({
 })
 
 
-load("data/JIAP_data.Rdata")
+load("data/sim_data.Rdata")
+
 
