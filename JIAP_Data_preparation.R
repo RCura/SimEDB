@@ -1,4 +1,5 @@
-library(tidyverse)
+suppressPackageStartupMessages(library(readr))
+suppressPackageStartupMessages(library(dplyr))
 
 parameters_name <-
   c(
@@ -169,7 +170,7 @@ paroisses_name <- c(
 
 
 JIAP_parameters <-
-  read_csv(col_names = parameters_name, "JIAP_parameters_TMD.csv")
+  read_csv(col_names = parameters_name, "../GAMA/transition8/outputs/4_4_A_parameters.csv")
 JIAP_results <-
   read_csv(col_names = results_name, "JIAP_results_TMD.csv")
 JIAP_seigneurs <-
@@ -196,11 +197,14 @@ rm(
   seigneurs_name
 )
 
+### On ne garde que 20 repli par experience ###
+
 goodSeeds <- JIAP_parameters %>%
   left_join(JIAP_results %>% filter(Annee == 1160) %>% select(seed, Annee),
             by = "seed") %>%
   filter(Annee == 1160) %>%
   group_by(name) %>%
+  sample_n(20) %>%
   select(seed)
 
 JIAP_parameters <-
@@ -271,7 +275,7 @@ save(
     "JIAP_paroisses_geom",
     "goodSeeds"
   ),
-  file = "data/afterTMD_data.Rdata"
+  file = "data/JIAP_data.Rdata"
 )
 
 
