@@ -3,8 +3,7 @@ library(shiny)
 shinyServer(function(session, input, output) {
    
   filtred <- reactiveValues(agregats = NA,
-                            FP_all = NA,
-                            FP_summary = NA,
+                            FP = NA,
                             parameters = NA,
                             paroisses = NA,
                             poles = NA,
@@ -35,8 +34,7 @@ shinyServer(function(session, input, output) {
   observe({
     if (length(input$paramParCoords_brushed_row_names) > 0){
       filtred$agregats <- sim_agregats %>% filter(seed %in% filtredSeeds())
-      filtred$FP_all <- sim_FP_all %>% filter(seed %in% filtredSeeds()) 
-      filtred$FP_summary <- sim_FP_summary %>% filter(seed %in% filtredSeeds())
+      filtred$FP <- sim_FP %>% filter(seed %in% filtredSeeds()) 
       filtred$parameters <- sim_parameters %>% filter(seed %in% filtredSeeds())
       filtred$paroisses <- sim_paroisses %>% filter(seed %in% filtredSeeds())
       filtred$poles <- sim_poles %>% filter(seed %in% filtredSeeds())
@@ -44,8 +42,7 @@ shinyServer(function(session, input, output) {
       filtred$seigneurs <- sim_seigneurs %>% filter(seed %in% filtredSeeds())
     } else {
       filtred$agregats <- NA
-      filtred$FP_all <- NA
-      filtred$FP_summary <- NA
+      filtred$FP <- NA
       filtred$parameters <- NA
       filtred$paroisses <- NA
       filtred$poles <- NA

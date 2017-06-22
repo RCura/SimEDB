@@ -21,8 +21,8 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                        tabsetPanel(id = "FPPlots", position = "left",
                                    tabPanel("Déplacements", 
                                             fluidRow(
-                                              column(6,plotOutput("fpDeplacements")),
-                                              column(6,plotOutput("fpDeplacementsFilter"))
+                                              column(6,plotOutput("fpTypeDeplacements")),
+                                              column(6,plotOutput("fpTypeDeplacementsFilter"))
                                             )),
                                    tabPanel("Concentration",
                                             fluidRow(
