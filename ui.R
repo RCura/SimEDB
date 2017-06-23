@@ -24,6 +24,11 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                                               column(6,plotOutput("fpTypeDeplacements")),
                                               column(6,plotOutput("fpTypeDeplacementsFilter"))
                                             )),
+                                   tabPanel("Déplacements (détail)", 
+                                            fluidRow(
+                                              column(6,plotOutput("fpDeplacementsDetail")),
+                                              column(6,plotOutput("fpDeplacementsDetailFilter"))
+                                            )),
                                    tabPanel("Concentration",
                                             fluidRow(
                                               column(6,plotOutput("fpConcentration")),

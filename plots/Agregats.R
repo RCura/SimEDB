@@ -18,13 +18,26 @@ output$agregatsNbFilter <- renderPlot({
 })
 
 # output$agregatsPoles <- renderPlot({
-#   
+# 
 #   nombre_agregats <- JIAP_agregats %>% group_by(Annee, seed) %>% summarise(nb = n())
-#   
+# 
 #   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
 #     geom_tufteboxplot() +
 #     xlab("Temps") + ylab("Nombre d'agrégats") +
 #     ggtitle("Évolution du nombre d'agrégats")
+
+
+# foo <- sim_agregats %>%
+#   mutate(pole = if_else(monPole == "nil", FALSE, TRUE)) %>%
+#   group_by(seed, Annee, pole) %>%
+#   summarise(N = n()) %>%
+#   group_by(seed, Annee) %>%
+#   mutate(NbAgregats = sum(N)) %>% filter(pole == TRUE) %>% mutate(TxAgregatPole = N / NbAgregats)
+# ggplot(bar, aes(Annee, TxAgregatPole, group = factor(Annee))) +
+#   geom_tufteboxplot() +
+#   scale_y_continuous(labels = percent, limits = c(0,1))
+
+
 # })
 # 
 # output$agregatsPolesFilter <- renderPlot({

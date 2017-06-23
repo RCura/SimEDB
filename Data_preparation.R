@@ -48,14 +48,13 @@ sim_results <- sim_results %>%
     sim_agregats %>%
       group_by(seed, Annee) %>%
       summarise(NbAgregats = n())
-  },
-  by=c("seed", "Annee")
+  }, by = c("seed", "Annee")
   ) %>%
   inner_join({
     filter(., Annee == 840) %>%
       mutate(CFinit = charge_fiscale) %>%
       select(seed, CFinit)
-  }, by="seed") %>%
+  }, by = "seed") %>%
   mutate(RatioChargeFiscale = charge_fiscale / CFinit) %>%
   select(-CFinit)
 
