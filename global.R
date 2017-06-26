@@ -6,16 +6,11 @@ suppressPackageStartupMessages({
   library(parcoords) # devtools::install_github("timelyportfolio/parcoords", ref="feature/resize")
 
   # Data wrangling
-  library(readr)
-  library(dplyr)
-  library(tidyr)
-  library(tibble)
-  library(magrittr)
-  library(data.table)
-  library(purrr)
+  library(tidyverse)
+  #library(data.table)
+
   
   # Plots
-  library(ggplot2)
   library(gridExtra)
   library(ggthemes)
   
@@ -24,7 +19,7 @@ suppressPackageStartupMessages({
   library(formattable) # devtools::install_github("renkun-ken/formattable")
 
   # Spatial
-  library(sp)
+  #library(sp)
   
 })
 
