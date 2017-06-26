@@ -194,7 +194,7 @@ shinyServer(function(session, input, output) {
   source("plots/Agregats.R", local = TRUE, encoding = 'utf8')
   # source("plots/Seigneurs.R", local = TRUE, encoding = 'utf8')
   source("plots/Poles.R", local = TRUE, encoding = 'utf8')
-  # source("plots/Paroisses.R", local = TRUE, encoding = 'utf8')
+  source("plots/Paroisses.R", local = TRUE, encoding = 'utf8')
   
   
   

@@ -121,10 +121,15 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                                               column(6,plotOutput("paroissesNb")),
                                               column(6, plotOutput("paroissesNbFilter"))
                                             )),
-                                   tabPanel("Composition",
+                                   tabPanel("Composition (Nb FP/ paroisse)",
                                             fluidRow(
                                               column(6,plotOutput("paroissesCompo")),
                                               column(6, plotOutput("paroissesCompoFilter"))
+                                            )),
+                                   tabPanel("Modes de promotion",
+                                            fluidRow(
+                                              column(6,plotOutput("paroissesPromo")),
+                                              column(6, plotOutput("paroissesPromoFilter"))
                                             )),
                                    tabPanel("Superficie",
                                             fluidRow(
