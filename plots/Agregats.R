@@ -1,6 +1,8 @@
 output$agregatsNb <- renderPlot({
   
-  nombre_agregats <- JIAP_agregats %>% group_by(Annee, seed) %>% summarise(nb = n())
+  nombre_agregats <- sim_agregats %>%
+    group_by(Annee, seed) %>%
+    summarise(nb = n())
   
   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
     geom_tufteboxplot() +
@@ -9,7 +11,9 @@ output$agregatsNb <- renderPlot({
 })
 
 output$agregatsNbFilter <- renderPlot({
-  nombre_agregats <- filtred$agregats %>% group_by(Annee, seed) %>% summarise(nb = n())
+  nombre_agregats <- filtred$agregats %>%
+    group_by(Annee, seed) %>%
+    summarise(nb = n())
   
   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
     geom_tufteboxplot() +
@@ -17,43 +21,48 @@ output$agregatsNbFilter <- renderPlot({
     ggtitle("Évolution du nombre d'agrégats")
 })
 
-# output$agregatsPoles <- renderPlot({
-# 
-#   nombre_agregats <- JIAP_agregats %>% group_by(Annee, seed) %>% summarise(nb = n())
-# 
-#   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
-#     geom_tufteboxplot() +
-#     xlab("Temps") + ylab("Nombre d'agrégats") +
-#     ggtitle("Évolution du nombre d'agrégats")
+output$agregatsPoles <- renderPlot({
+txAgregatsPoles <- sim_agregats %>%
+  mutate(pole = if_else(monPole == "nil", FALSE, TRUE)) %>%
+  group_by(seed, Annee, pole) %>%
+  summarise(N = n()) %>%
+  group_by(seed, Annee) %>%
+  mutate(NbAgregats = sum(N)) %>%
+  filter(pole == TRUE) %>%
+  mutate(TxAgregatPole = N / NbAgregats)
 
 
-# foo <- sim_agregats %>%
-#   mutate(pole = if_else(monPole == "nil", FALSE, TRUE)) %>%
-#   group_by(seed, Annee, pole) %>%
-#   summarise(N = n()) %>%
-#   group_by(seed, Annee) %>%
-#   mutate(NbAgregats = sum(N)) %>% filter(pole == TRUE) %>% mutate(TxAgregatPole = N / NbAgregats)
-# ggplot(bar, aes(Annee, TxAgregatPole, group = factor(Annee))) +
-#   geom_tufteboxplot() +
-#   scale_y_continuous(labels = percent, limits = c(0,1))
+ggplot(txAgregatsPoles, aes(Annee, TxAgregatPole, group = factor(Annee))) +
+  geom_tufteboxplot() +
+  scale_y_continuous(labels = percent, limits = c(0,1)) +
+  xlab("Temps") + ylab("Taux d'agrégats\n contenant un pôle") +
+  ggtitle("Évolution du taux d'agrégats avec pôle")
+})
 
-
-# })
-# 
-# output$agregatsPolesFilter <- renderPlot({
-#   nombre_agregats <- filtred$agregats %>% group_by(Annee, seed) %>% summarise(nb = n())
-#   
-#   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
-#     geom_tufteboxplot() +
-#     xlab("Temps") + ylab("Nombre d'agrégats") +
-#     ggtitle("Évolution du nombre d'agrégats")
-# })
+output$agregatsPoles <- renderPlot({
+  txAgregatsPoles <- filtred$agregats %>%
+    mutate(pole = if_else(monPole == "nil", FALSE, TRUE)) %>%
+    group_by(seed, Annee, pole) %>%
+    summarise(N = n()) %>%
+    group_by(seed, Annee) %>%
+    mutate(NbAgregats = sum(N)) %>%
+    filter(pole == TRUE) %>%
+    mutate(TxAgregatPole = N / NbAgregats)
+  
+  
+  ggplot(txAgregatsPoles, aes(Annee, TxAgregatPole, group = factor(Annee))) +
+    geom_tufteboxplot() +
+    scale_y_continuous(labels = percent, limits = c(0,1)) +
+    xlab("Temps") + ylab("Taux d'agrégats\n contenant un pôle") +
+    ggtitle("Évolution du taux d'agrégats avec pôle")
+})
 
 output$agregatsCA <- renderPlot({
   
-  nombre_agregats <- JIAP_agregats %>%
-    filter(Communaute) %>%
-    group_by(Annee, seed) %>% summarise(nb = n())
+  nombre_agregats <- sim_agregats %>%
+    filter(communaute == "true") %>%
+    group_by(Annee, seed) %>%
+    summarise(nb = n())
   
   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
     geom_tufteboxplot() +
@@ -63,7 +72,7 @@ output$agregatsCA <- renderPlot({
 
 output$agregatsCAFilter <- renderPlot({
   nombre_agregats <- filtred$agregats %>%
-    filter(Communaute) %>%
+    filter(communaute == "true") %>%
     group_by(Annee, seed) %>% summarise(nb = n())
   
   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
@@ -73,26 +82,28 @@ output$agregatsCAFilter <- renderPlot({
 })
 
 output$agregatsRT <- renderPlot({
-  rtAgregats <- JIAP_agregats %>%
+  rtAgregats <- sim_agregats %>%
     filter(Annee %in% c(820, 940, 1040, 1160)) %>%
     group_by(seed, Annee) %>%
-    mutate(Rank = row_number(desc(NbFContenusAvantDem))) %>%
+    mutate(Rank = row_number(desc(nbFP))) %>%
     group_by(Annee, Rank) %>%
-    summarise(Moyenne = mean(NbFContenusAvantDem), Q1 = quantile(NbFContenusAvantDem, probs=0.25), Q3 = quantile(NbFContenusAvantDem, probs=0.75)) %>%
+    summarise(Moyenne = mean(nbFP),
+              Q1 = quantile(nbFP, probs = 0.25),
+              Q3 = quantile(nbFP, probs = 0.75)) %>%
     gather(key = `Méthode d'agrégation`, value = Value, Moyenne:Q3) %>%
     tbl_df() %>%
     ungroup() %>%
     mutate(Annee = Annee - 20)
   
   
-  ggplot(rtAgregats, aes(Rank, Value, group=`Méthode d'agrégation`, colour=`Méthode d'agrégation`)) +
-    geom_line(size=0.3, linetype="dotted") +
-    geom_point(size=0.3) +
-    scale_color_manual(values=c("black", "red", "blue")) +
-    facet_grid(~Annee, space="free_x",  scale="free_x") +
+  ggplot(rtAgregats, aes(Rank, Value, group = `Méthode d'agrégation`, colour = `Méthode d'agrégation`)) +
+    geom_line(size = 0.3, linetype = "dotted") +
+    geom_point(size = 0.3) +
+    scale_color_manual(values = c("black", "red", "blue")) +
+    facet_grid(~Annee, space = "free_x",  scales = "free_x") +
     scale_x_log10() + scale_y_log10() +
     ggtitle("Évolution rang-taille de la composition des agrégats") +
-    theme(legend.position="bottom") +
+    theme(legend.position = "bottom") +
     xlab("Rang (log10)") + ylab("Nombre de FP\ncontenus (log10)")
 })
 
@@ -100,9 +111,11 @@ output$agregatsRTFilter <- renderPlot({
   rtAgregats <- filtred$agregats %>%
     filter(Annee %in% c(820, 940, 1040, 1160)) %>%
     group_by(seed, Annee) %>%
-    mutate(Rank = row_number(desc(NbFContenusAvantDem))) %>%
+    mutate(Rank = row_number(desc(nbFP))) %>%
     group_by(Annee, Rank) %>%
-    summarise(Moyenne = mean(NbFContenusAvantDem), Q1 = quantile(NbFContenusAvantDem, probs=0.25), Q3 = quantile(NbFContenusAvantDem, probs=0.75)) %>%
+    summarise(Moyenne = mean(nbFP),
+              Q1 = quantile(nbFP, probs = 0.25),
+              Q3 = quantile(nbFP, probs = 0.75)) %>%
     gather(key = `Méthode d'agrégation`, value = Value, Moyenne:Q3) %>%
     tbl_df() %>%
     ungroup() %>%
@@ -110,13 +123,13 @@ output$agregatsRTFilter <- renderPlot({
   
   
   
-  ggplot(rtAgregats, aes(Rank, Value, group=`Méthode d'agrégation`, colour=`Méthode d'agrégation`)) +
-    geom_line(size=0.3, linetype="dotted") +
-    geom_point(size=0.3) +
-    scale_color_manual(values=c("black", "red", "blue")) +
-    facet_grid(~Annee, space="free_x",  scale="free_x") +
+  ggplot(rtAgregats, aes(Rank, Value, group = `Méthode d'agrégation`, colour = `Méthode d'agrégation`)) +
+    geom_line(size = 0.3, linetype = "dotted") +
+    geom_point(size = 0.3) +
+    scale_color_manual(values = c("black", "red", "blue")) +
+    facet_grid(~Annee, space = "free_x",  scales = "free_x") +
     scale_x_log10() + scale_y_log10() +
     ggtitle("Évolution rang-taille de la composition des agrégats") +
-    theme(legend.position="bottom") +
+    theme(legend.position = "bottom") +
     xlab("Rang (log10)") + ylab("Nombre de FP\ncontenus (log10)")
 })

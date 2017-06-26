@@ -1,7 +1,7 @@
 library(shiny)
 
 shinyServer(function(session, input, output) {
-   
+  
   filtred <- reactiveValues(agregats = NA,
                             FP = NA,
                             parameters = NA,
@@ -9,7 +9,7 @@ shinyServer(function(session, input, output) {
                             poles = NA,
                             results = NA,
                             seigneurs = NA
-                            )
+  )
   
   parameters_data <- reactive({
     nonUniqueParams <- sim_parameters %>%
@@ -50,7 +50,7 @@ shinyServer(function(session, input, output) {
       filtred$seigneurs <- NA
     }
   })
-
+  
   # output$paramParCoords <- renderParcoords({
   #   parcoords(parameters_data() %>% select(-seed, -sim_name) %>% set_colnames(LETTERS[1:ncol(.)]),
   #             rownames=FALSE,
@@ -74,7 +74,7 @@ shinyServer(function(session, input, output) {
             nrow(sim_parameters))
   })
   
-
+  
   summary_table <- reactive({
     
     Objectifs <- data_frame(
@@ -110,7 +110,7 @@ shinyServer(function(session, input, output) {
       select(RealVar, Objectif,Moyenne, Mediane, Q1, Q3, StDev, Min, Max)
   })
   
-
+  
   summary_table2 <- reactive({
     Objectifs <- data_frame(
       Var = c("NbAgregats", "nbChateaux", "nbGdChateaux", "nbEglisesParoissiales", "distance_eglises_paroissiales", "prop_FP_isoles", "RatioChargeFiscale"),
@@ -144,7 +144,7 @@ shinyServer(function(session, input, output) {
       arrange(Ordre) %>%
       select(RealVar, Objectif,Moyenne, Mediane, Q1, Q3, StDev, Min, Max)
   })
-
+  
   output$targetsTable <- renderFormattable({
     arrondir <- formatter("span", 
                           style = function(x) style(round(x, digits = 2)))
@@ -190,8 +190,8 @@ shinyServer(function(session, input, output) {
   #   ))
   # })
   
-   source("plots/FP.R", local = TRUE, encoding = 'utf8')
-  # source("plots/Agregats.R", local = TRUE, encoding = 'utf8')
+  source("plots/FP.R", local = TRUE, encoding = 'utf8')
+  source("plots/Agregats.R", local = TRUE, encoding = 'utf8')
   # source("plots/Seigneurs.R", local = TRUE, encoding = 'utf8')
   # source("plots/Poles.R", local = TRUE, encoding = 'utf8')
   # source("plots/Paroisses.R", local = TRUE, encoding = 'utf8')

@@ -47,7 +47,7 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                                               column(6,plotOutput("agregatsNb")),
                                               column(6, plotOutput("agregatsNbFilter"))
                                               )),
-                                   tabPanel("Pôles TODO",
+                                   tabPanel("Pôles",
                                             fluidRow(
                                               column(6,plotOutput("agregatsPoles")),
                                               column(6, plotOutput("agregatsPolesFilter"))
