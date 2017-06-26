@@ -1,5 +1,5 @@
 output$polesNb <- renderPlot({
-  PolesTous <- JIAP_poles %>%
+  PolesTous <- sim_poles %>%
     group_by(seed, Annee) %>%
     summarise(NbPoles = n()) %>%
     tbl_df()
@@ -26,13 +26,13 @@ output$polesNbFilter <- renderPlot({
 
 output$polesAgregats <- renderPlot({
   
-  PolesTous <- JIAP_poles %>%
+  PolesTous <- sim_poles %>%
     group_by(seed, Annee) %>%
     summarise(NbPoles = n()) %>%
     tbl_df()
   
-  tempVar <- JIAP_poles %>%
-    filter(Agregat != "null") %>%
+  tempVar <- sim_poles %>%
+    filter(monAgregat != "nil") %>%
     group_by(seed,Annee) %>%
     summarise(NbPoleAg = n())
   
@@ -63,7 +63,7 @@ output$polesAgregatsFilter <- renderPlot({
     tbl_df()
   
   tempVar <- filtred$poles %>%
-    filter(Agregat != "null") %>%
+    filter(monAgregat != "nil") %>%
     group_by(seed,Annee) %>%
     summarise(NbPoleAg = n())
   
@@ -87,15 +87,15 @@ output$polesAgregatsFilter <- renderPlot({
 })
 
 output$polesCompo <- renderPlot({
-  poles_temps <- JIAP_poles %>%
+  poles_temps <- sim_poles %>%
     filter(Annee %in% c(820, 940, 1040, 1160))
   
   compoPoles <- poles_temps %>%
-    group_by(seed, Annee, NbAttracteurs) %>%
+    group_by(seed, Annee, nbAttracteurs) %>%
     summarise(Nb = n()) %>%
     tbl_df()
   
-  ggplot(compoPoles, aes(factor(NbAttracteurs), Nb)) +
+  ggplot(compoPoles, aes(factor(nbAttracteurs), Nb)) +
     geom_tufteboxplot() +
     facet_wrap(~Annee, scales = "free", nrow = 1) +
     xlab("Nombre d'attracteurs") +
@@ -110,11 +110,11 @@ output$polesCompoFilter <- renderPlot({
     filter(Annee %in% c(820, 940, 1040, 1160))
   
   compoPoles <- poles_temps %>%
-    group_by(seed, Annee, NbAttracteurs) %>%
+    group_by(seed, Annee, nbAttracteurs) %>%
     summarise(Nb = n()) %>%
     tbl_df()
 
-  ggplot(compoPoles, aes(factor(NbAttracteurs), Nb)) +
+  ggplot(compoPoles, aes(factor(nbAttracteurs), Nb)) +
     geom_tufteboxplot() +
     facet_wrap(~Annee, scales = "free", nrow = 1) +
     xlab("Nombre d'attracteurs") +
@@ -125,17 +125,15 @@ output$polesCompoFilter <- renderPlot({
 
 
 output$polesAttrac <- renderPlot({
-  poles_temps <- JIAP_poles %>%
+  poles_temps <- sim_poles %>%
     filter(Annee %in% c(820, 940, 1040, 1160))
   
   attracPoles <- poles_temps %>%
-    mutate(`Attractivite` = replace(`Attractivite`, `Attractivite` == 0.68, 0.66)) %>%
-    mutate(`Attractivite` = replace(`Attractivite`, `Attractivite` == 0.83, 0.85)) %>%
-    group_by(seed, Annee,`Attractivite`) %>%
+    group_by(seed, Annee,attractivite) %>%
     summarise(Nb = n()) %>%
     tbl_df()
   
-  ggplot(attracPoles, aes(factor(`Attractivite`), Nb)) +
+  ggplot(attracPoles, aes(factor(attractivite), Nb)) +
     geom_tufteboxplot() + 
     facet_wrap(~Annee, scales = "free", nrow = 1) +
     xlab("Attractivité") +
@@ -149,13 +147,11 @@ output$polesAttracFilter <- renderPlot({
     filter(Annee %in% c(820, 940, 1040, 1160))
   
   attracPoles <- poles_temps %>%
-    mutate(`Attractivite` = replace(`Attractivite`, `Attractivite` == 0.68, 0.66)) %>%
-    mutate(`Attractivite` = replace(`Attractivite`, `Attractivite` == 0.83, 0.85)) %>%
-    group_by(seed, Annee,`Attractivite`) %>%
+    group_by(seed, Annee, attractivite) %>%
     summarise(Nb = n()) %>%
     tbl_df()
   
-  ggplot(attracPoles, aes(factor(`Attractivite`), Nb)) +
+  ggplot(attracPoles, aes(factor(attractivite), Nb)) +
     geom_tufteboxplot() + 
     facet_wrap(~Annee, scales = "free", nrow = 1) +
     xlab("Attractivité") +
@@ -166,14 +162,14 @@ output$polesAttracFilter <- renderPlot({
 
 output$polesRT <- renderPlot({
   
-  rtPoles_data <- JIAP_poles %>%
+  rtPoles_data <- sim_poles %>%
     filter(Annee %in% c(820, 940, 1040, 1160)) %>%
     group_by(seed, Annee) %>%
-    mutate(Rank = row_number(desc(NbAttracteurs))) %>%
+    mutate(Rank = row_number(desc(nbAttracteurs))) %>%
     group_by(Annee, Rank) %>%
-    summarise(Moyenne = mean(NbAttracteurs),
-              Q1 = quantile(NbAttracteurs, probs = 0.25),
-              Q3 = quantile(NbAttracteurs, probs = 0.75)) %>%
+    summarise(Moyenne = mean(nbAttracteurs),
+              Q1 = quantile(nbAttracteurs, probs = 0.25),
+              Q3 = quantile(nbAttracteurs, probs = 0.75)) %>%
     gather(key = `Méthode d'agrégation`, value = Value, Moyenne:Q3) %>%
     tbl_df() %>%
     ungroup()
@@ -197,11 +193,11 @@ output$polesRTFilter <- renderPlot({
   rtPoles_data <- filtred$poles %>%
     filter(Annee %in% c(820, 940, 1040, 1160)) %>%
     group_by(seed, Annee) %>%
-    mutate(Rank = row_number(desc(NbAttracteurs))) %>%
+    mutate(Rank = row_number(desc(nbAttracteurs))) %>%
     group_by(Annee, Rank) %>%
-    summarise(Moyenne = mean(NbAttracteurs),
-              Q1 = quantile(NbAttracteurs, probs = 0.25),
-              Q3 = quantile(NbAttracteurs, probs = 0.75)) %>%
+    summarise(Moyenne = mean(nbAttracteurs),
+              Q1 = quantile(nbAttracteurs, probs = 0.25),
+              Q3 = quantile(nbAttracteurs, probs = 0.75)) %>%
     gather(key = `Méthode d'agrégation`, value = Value, Moyenne:Q3) %>%
     tbl_df() %>%
     ungroup()
