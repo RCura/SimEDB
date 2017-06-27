@@ -107,7 +107,13 @@ shinyServer(function(session, input, output) {
       filter(!is.na(RealVar)) %>%
       spread(key = Indice,value = Value) %>%
       arrange(Ordre) %>%
-      select(RealVar, Objectif,Moyenne, Mediane, Q1, Q3, StDev, Min, Max)
+      select(RealVar, Objectif,Moyenne, Mediane, Q1, Q3, StDev) %>%
+      rename(Indicateur = RealVar,
+             `Valeur attendue` = Objectif,
+             `Médiane` = Mediane,
+             `1er quartile` = Q1,
+             `3ème quartile` = Q3,
+             `Écart-type` = StDev)
       
     return(tableau_resultats)
   })
@@ -123,7 +129,7 @@ shinyServer(function(session, input, output) {
       Ordre = 1:7
     )
     
-    filtred$results %>%
+    tableau_resultats <- filtred$results %>%
       filter(Annee == 1160) %>%
       select(-seed) %>%
       rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
@@ -144,27 +150,26 @@ shinyServer(function(session, input, output) {
       filter(!is.na(RealVar)) %>%
       spread(key = Indice,value = Value) %>%
       arrange(Ordre) %>%
-      select(RealVar, Objectif,Moyenne, Mediane, Q1, Q3, StDev, Min, Max)
+      select(RealVar, Objectif,Moyenne, Mediane, Q1, Q3, StDev) %>%
+      rename(Indicateur = RealVar,
+             `Valeur attendue` = Objectif,
+             `Médiane` = Mediane,
+             `1er quartile` = Q1,
+             `3ème quartile` = Q3,
+             `Écart-type` = StDev)
+    
   })
   
   output$targetsTable <- renderFormattable({
-    arrondir <- formatter("span", 
-                          style = function(x) style(round(x, digits = 2)))
-    
-    formattable(summary_table(), list(
-      Objectif = formatter("span", style = function(x){as.integer(x)}),
-      Moyenne = arrondir,
-      Ecart = formatter("span", style = function(x){
-        ifelse(abs(x) > 0.3,  style(color = "red", font.weight = "bold"),
-               ifelse(abs(x) < 0.1, style(color = "green", font.weight = "bold"), NA))},
-        function(x) percent(x)),
-      `Médiane` = arrondir,
-      Q1 = arrondir,
-      Q3 = arrondir,
-      StDev = formatter("span", style = function(x) style(round(x, digits = 2))),
-      Min = formatter("span", style = function(x){as.integer(x)}),
-      Max = formatter("span", style = function(x){as.integer(x)})
-    ))
+    formattable(summary_table(), table.attr = 'class="table table-striped"',
+                list(
+                  area(row = 1:4, col = 2:6) ~ round,
+                  area(row = 1:4, col = 7) ~ formatter("span", function(x){ round(x, digits = 2) }),
+                  area(row = 5, col = 2:7) ~ formatter("span",  function(x){paste(round(x), "m")}),
+                  area(row = 6, col = 2:7) ~ percent,
+                  area(row = 7, col = 2:6) ~ formatter("span", function(x){ paste("x", round(x)) }),
+                  area(row = 7, col = 7) ~ formatter("span", function(x){ paste("x", round(x, digits = 2)) })
+                ))
   })
   
   # output$selectionTable <- renderPrint({
