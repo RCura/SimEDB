@@ -11,6 +11,7 @@ output$paroissesNb <- renderPlot({
 })
 
 output$paroissesNbFilter <- renderPlot({
+  req(filtred$paroisses)
   nombre_paroisses <- filtred$paroisses %>%
     group_by(Annee, seed) %>%
     summarise(nb = n())
@@ -39,6 +40,7 @@ output$paroissesCompo <- renderPlot({
 })
 
 output$paroissesCompoFilter <- renderPlot({
+  req(filtred$paroisses)
   fidelesBreaks <- c(-1,0,10,30,50,100,1000)
   fidelesLabels <- c("0", "1-10", "11-30", "31-50", "51-100", ">100")
   
@@ -79,7 +81,7 @@ output$paroissesSuperficie <- renderPlot({
 })
 
 output$paroissesSuperficieFilter <- renderPlot({
-  
+  req(filtred$paroisses)
   superficieBreaks <- c(-1,1, 5, 10, 20,50, 100,500, 1E12)
   superficieBreaks <- superficieBreaks * 1E6
   superficieLabels <- c("<1", "1-5", "6-10", "11-20", "21-50", "51-100", "101-500", ">500")
@@ -119,6 +121,7 @@ output$paroissesPromo <- renderPlot({
 })
 
 output$paroissesPromoFilter <- renderPlot({
+  req(filtred$paroisses)
   paroisses_promo <- filtred$paroisses %>%
     filter(mode_promotion != "nil") %>%
     filter(mode_promotion != "initialisation") %>%

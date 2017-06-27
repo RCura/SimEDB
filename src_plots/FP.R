@@ -44,6 +44,7 @@ output$fpTypeDeplacements <- renderPlot({
 })
 
 output$fpTypeDeplacementsFilter <- renderPlot({
+  req(filtred$FP)
   types_deplacements <- filtred$sim_FP %>%
     group_by(Annee, seed, type_deplacement) %>%
     summarise(N = n()) %>%
@@ -59,27 +60,28 @@ output$fpTypeDeplacementsFilter <- renderPlot({
     xlab("Temps") + ylab("Part des Foyers Paysans") +
     ggtitle("Type de déplacement des Foyers Paysans")
 })
-# 
-# output$fpDeplacementsFilter <- renderPlot({
-#   gatherFP <- filtred$FP %>%
-#     group_by(Annee) %>%
-#     summarise_each(funs(mean)) %>%
-#     gather(Type, Value, nbInInIntra:nbOutOutInter) %>%
-#     mutate(GrandType =  substr(Type, nchar(Type) - 4, nchar(Type))) %>%
-#     mutate(Type = gsub("Inter", "", Type)) %>%
-#     mutate(Type = gsub("Intra", "", Type)) %>%
-#     mutate(Type = gsub("nb", "", Type))
-#   
-#   TypeDeplacement <- ggplot(gatherFP, aes(x=factor(Annee), y = Value)) +
-#     geom_bar(stat = "identity", aes(fill=Type) ) +
-#     facet_wrap(~GrandType) +
-#     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-#     theme(legend.position="bottom") +
-#     xlab("Temps") + ylab("Nombre de Foyers Paysans") +
-#     ggtitle("Type de déplacement des Foyers Paysans")
-#   
-#   TypeDeplacement
-# })
+
+output$fpDeplacementsFilter <- renderPlot({
+  req(filtred$FP)
+  gatherFP <- filtred$FP %>%
+    group_by(Annee) %>%
+    summarise_each(funs(mean)) %>%
+    gather(Type, Value, nbInInIntra:nbOutOutInter) %>%
+    mutate(GrandType =  substr(Type, nchar(Type) - 4, nchar(Type))) %>%
+    mutate(Type = gsub("Inter", "", Type)) %>%
+    mutate(Type = gsub("Intra", "", Type)) %>%
+    mutate(Type = gsub("nb", "", Type))
+
+  TypeDeplacement <- ggplot(gatherFP, aes(x=factor(Annee), y = Value)) +
+    geom_bar(stat = "identity", aes(fill=Type) ) +
+    facet_wrap(~GrandType) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    theme(legend.position="bottom") +
+    xlab("Temps") + ylab("Nombre de Foyers Paysans") +
+    ggtitle("Type de déplacement des Foyers Paysans")
+
+  TypeDeplacement
+})
 
 
 output$fpConcentration <- renderPlot({
@@ -91,6 +93,7 @@ output$fpConcentration <- renderPlot({
 })
 
 output$fpConcentrationFilter <- renderPlot({
+  req(filtred$results)
   ggplot(filtred$results, aes(factor(Annee), prop_FP_isoles)) +
     geom_tufteboxplot() +
     ggtitle("Évolution de la part de FP isolés") +
@@ -125,6 +128,7 @@ output$fpSatisfaction <- renderPlot({
 })
 
 output$fpSatisfactionFilter <- renderPlot({
+  req(filtred$FP)
   satisfaction_data <- filtred$FP %>%
       select(Annee, sMat, sRel, sProt, Satis) %>%
       rename(

@@ -12,6 +12,7 @@ output$polesNb <- renderPlot({
 })
 
 output$polesNbFilter <- renderPlot({
+  req(filtred$poles)
   PolesTous <- filtred$poles %>%
     group_by(seed, Annee) %>%
     summarise(NbPoles = n()) %>%
@@ -56,7 +57,7 @@ output$polesAgregats <- renderPlot({
 })
 
 output$polesAgregatsFilter <- renderPlot({
-  
+  req(filtred$poles)
   PolesTous <- filtred$poles %>%
     group_by(seed, Annee) %>%
     summarise(NbPoles = n()) %>%
@@ -106,6 +107,8 @@ output$polesCompo <- renderPlot({
 })
 
 output$polesCompoFilter <- renderPlot({
+  req(filtred$poles)
+  
   poles_temps <- filtred$poles %>%
     filter(Annee %in% c(820, 940, 1040, 1160))
   
@@ -143,6 +146,8 @@ output$polesAttrac <- renderPlot({
 })
 
 output$polesAttracFilter <- renderPlot({
+  req(filtred$poles)
+  
   poles_temps <- filtred$poles %>%
     filter(Annee %in% c(820, 940, 1040, 1160))
   
@@ -189,6 +194,7 @@ output$polesRT <- renderPlot({
 })
 
 output$polesRTFilter <- renderPlot({
+  req(filtred$poles)
   
   rtPoles_data <- filtred$poles %>%
     filter(Annee %in% c(820, 940, 1040, 1160)) %>%

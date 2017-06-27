@@ -59,7 +59,7 @@ output$seigneursChateaux <- renderPlot({
 })
 
 output$seigneursChateauxFilter <- renderPlot({
-  
+  req(filtred$seigneurs)
   breaksGS <- c(-0,1,2,3,4,5,10,25,50,1000)
   labelsGS <- c("1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
   
@@ -170,6 +170,8 @@ output$seigneursVassaux <- renderPlot({
 })
 
 output$seigneursVassauxFilter <- renderPlot({
+  req(filtred$seigneurs)
+  
   myBreaks <- c(-1,0,1,2,3,4,5,10,25,50,1000)
   myLabels <- c("0","1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
   
@@ -239,6 +241,8 @@ output$seigneursRedevances <- renderPlot({
 })
 
 output$seigneursRedevancesFilter <- renderPlot({
+  req(filtred$seigneurs)
+  
   redevances_seigneurs <- filtred$seigneurs %>%
     filter(Annee == 1160) %>%
     select(seed, Annee, Type, Initial, NbFpAssujetis) %>%
@@ -273,6 +277,7 @@ output$seigneursPuissance <- renderPlot({
 })
 
 output$seigneursPuissanceFilter <- renderPlot({
+  req(filtred$seigneurs)
   
   seigneurs_puissance <- filtred$seigneurs %>%
     filter(puissance > 0) %>%

@@ -11,6 +11,7 @@ output$agregatsNb <- renderPlot({
 })
 
 output$agregatsNbFilter <- renderPlot({
+  req(filtred$agregats)
   nombre_agregats <- filtred$agregats %>%
     group_by(Annee, seed) %>%
     summarise(nb = n())
@@ -39,7 +40,8 @@ ggplot(txAgregatsPoles, aes(Annee, TxAgregatPole, group = factor(Annee))) +
   ggtitle("Évolution du taux d'agrégats avec pôle")
 })
 
-output$agregatsPoles <- renderPlot({
+output$agregatsPolesFilter <- renderPlot({
+  req(filtred$agregats)
   txAgregatsPoles <- filtred$agregats %>%
     mutate(pole = if_else(monPole == "nil", FALSE, TRUE)) %>%
     group_by(seed, Annee, pole) %>%
@@ -71,6 +73,7 @@ output$agregatsCA <- renderPlot({
 })
 
 output$agregatsCAFilter <- renderPlot({
+  req(filtred$agregats)
   nombre_agregats <- filtred$agregats %>%
     filter(communaute == "true") %>%
     group_by(Annee, seed) %>% summarise(nb = n())
@@ -108,6 +111,7 @@ output$agregatsRT <- renderPlot({
 })
 
 output$agregatsRTFilter <- renderPlot({
+  req(filtred$agregats)
   rtAgregats <- filtred$agregats %>%
     filter(Annee %in% c(820, 940, 1040, 1160)) %>%
     group_by(seed, Annee) %>%
