@@ -5,34 +5,34 @@ output$seigneursChateaux <- renderPlot({
   
   # On ne garde que : les GS, les chatelains, et les PS/Chatelains inits
   
-  GS <- JIAP_seigneurs %>%
-    filter(Annee == 1160, Type == "Grand Seigneur") %>%
-    rename(`Propriétés` = NbChateauxProprio, Gardiennage = NbChateauxGardien) %>%
+  GS <- sim_seigneurs %>%
+    filter(Annee == 1160, type == "Grand Seigneur") %>%
+    rename(`Propriétés` = nbChateauxProprio, Gardiennage = nbChateauxGardien) %>%
     gather(key = TypePossession, value = NbChateaux, `Propriétés`, Gardiennage) %>%
-    xtabs(formula = ~ seed + Type + TypePossession + NbChateaux) %>%
+    xtabs(formula = ~ seed + type + TypePossession + NbChateaux) %>%
     as.data.frame(stringsAsFactors = FALSE) %>%
     tbl_df() %>%
     mutate(NbChateaux = as.numeric(NbChateaux)) %>%
     filter(NbChateaux > 0) %>%
     mutate(NbChateauxBreaks =  cut(NbChateaux, breaks = breaksGS, labels =  labelsGS)) %>%
-    group_by(seed, NbChateauxBreaks, TypePossession, Type) %>%
+    group_by(seed, NbChateauxBreaks, TypePossession, type) %>%
     summarise(NbSeigneurs = sum(Freq)) %>%
     tbl_df()
   
   breaksChat <- c(-1,0,1,2,3,4,1000)
-  labelsChat<- c("0", "1", "2", "3", "4", "5+")
+  labelsChat <- c("0", "1", "2", "3", "4", "5+")
   
-  Chat <- JIAP_seigneurs %>%
-    filter(Annee == 1160, Type == "Chatelain") %>%
-    rename(`Propriétés` = NbChateauxProprio, Gardiennage = NbChateauxGardien) %>%
+  Chat <- sim_seigneurs %>%
+    filter(Annee == 1160, type == "Chatelain") %>%
+    rename(`Propriétés` = nbChateauxProprio, Gardiennage = nbChateauxGardien) %>%
     gather(key = TypePossession, value = NbChateaux, `Propriétés`, Gardiennage) %>%
-    xtabs(formula = ~ seed + Type + TypePossession + NbChateaux) %>%
+    xtabs(formula = ~ seed + type + TypePossession + NbChateaux) %>%
     as.data.frame(stringsAsFactors = FALSE) %>%
     tbl_df() %>%
     mutate(NbChateaux = as.numeric(NbChateaux)) %>%
     filter(NbChateaux > 0) %>%
     mutate(NbChateauxBreaks =  cut(NbChateaux, breaks = breaksChat, labels =  labelsChat)) %>%
-    group_by(seed, NbChateauxBreaks, TypePossession, Type) %>%
+    group_by(seed, NbChateauxBreaks, TypePossession, type) %>%
     summarise(NbSeigneurs = sum(Freq)) %>%
     tbl_df()
   
@@ -69,13 +69,13 @@ output$seigneursChateauxFilter <- renderPlot({
     filter(Annee == 1160, Type == "Grand Seigneur") %>%
     rename(`Propriétés` = NbChateauxProprio, Gardiennage = NbChateauxGardien) %>%
     gather(key = TypePossession, value = NbChateaux, `Propriétés`, Gardiennage) %>%
-    xtabs(formula = ~ seed + Type + TypePossession + NbChateaux) %>%
+    xtabs(formula = ~ seed + type + TypePossession + NbChateaux) %>%
     as.data.frame(stringsAsFactors = FALSE) %>%
     tbl_df() %>%
     mutate(NbChateaux = as.numeric(NbChateaux)) %>%
     filter(NbChateaux > 0) %>%
     mutate(NbChateauxBreaks =  cut(NbChateaux, breaks = breaksGS, labels =  labelsGS)) %>%
-    group_by(seed, NbChateauxBreaks, TypePossession, Type) %>%
+    group_by(seed, NbChateauxBreaks, TypePossession, type) %>%
     summarise(NbSeigneurs = sum(Freq)) %>%
     tbl_df()
   
@@ -83,16 +83,16 @@ output$seigneursChateauxFilter <- renderPlot({
   labelsChat<- c("0", "1", "2", "3", "4", "5+")
   
   Chat <- filtred$seigneurs %>%
-    filter(Annee == 1160, Type == "Chatelain") %>%
+    filter(Annee == 1160, type == "Chatelain") %>%
     rename(`Propriétés` = NbChateauxProprio, Gardiennage = NbChateauxGardien) %>%
     gather(key = TypePossession, value = NbChateaux, `Propriétés`, Gardiennage) %>%
-    xtabs(formula = ~ seed + Type + TypePossession + NbChateaux) %>%
+    xtabs(formula = ~ seed + type + TypePossession + NbChateaux) %>%
     as.data.frame(stringsAsFactors = FALSE) %>%
     tbl_df() %>%
     mutate(NbChateaux = as.numeric(NbChateaux)) %>%
     filter(NbChateaux > 0) %>%
     mutate(NbChateauxBreaks =  cut(NbChateaux, breaks = breaksChat, labels =  labelsChat)) %>%
-    group_by(seed, NbChateauxBreaks, TypePossession, Type) %>%
+    group_by(seed, NbChateauxBreaks, TypePossession, type) %>%
     summarise(NbSeigneurs = sum(Freq)) %>%
     tbl_df()
   
@@ -122,40 +122,39 @@ output$seigneursVassaux <- renderPlot({
   myBreaks <- c(-1,0,1,2,3,4,5,10,25,50,1000)
   myLabels <- c("0","1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
   
-  debiteurs_seigneurs<- JIAP_seigneurs %>%
+  debiteurs_seigneurs<- sim_seigneurs %>%
     filter(Annee == 1160) %>%
-    select(seed, Annee, Type, Initial, NbDebiteurs) %>%
-    mutate(Initial= as.character(Initial)) %>%
-    mutate(Initial = replace(Initial, Initial=="TRUE", "Initialement\nPrésent")) %>%
-    mutate(Initial = replace(Initial, Initial=="FALSE", "Arrivé\nen cours")) %>%
-    mutate(Initial = factor(Initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
-    mutate(NbDebiteursBreaks =  cut(NbDebiteurs, breaks = myBreaks, labels =  myLabels)) %>%  
-    group_by(seed, Type, Initial, NbDebiteursBreaks) %>%
+    select(seed, Annee, type, initial, nbDebiteurs) %>%
+    mutate(initial = replace(initial, initial=="true", "Initialement\nPrésent")) %>%
+    mutate(initial = replace(initial, initial=="false", "Arrivé\nen cours")) %>%
+    mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
+    mutate(nbDebiteursBreaks =  cut(nbDebiteurs, breaks = myBreaks, labels =  myLabels)) %>%  
+    group_by(seed, type, initial, nbDebiteursBreaks) %>%
     summarise(StatsDebiteurs = n())
   
-  debInitCPS <- debiteurs_seigneurs %>% filter(Type != "Grand Seigneur", Initial == "Initialement\nPrésent")
-  debNonCPS <- debiteurs_seigneurs %>% filter(Type != "Grand Seigneur", Initial == "Arrivé\nen cours")
-  debGS <- debiteurs_seigneurs %>% filter(Type == "Grand Seigneur")
+  debInitCPS <- debiteurs_seigneurs %>% filter(type != "Grand Seigneur", initial == "Initialement\nPrésent")
+  debNonCPS <- debiteurs_seigneurs %>% filter(type != "Grand Seigneur", initial == "Arrivé\nen cours")
+  debGS <- debiteurs_seigneurs %>% filter(type == "Grand Seigneur")
   
-  plotInitCPS <- ggplot(debInitCPS, aes(NbDebiteursBreaks, StatsDebiteurs)) +
+  plotInitCPS <- ggplot(debInitCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
     geom_tufteboxplot() +
-    facet_grid(Initial ~ Type, scale="free", space = "free_x") +
+    facet_grid(initial ~ type, scale="free", space = "free_x") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
     theme(plot.title = element_text(size = rel(1), face = "italic"))
   
   
-  plotNonCPS <- ggplot(debNonCPS, aes(NbDebiteursBreaks, StatsDebiteurs)) +
+  plotNonCPS <- ggplot(debNonCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
     geom_tufteboxplot() +
-    facet_grid(Initial ~ Type, scale="free", space = "free_x") +
+    facet_grid(initial ~ type, scale="free", space = "free_x") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
     theme(plot.title = element_text(size = rel(1), face = "italic"))
   
   
-  plotGS <- ggplot(debGS, aes(NbDebiteursBreaks, StatsDebiteurs)) +
+  plotGS <- ggplot(debGS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
     geom_tufteboxplot() +
-    facet_wrap(~Type) +
+    facet_wrap(~type) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
     theme(plot.title = element_text(size = rel(1), face = "italic"))
@@ -177,38 +176,37 @@ output$seigneursVassauxFilter <- renderPlot({
   
   debiteurs_seigneurs<- filtred$seigneurs %>%
     filter(Annee == 1160) %>%
-    select(seed, Annee, Type, Initial, NbDebiteurs) %>%
-    mutate(Initial= as.character(Initial)) %>%
-    mutate(Initial = replace(Initial, Initial=="TRUE", "Initialement\nPrésent")) %>%
-    mutate(Initial = replace(Initial, Initial=="FALSE", "Arrivé\nen cours")) %>%
-    mutate(Initial = factor(Initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
-    mutate(NbDebiteursBreaks =  cut(NbDebiteurs, breaks = myBreaks, labels =  myLabels)) %>%  
-    group_by(seed, Type, Initial, NbDebiteursBreaks) %>%
+    select(seed, Annee, type, initial, nbDebiteurs) %>%
+    mutate(initial = replace(initial, initial=="TRUE", "Initialement\nPrésent")) %>%
+    mutate(initial = replace(initial, initial=="FALSE", "Arrivé\nen cours")) %>%
+    mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
+    mutate(nbDebiteursBreaks =  cut(nbDebiteurs, breaks = myBreaks, labels =  myLabels)) %>%  
+    group_by(seed, type, initial, nbDebiteursBreaks) %>%
     summarise(StatsDebiteurs = n())
   
-  debInitCPS <- debiteurs_seigneurs %>% filter(Type != "Grand Seigneur", Initial == "Initialement\nPrésent")
-  debNonCPS <- debiteurs_seigneurs %>% filter(Type != "Grand Seigneur", Initial == "Arrivé\nen cours")
-  debGS <- debiteurs_seigneurs %>% filter(Type == "Grand Seigneur")
+  debInitCPS <- debiteurs_seigneurs %>% filter(type != "Grand Seigneur", initial == "Initialement\nPrésent")
+  debNonCPS <- debiteurs_seigneurs %>% filter(type != "Grand Seigneur", initial == "Arrivé\nen cours")
+  debGS <- debiteurs_seigneurs %>% filter(type == "Grand Seigneur")
   
-  plotInitCPS <- ggplot(debInitCPS, aes(NbDebiteursBreaks, StatsDebiteurs)) +
+  plotInitCPS <- ggplot(debInitCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
     geom_tufteboxplot() +
-    facet_grid(Initial ~ Type, scale="free", space = "free_x") +
+    facet_grid(initial ~ type, scale="free", space = "free_x") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
     theme(plot.title = element_text(size = rel(1), face = "italic"))
   
   
-  plotNonCPS <- ggplot(debNonCPS, aes(NbDebiteursBreaks, StatsDebiteurs)) +
+  plotNonCPS <- ggplot(debNonCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
     geom_tufteboxplot() +
-    facet_grid(Initial ~ Type, scale="free", space = "free_x") +
+    facet_grid(initial ~ type, scale="free", space = "free_x") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
     theme(plot.title = element_text(size = rel(1), face = "italic"))
   
   
-  plotGS <- ggplot(debGS, aes(NbDebiteursBreaks, StatsDebiteurs)) +
+  plotGS <- ggplot(debGS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
     geom_tufteboxplot() +
-    facet_wrap(~Type) +
+    facet_wrap(~type) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
     theme(plot.title = element_text(size = rel(1), face = "italic"))
@@ -223,19 +221,19 @@ output$seigneursVassauxFilter <- renderPlot({
 })
 
 output$seigneursRedevances <- renderPlot({
-  redevances_seigneurs <- JIAP_seigneurs %>%
+  redevances_seigneurs <- sim_seigneurs %>%
     filter(Annee == 1160) %>%
-    select(seed, Annee, Type, Initial, NbFpAssujetis) %>%
-    mutate(Initial = replace(Initial, Initial == "true", "Initialement\nPrésent")) %>%
-    mutate(Initial = replace(Initial, Initial == "false", "Arrivé\nen cours")) %>%
-    mutate(Initial = factor(Initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
-    mutate(Type = factor(Type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur"))) %>%
-    group_by(seed, Type, Initial) %>%
-    summarise(Redevances = mean(NbFpAssujetis))
+    select(seed, Annee, type, initial, nbFPassujettis) %>%
+    mutate(initial = replace(initial, initial == "true", "Initialement\nPrésent")) %>%
+    mutate(initial = replace(initial, initial == "false", "Arrivé\nen cours")) %>%
+    mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
+    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur"))) %>%
+    group_by(seed, type, initial) %>%
+    summarise(Redevances = mean(nbFPassujettis))
   
   ggplot(redevances_seigneurs, aes(Redevances)) +
     geom_histogram(bins=20) + 
-    facet_grid(Initial ~ Type, scales = "free") +
+    facet_grid(initial ~ type, scales = "free") +
     ylab("Fréquence") + xlab("Nombre de FP assujetis") +
     ggtitle("Distribution des redevances")
 })
@@ -245,32 +243,32 @@ output$seigneursRedevancesFilter <- renderPlot({
   
   redevances_seigneurs <- filtred$seigneurs %>%
     filter(Annee == 1160) %>%
-    select(seed, Annee, Type, Initial, NbFpAssujetis) %>%
-    mutate(Initial = replace(Initial, Initial == "true", "Initialement\nPrésent")) %>%
-    mutate(Initial = replace(Initial, Initial == "false", "Arrivé\nen cours")) %>%
-    mutate(Initial = factor(Initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
-    mutate(Type = factor(Type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur"))) %>%
-    group_by(seed, Type, Initial) %>%
-    summarise(Redevances = mean(NbFpAssujetis))
+    select(seed, Annee, type, initial, nbFPassujettis) %>%
+    mutate(initial = replace(initial, initial == "true", "Initialement\nPrésent")) %>%
+    mutate(initial = replace(initial, initial == "false", "Arrivé\nen cours")) %>%
+    mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
+    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur"))) %>%
+    group_by(seed, type, initial) %>%
+    summarise(Redevances = mean(nbFPassujettis))
   
   ggplot(redevances_seigneurs, aes(Redevances)) +
     geom_histogram(bins=20) + 
-    facet_grid(Initial ~ Type, scales = "free") +
+    facet_grid(initial ~ type, scales = "free") +
     ylab("Fréquence") + xlab("Nombre de FP assujetis") +
     ggtitle("Distribution des redevances")
 })
 
 output$seigneursPuissance <- renderPlot({
   
-  seigneurs_puissance <- JIAP_seigneurs %>%
+  seigneurs_puissance <- sim_seigneurs %>%
     filter(puissance > 0) %>%
-    group_by(seed, Annee, Type) %>%
+    group_by(seed, Annee, type) %>%
     summarise(Q1 =quantile(puissance, 0.25), Mean = mean(puissance), Max = max(puissance)) %>%
     gather(TypeIndic, puissance, Q1:Max)
   
   
   ggplot(seigneurs_puissance, aes(factor(Annee), puissance)) +geom_tufteboxplot() +
-    facet_grid(Type~TypeIndic, scale="free") +
+    facet_grid(type~TypeIndic, scale="free") +
     xlab("Temps") + ylab("Puissance") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)")
@@ -281,13 +279,13 @@ output$seigneursPuissanceFilter <- renderPlot({
   
   seigneurs_puissance <- filtred$seigneurs %>%
     filter(puissance > 0) %>%
-    group_by(seed, Annee, Type) %>%
+    group_by(seed, Annee, type) %>%
     summarise(Q1 =quantile(puissance, 0.25), Mean = mean(puissance), Max = max(puissance)) %>%
     gather(TypeIndic, puissance, Q1:Max)
   
   
   ggplot(seigneurs_puissance, aes(factor(Annee), puissance)) +geom_tufteboxplot() +
-    facet_grid(Type~TypeIndic, scale="free") +
+    facet_grid(type~TypeIndic, scale="free") +
     xlab("Temps") + ylab("Puissance") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)")
