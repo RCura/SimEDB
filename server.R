@@ -78,16 +78,22 @@ shinyServer(function(session, input, output) {
   summary_table <- reactive({
     
     Objectifs <- data_frame(
-      Var = c("NbAgregats", "nbChateaux", "nbGdChateaux", "nbEglisesParoissiales", "distance_eglises_paroissiales", "prop_FP_isoles", "RatioChargeFiscale"),
-      RealVar = c("Nombre d'agrégats", "Nombre de châteaux",  "Nombre de gros châteaux",
-                  "Nombre d'églises paroissiales", "Distance moyenne entre églises",  
-                  "Proportion de FP isolés", "Augmentation de la charge fiscale (ratio)"),
-      Objectif = c(200, 50, 10, 300, 3000, 0.2, 3),
-      Ordre = 1:7
+      Var = c("NbAgregats", "nbChateaux", "nbGdChateaux", "NbSeigneurs","nbEglisesParoissiales", "distance_eglises_paroissiales", "prop_FP_isoles", "RatioChargeFiscale"),
+      RealVar = c("Agrégats", "Châteaux",  "Gros châteaux", "Seigneurs",
+                  "Églises paroissiales", "Distance moyenne entre églises",  
+                  "Part de foyers paysans isolés",
+                  "Augmentation de la charge fiscale des foyers paysans"),
+      Objectif = c(200, 50, 10, 200, 300, 3000, 0.2, 3),
+      Ordre = 1:8
     )
     
+    nbSeigneurs <- sim_seigneurs %>%
+      group_by(seed, Annee) %>%
+      summarise(NbSeigneurs = n())
+      
     tableau_resultats <- sim_results %>%
       filter(Annee == 1160) %>%
+      left_join(nbSeigneurs) %>%
       select(-seed) %>%
       rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
       summarise_if(is.numeric,funs(
@@ -120,17 +126,24 @@ shinyServer(function(session, input, output) {
   
   
   summary_table2 <- reactive({
+    req(filtred$results)
     Objectifs <- data_frame(
-      Var = c("NbAgregats", "nbChateaux", "nbGdChateaux", "nbEglisesParoissiales", "distance_eglises_paroissiales", "prop_FP_isoles", "RatioChargeFiscale"),
-      RealVar = c("Nombre d'agrégats", "Nombre de châteaux",  "Nombre de gros châteaux",
-                  "Nombre d'églises paroissiales", "Distance moyenne entre églises",  
-                  "Proportion de FP isolés", "Augmentation de la charge fiscale (ratio)"),
-      Objectif = c(200, 50, 10, 300, 3000, 0.2, 3),
-      Ordre = 1:7
+      Var = c("NbAgregats", "nbChateaux", "nbGdChateaux", "NbSeigneurs","nbEglisesParoissiales", "distance_eglises_paroissiales", "prop_FP_isoles", "RatioChargeFiscale"),
+      RealVar = c("Agrégats", "Châteaux",  "Gros châteaux", "Seigneurs",
+                  "Églises paroissiales", "Distance moyenne entre églises",  
+                  "Part de foyers paysans isolés",
+                  "Augmentation de la charge fiscale des foyers paysans"),
+      Objectif = c(200, 50, 10, 200, 300, 3000, 0.2, 3),
+      Ordre = 1:8
     )
-    
+
+    nbSeigneurs <- filtred$seigneurs %>%
+      group_by(seed, Annee) %>%
+      summarise(NbSeigneurs = n())
+
     tableau_resultats <- filtred$results %>%
       filter(Annee == 1160) %>%
+      left_join(nbSeigneurs) %>%
       select(-seed) %>%
       rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
       summarise_if(is.numeric,funs(
@@ -157,18 +170,19 @@ shinyServer(function(session, input, output) {
              `1er quartile` = Q1,
              `3ème quartile` = Q3,
              `Écart-type` = StDev)
-    
+
   })
   
   output$targetsTable <- renderFormattable({
     formattable(summary_table(), table.attr = 'class="table table-striped"',
                 list(
-                  area(row = 1:4, col = 2:6) ~ round,
-                  area(row = 1:4, col = 7) ~ formatter("span", function(x){ round(x, digits = 2) }),
-                  area(row = 5, col = 2:7) ~ formatter("span",  function(x){paste(round(x), "m")}),
-                  area(row = 6, col = 2:7) ~ percent,
-                  area(row = 7, col = 2:6) ~ formatter("span", function(x){ paste("x", round(x)) }),
-                  area(row = 7, col = 7) ~ formatter("span", function(x){ paste("x", round(x, digits = 2)) })
+                  area(row = 1:5, col = 2:6) ~ round,
+                  area(row = 1:5, col = 7) ~ formatter("span", function(x){ round(x, digits = 2) }),
+                  area(row = 6, col = 2:7) ~ formatter("span",  function(x){paste(round(x), "m")}),
+                  area(row = 7, col = 2:6) ~ formatter("span",  function(x){paste(round(x * 100), "%")}),
+                  area(row = 7, col = 7) ~ formatter("span",  function(x){paste(round(x * 100, digits = 1), "%")}),
+                  area(row = 8, col = 2:6) ~ formatter("span", function(x){ paste("x", round(x)) }),
+                  area(row = 8, col = 7) ~ formatter("span", function(x){ paste("x", round(x, digits = 2)) })
                 ))
   })
   
@@ -176,26 +190,19 @@ shinyServer(function(session, input, output) {
   #   filtredSeeds()
   # })
   
-  # output$selectionTable <- renderFormattable({
-  #   arrondir <- formatter("span",
-  #                         style = function(x) style(round(x, digits = 2)))
-  # 
-  #   formattable(summary_table2(), list(
-  #     Objectif = formatter("span", style = function(x){as.integer(x)}),
-  #     Moyenne = arrondir,
-  #     Ecart = formatter("span", style = function(x){
-  #       ifelse(abs(x) > 0.3,  style(color = "red", font.weight = "bold"),
-  #              ifelse(abs(x) < 0.1, style(color = "green", font.weight = "bold"), NA))},
-  #       function(x) percent(x)),
-  #     `Médiane` = arrondir,
-  #     Q1 = arrondir,
-  #     Q3 = arrondir,
-  #     StDev = formatter("span", style = function(x) style(round(x, digits = 2))),
-  #     Min = formatter("span", style = function(x){as.integer(x)}),
-  #     Max = formatter("span", style = function(x){as.integer(x)})
-  # 
-  #   ))
-  # })
+  output$selectionTable <- renderFormattable({
+    req(summary_table2())
+  formattable(summary_table2(), table.attr = 'class="table table-striped"',
+              list(
+                area(row = 1:5, col = 2:6) ~ round,
+                area(row = 1:5, col = 7) ~ formatter("span", function(x){ round(x, digits = 2) }),
+                area(row = 6, col = 2:7) ~ formatter("span",  function(x){paste(round(x), "m")}),
+                area(row = 7, col = 2:6) ~ formatter("span",  function(x){paste(round(x * 100), "%")}),
+                area(row = 7, col = 7) ~ formatter("span",  function(x){paste(round(x * 100, digits = 1), "%")}),
+                area(row = 8, col = 2:6) ~ formatter("span", function(x){ paste("x", round(x)) }),
+                area(row = 8, col = 7) ~ formatter("span", function(x){ paste("x", round(x, digits = 2)) })
+              ))
+  })
   
   source("src_plots/FP.R", local = TRUE, encoding = 'utf8')
   source("src_plots/Agregats.R", local = TRUE, encoding = 'utf8')
