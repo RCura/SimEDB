@@ -86,7 +86,7 @@ shinyServer(function(session, input, output) {
       Ordre = 1:7
     )
     
-    sim_results %>%
+    tableau_resultats <- sim_results %>%
       filter(Annee == 1160) %>%
       select(-seed) %>%
       rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
@@ -108,6 +108,8 @@ shinyServer(function(session, input, output) {
       spread(key = Indice,value = Value) %>%
       arrange(Ordre) %>%
       select(RealVar, Objectif,Moyenne, Mediane, Q1, Q3, StDev, Min, Max)
+      
+    return(tableau_resultats)
   })
   
   
@@ -190,11 +192,11 @@ shinyServer(function(session, input, output) {
   #   ))
   # })
   
-  source("plots/FP.R", local = TRUE, encoding = 'utf8')
-  source("plots/Agregats.R", local = TRUE, encoding = 'utf8')
-  # source("plots/Seigneurs.R", local = TRUE, encoding = 'utf8')
-  source("plots/Poles.R", local = TRUE, encoding = 'utf8')
-  source("plots/Paroisses.R", local = TRUE, encoding = 'utf8')
+  source("src_plots/FP.R", local = TRUE, encoding = 'utf8')
+  source("src_plots/Agregats.R", local = TRUE, encoding = 'utf8')
+  # source("src_plots/Seigneurs.R", local = TRUE, encoding = 'utf8')
+  source("src_plots/Poles.R", local = TRUE, encoding = 'utf8')
+  source("src_plots/Paroisses.R", local = TRUE, encoding = 'utf8')
   
   
   
