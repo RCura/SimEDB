@@ -1,5 +1,5 @@
-output$Seigneurs_Nb <- renderPlot({
-  nbSeigneurs <- sim_seigneurs %>%
+Seigneurs_Nb <- function(seigneurs_data){
+  nbSeigneurs <- seigneurs_data %>%
     filter(type != "Grand Seigneur") %>%
     group_by(seed, Annee, type) %>%
     summarise(N = n())
@@ -12,35 +12,24 @@ output$Seigneurs_Nb <- renderPlot({
     xlab("Temps") +
     labs(title = "Évolution du nombre de seigneurs",
          subtitle = "Variabilité : Réplications")
+}
+
+output$Seigneurs_Nb <- renderPlot({
+  Seigneurs_Nb(seigneurs_data = sim_seigneurs)
 })
 
 output$Seigneurs_Nb_Filter <- renderPlot({
   req(filtred$seigneurs)
-  
-  nbSeigneurs <- filtred$seigneurs %>%
-    filter(type != "Grand Seigneur") %>%
-    group_by(seed, Annee, type) %>%
-    summarise(N = n())
-  
-  ggplot(nbSeigneurs, aes(factor(Annee), col = type, fill = type, y = N)) +
-    geom_tufteboxplot() +
-    scale_color_discrete(name = "Type de seigneur") +
-    scale_fill_discrete(name = "Type de seigneur") +
-    ylab("Nombre de seigneurs") +
-    xlab("Temps") +
-    labs(title = "Évolution du nombre de seigneurs",
-         subtitle = "Variabilité : Réplications")
+  Seigneurs_Nb(seigneurs_data = filtred$seigneurs)
 })
 
-
-output$Seigneurs_Chateaux <- renderPlot({
-  
+Seigneurs_Chateaux <- function(seigneurs_data){
   breaksGS <- c(-0,1,2,3,4,5,10,25,50,1000)
   labelsGS <- c("1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
   
   # On ne garde que : les GS, les chatelains, et les PS/Chatelains inits
   
-  GS <- sim_seigneurs %>%
+  GS <- seigneurs_data %>%
     filter(Annee == 1160, type == "Grand Seigneur") %>%
     rename(`Propriétés` = nbChateauxProprio, Gardiennage = nbChateauxGardien) %>%
     gather(key = TypePossession, value = NbChateaux, `Propriétés`, Gardiennage) %>%
@@ -57,7 +46,7 @@ output$Seigneurs_Chateaux <- renderPlot({
   breaksChat <- c(-1,0,1,2,3,4,1000)
   labelsChat <- c("0", "1", "2", "3", "4", "5+")
   
-  Chat <- sim_seigneurs %>%
+  Chat <- seigneurs_data %>%
     filter(Annee == 1160, type == "Chatelain") %>%
     rename(`Propriétés` = nbChateauxProprio, Gardiennage = nbChateauxGardien) %>%
     gather(key = TypePossession, value = NbChateaux, `Propriétés`, Gardiennage) %>%
@@ -92,75 +81,23 @@ output$Seigneurs_Chateaux <- renderPlot({
                bottom = "Nombre de châteaux", left = "Fréquence",
                top = "Distribution des possessions et gardiennages de châteaux
                Variabilité : Réplications"
-               )
+  )
+}
+
+output$Seigneurs_Chateaux <- renderPlot({
+  Seigneurs_Chateaux(seigneurs_data = sim_seigneurs)
 })
 
 output$Seigneurs_Chateaux_Filter <- renderPlot({
   req(filtred$seigneurs)
-  breaksGS <- c(-0,1,2,3,4,5,10,25,50,1000)
-  labelsGS <- c("1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
-  
-  # On ne garde que : les GS, les chatelains, et les PS/Chatelains inits
-  
-  GS <- filtred$seigneurs %>%
-    filter(Annee == 1160, Type == "Grand Seigneur") %>%
-    rename(`Propriétés` = NbChateauxProprio, Gardiennage = NbChateauxGardien) %>%
-    gather(key = TypePossession, value = NbChateaux, `Propriétés`, Gardiennage) %>%
-    xtabs(formula = ~ seed + type + TypePossession + NbChateaux) %>%
-    as.data.frame(stringsAsFactors = FALSE) %>%
-    tbl_df() %>%
-    mutate(NbChateaux = as.numeric(NbChateaux)) %>%
-    filter(NbChateaux > 0) %>%
-    mutate(NbChateauxBreaks =  cut(NbChateaux, breaks = breaksGS, labels =  labelsGS)) %>%
-    group_by(seed, NbChateauxBreaks, TypePossession, type) %>%
-    summarise(NbSeigneurs = sum(Freq)) %>%
-    tbl_df()
-  
-  breaksChat <- c(-1,0,1,2,3,4,1000)
-  labelsChat<- c("0", "1", "2", "3", "4", "5+")
-  
-  Chat <- filtred$seigneurs %>%
-    filter(Annee == 1160, type == "Chatelain") %>%
-    rename(`Propriétés` = NbChateauxProprio, Gardiennage = NbChateauxGardien) %>%
-    gather(key = TypePossession, value = NbChateaux, `Propriétés`, Gardiennage) %>%
-    xtabs(formula = ~ seed + type + TypePossession + NbChateaux) %>%
-    as.data.frame(stringsAsFactors = FALSE) %>%
-    tbl_df() %>%
-    mutate(NbChateaux = as.numeric(NbChateaux)) %>%
-    filter(NbChateaux > 0) %>%
-    mutate(NbChateauxBreaks =  cut(NbChateaux, breaks = breaksChat, labels =  labelsChat)) %>%
-    group_by(seed, NbChateauxBreaks, TypePossession, type) %>%
-    summarise(NbSeigneurs = sum(Freq)) %>%
-    tbl_df()
-  
-  plotGS <- ggplot(data = GS, aes(NbChateauxBreaks, NbSeigneurs)) +
-    geom_tufteboxplot() +
-    facet_wrap(~TypePossession, scale="free") +
-    ggtitle("Grands Seigneurs") + 
-    theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
-    theme(plot.title = element_text(size = rel(1), face = "italic")) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  
-  
-  plotChat <- ggplot(data = Chat, aes(NbChateauxBreaks, NbSeigneurs)) +
-    geom_tufteboxplot() + 
-    facet_wrap(~TypePossession, scale="free") +
-    ggtitle("Chatelains") + 
-    theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
-    theme(plot.title = element_text(size = rel(1), face = "italic")) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  
-  grid.arrange(plotChat, plotGS, nrow=2,
-               bottom = "Nombre de châteaux", left="Fréquence",
-               top="Distribution des possessions et gardiennages de châteaux
-               Variabilité : Réplications")
+  Seigneurs_Chateaux(seigneurs_data = filtred$seigneurs)
 })
 
-output$Seigneurs_Vassaux <- renderPlot({
+Seigneurs_Vassaux <- function(seigneurs_data){
   myBreaks <- c(-1,0,1,2,3,4,5,10,25,50,1000)
   myLabels <- c("0","1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
   
-  debiteurs_seigneurs<- sim_seigneurs %>%
+  debiteurs_seigneurs<- seigneurs_data %>%
     filter(Annee == 1160) %>%
     select(seed, Annee, type, initial, nbDebiteurs) %>%
     mutate(initial = replace(initial, initial=="true", "Initialement\nPrésent")) %>%
@@ -176,19 +113,17 @@ output$Seigneurs_Vassaux <- renderPlot({
   
   plotInitCPS <- ggplot(debInitCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
     geom_tufteboxplot() +
-    facet_grid(initial ~ type, scale="free", space = "free_x") +
+    facet_grid(initial ~ type, scales="free", space = "free_x") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
     theme(plot.title = element_text(size = rel(1), face = "italic"))
-  
   
   plotNonCPS <- ggplot(debNonCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
     geom_tufteboxplot() +
-    facet_grid(initial ~ type, scale="free", space = "free_x") +
+    facet_grid(initial ~ type, scales="free", space = "free_x") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
     theme(plot.title = element_text(size = rel(1), face = "italic"))
-  
   
   plotGS <- ggplot(debGS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
     geom_tufteboxplot() +
@@ -200,68 +135,23 @@ output$Seigneurs_Vassaux <- renderPlot({
   lay <- rbind(c(1,1,1,3),
                c(2,2,2,3))
   
-  grid.arrange(plotNonCPS, plotInitCPS, plotGS, nrow=1, layout_matrix = lay,
-               bottom="Nombre de Vassaux", left = "Fréquence",
-               top ="Distribution du nombre de vassaux selon les types de seigneurs
+  grid.arrange(plotNonCPS, plotInitCPS, plotGS, nrow = 1, layout_matrix = lay,
+               bottom = "Nombre de Vassaux", left = "Fréquence",
+               top = "Distribution du nombre de vassaux selon les types de seigneurs
                Variabilité : Réplications")
-  
+}
+
+output$Seigneurs_Vassaux <- renderPlot({
+ Seigneurs_Vassaux(seigneurs_data = sim_seigneurs)
 })
 
 output$Seigneurs_Vassaux_Filter <- renderPlot({
   req(filtred$seigneurs)
-  
-  myBreaks <- c(-1,0,1,2,3,4,5,10,25,50,1000)
-  myLabels <- c("0","1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
-  
-  debiteurs_seigneurs<- filtred$seigneurs %>%
-    filter(Annee == 1160) %>%
-    select(seed, Annee, type, initial, nbDebiteurs) %>%
-    mutate(initial = replace(initial, initial=="TRUE", "Initialement\nPrésent")) %>%
-    mutate(initial = replace(initial, initial=="FALSE", "Arrivé\nen cours")) %>%
-    mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
-    mutate(nbDebiteursBreaks =  cut(nbDebiteurs, breaks = myBreaks, labels =  myLabels)) %>%  
-    group_by(seed, type, initial, nbDebiteursBreaks) %>%
-    summarise(StatsDebiteurs = n())
-  
-  debInitCPS <- debiteurs_seigneurs %>% filter(type != "Grand Seigneur", initial == "Initialement\nPrésent")
-  debNonCPS <- debiteurs_seigneurs %>% filter(type != "Grand Seigneur", initial == "Arrivé\nen cours")
-  debGS <- debiteurs_seigneurs %>% filter(type == "Grand Seigneur")
-  
-  plotInitCPS <- ggplot(debInitCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
-    geom_tufteboxplot() +
-    facet_grid(initial ~ type, scale="free", space = "free_x") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
-    theme(plot.title = element_text(size = rel(1), face = "italic"))
-  
-  
-  plotNonCPS <- ggplot(debNonCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
-    geom_tufteboxplot() +
-    facet_grid(initial ~ type, scale="free", space = "free_x") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
-    theme(plot.title = element_text(size = rel(1), face = "italic"))
-  
-  
-  plotGS <- ggplot(debGS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
-    geom_tufteboxplot() +
-    facet_wrap(~type) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
-    theme(plot.title = element_text(size = rel(1), face = "italic"))
-  
-  lay <- rbind(c(1,1,1,3),
-               c(2,2,2,3))
-  
-  grid.arrange(plotNonCPS, plotInitCPS, plotGS, nrow=1, layout_matrix = lay,
-               bottom="Nombre de Vassaux", left = "Fréquence",
-               top ="Distribution du nombre de vassaux selon les types de seigneurs
-               Variabilité : Réplications")
-  
+  Seigneurs_Vassaux(seigneurs_data = filtred$seigneurs)
 })
 
-output$Seigneurs_Redevances <- renderPlot({
-  redevances_seigneurs <- sim_seigneurs %>%
+Seigneurs_Redevances <- function(seigneurs_data){
+  redevances_seigneurs <- seigneurs_data %>%
     filter(Annee == 1160) %>%
     select(seed, Annee, type, nbFPassujettis) %>%
     mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur")))
@@ -272,26 +162,19 @@ output$Seigneurs_Redevances <- renderPlot({
     xlab("Types de seigneurs") + ylab("Nombre de FP assujetis\n(Échelle logarithmique)") +
     ggtitle("Distribution des redevances en fin de simulation") +
     labs(subtitle = "Variabilité : Seigneurs et réplications")
+}
+
+output$Seigneurs_Redevances <- renderPlot({
+  Seigneurs_Redevances(seigneurs_data = sim_seigneurs)
 })
 
 output$Seigneurs_Redevances_Filter <- renderPlot({
   req(filtred$seigneurs)
-  
-  redevances_seigneurs <- filtred$seigneurs %>%
-    filter(Annee == 1160) %>%
-    select(seed, Annee, type, nbFPassujettis) %>%
-    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur")))
-  
-  ggplot(redevances_seigneurs, aes(type, nbFPassujettis)) +
-    geom_tufteboxplot() +
-    scale_y_log10(breaks = c(10,50,100, 500,1000, 2000)) +
-    xlab("Types de seigneurs") + ylab("Nombre de FP assujetis\n(Échelle logarithmique)") +
-    ggtitle("Distribution des redevances en fin de simulation") +
-    labs(subtitle = "Variabilité : Seigneurs et réplications")
+  Seigneurs_Redevances(seigneurs_data = filtred$seigneurs)
 })
 
-output$Seigneurs_Redevances_PS <- renderPlot({
-  
+Seigneurs_Redevances_PS <- function(seigneurs_data){
+  x <- "nbFPassujettis"
   redevancesLevels <- c("0","1-5","6-15","16-30","30-100",">100")
   redevancesBreaks <- rlang::exprs(
     .data[[x]] == 0 ~ "0",
@@ -302,9 +185,7 @@ output$Seigneurs_Redevances_PS <- renderPlot({
     .data[[x]] > 100 ~ ">100"
   )
   
-  x <- "nbFPassujettis"
-  
-  redevances_PS <- sim_seigneurs %>%
+  redevances_PS <- seigneurs_data %>%
     filter(Annee == 1160) %>%
     filter(type != "Grand Seigneur") %>%
     select(seed, Annee, type, nbFPassujettis) %>%
@@ -313,7 +194,7 @@ output$Seigneurs_Redevances_PS <- renderPlot({
     mutate(nbFP_cut =  factor(nbFP_cut, levels = redevancesLevels)) %>%
     group_by(seed, type,nbFP_cut) %>%
     summarise(N = n())
-
+  
   ggplot(redevances_PS, aes(nbFP_cut, N)) +
     geom_tufteboxplot() +
     facet_wrap(~type) +
@@ -322,54 +203,25 @@ output$Seigneurs_Redevances_PS <- renderPlot({
     ggtitle("Distribution des redevances en fin de simulation") +
     labs(subtitle = "Variabilité : Réplications") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+
+output$Seigneurs_Redevances_PS <- renderPlot({
+  Seigneurs_Redevances_PS(seigneurs_data = sim_seigneurs)
 })
 
 output$Seigneurs_Redevances_PS_Filter <- renderPlot({
   req(filtred$seigneurs)
-  
-  redevancesLevels <- c("0","1-5","6-15","16-30","30-100",">100")
-  redevancesBreaks <- rlang::exprs(
-    .data[[x]] == 0 ~ "0",
-    .data[[x]] <= 5 ~ "1-5",
-    .data[[x]] <= 15 ~ "6-15",
-    .data[[x]] <= 30 ~ "16-30",
-    .data[[x]] <= 100 ~ "30-100",
-    .data[[x]] > 100 ~ ">100"
-  )
-  
-  x <- "nbFPassujettis"
-  
-  redevances_PS <- filtred$seigneurs %>%
-    filter(Annee == 1160) %>%
-    filter(type != "Grand Seigneur") %>%
-    select(seed, Annee, type, nbFPassujettis) %>%
-    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain"))) %>%
-    mutate(nbFP_cut = case_when(!!!redevancesBreaks)) %>%
-    mutate(nbFP_cut =  factor(nbFP_cut, levels = redevancesLevels)) %>%
-    group_by(seed, type,nbFP_cut) %>%
-    summarise(N = n())
-  
-  ggplot(redevances_PS, aes(nbFP_cut, N)) +
-    geom_tufteboxplot() +
-    facet_wrap(~type) +
-    xlab("Nombre de FP assujetis\n(Échelle logarithmique)") +
-    ylab("Nombre de seigneurs") +
-    ggtitle("Distribution des redevances en fin de simulation") +
-    labs(subtitle = "Variabilité : Réplications") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  Seigneurs_Redevances_PS(seigneurs_data = filtred$seigneurs)
 })
 
-
-output$Seigneurs_Puissance <- renderPlot({
-  
-  seigneurs_puissance <- sim_seigneurs %>%
+Seigneurs_Puissance <- function(seigneurs_data){
+  seigneurs_puissance <- seigneurs_data %>%
     filter(puissance > 0) %>%
     group_by(seed, Annee, type) %>%
     summarise(Q1 = quantile(puissance, 0.25),
               Mean = mean(puissance),
               Max = max(puissance)) %>%
     gather(TypeIndic, puissance, Q1:Max)
-  
   
   ggplot(seigneurs_puissance, aes(factor(Annee), puissance)) +
     geom_tufteboxplot() +
@@ -378,31 +230,20 @@ output$Seigneurs_Puissance <- renderPlot({
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)") +
     labs(subtitle = "Variabilité : Réplications")
+}
+
+output$Seigneurs_Puissance <- renderPlot({
+  Seigneurs_Puissance(seigneurs_data = sim_seigneurs)
 })
 
 output$Seigneurs_Puissance_Filter <- renderPlot({
   req(filtred$seigneurs)
-  
-  seigneurs_puissance <- filtred$seigneurs %>%
-    filter(puissance > 0) %>%
-    group_by(seed, Annee, type) %>%
-    summarise(Q1 = quantile(puissance, 0.25),
-              Mean = mean(puissance),
-              Max = max(puissance)) %>%
-    gather(TypeIndic, puissance, Q1:Max)
-  
-  
-  ggplot(seigneurs_puissance, aes(factor(Annee), puissance)) +
-    geom_tufteboxplot() +
-    facet_grid(type~TypeIndic, scales = "free") +
-    xlab("Temps") + ylab("Puissance") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)") +
-    labs(subtitle = "Variabilité : Réplications")
+  Seigneurs_Puissance(seigneurs_data = filtred$seigneurs)
 })
 
-output$Seigneurs_Agregats <- renderPlot({
-  
+
+Seigneurs_Agregats <- function(seigneurs_data, agregats_data){
+  x <- "NbAgregats"
   nbAgregatsLevels <- c("0","1","2","3-5",">5")
   nbAgregatsBreaks <- rlang::exprs(
     .data[[x]] == 0 ~ "0",
@@ -412,16 +253,13 @@ output$Seigneurs_Agregats <- renderPlot({
     .data[[x]] > 5 ~ ">5"
   )
   
-  x <- "NbAgregats"
-  
-  
-  seigneurs_agregats <- sim_seigneurs %>%
+  seigneurs_agregats <- seigneurs_data %>%
     filter(Annee ==  1160) %>%
     group_by(seed, monAgregat) %>%
     summarise(NbAgregats = n()) %>%
     mutate(NbAgregats = case_when(!!!nbAgregatsBreaks)) %>%
     mutate(NbAgregats = factor(NbAgregats, levels = nbAgregatsLevels)) %>%
-    right_join(sim_agregats %>%
+    right_join(agregats_data %>%
                  filter(Annee == 1160) %>%
                  select(seed, self),
                by = c("seed", "monAgregat" = "self")) %>%
@@ -435,41 +273,15 @@ output$Seigneurs_Agregats <- renderPlot({
          y = "Nombre d'agrégats",
          title = "Nombre de seigneurs par agrégat en fin de simulation",
          subtitle = "Variabilité : Réplications")
+}
+
+output$Seigneurs_Agregats <- renderPlot({
+  Seigneurs_Agregats(seigneurs_data = sim_seigneurs,
+                     agregats_data = sim_agregats)
 })
 
 output$Seigneurs_Agregats_Filter <- renderPlot({
   req(filtred$seigneurs, filtred$agregats)
-  
-  nbAgregatsLevels <- c("0","1","2","3-5",">5")
-  nbAgregatsBreaks <- rlang::exprs(
-    .data[[x]] == 0 ~ "0",
-    .data[[x]] == 1 ~ "1",
-    .data[[x]] == 2 ~ "2",
-    .data[[x]] <= 5 ~ "3-5",
-    .data[[x]] > 5 ~ ">5"
-  )
-  
-  x <- "NbAgregats"
-  
-  
-  seigneurs_agregats <- filtred$seigneurs %>%
-    filter(Annee ==  1160) %>%
-    group_by(seed, monAgregat) %>%
-    summarise(NbAgregats = n()) %>%
-    mutate(NbAgregats = case_when(!!!nbAgregatsBreaks)) %>%
-    mutate(NbAgregats = factor(NbAgregats, levels = nbAgregatsLevels)) %>%
-    right_join(filtred$agregats %>%
-                 filter(Annee == 1160) %>%
-                 select(seed, self),
-               by = c("seed", "monAgregat" = "self")) %>%
-    mutate(NbAgregats = fct_explicit_na(NbAgregats, "0")) %>%
-    group_by(seed, NbAgregats) %>%
-    summarise(NbCas = n())
-  
-  ggplot(seigneurs_agregats, aes(factor(NbAgregats), NbCas)) +
-    geom_tufteboxplot() +
-    labs(x = "Nombre de seigneurs par agrégat",
-         y = "Nombre d'agrégats",
-         title = "Nombre de seigneurs par agrégat en fin de simulation",
-         subtitle = "Variabilité : Réplications")
+  Seigneurs_Agregats(seigneurs_data = filtred$seigneurs,
+                     agregats_data = filtred$agregats)
 })
