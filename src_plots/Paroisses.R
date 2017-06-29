@@ -7,7 +7,8 @@ output$paroissesNb <- renderPlot({
   ggplot(nombre_paroisses, aes(factor(Annee), nb)) +
     geom_tufteboxplot() +
     xlab("Temps") + ylab("Nombre de paroisses") +
-    ggtitle("Évolution du nombre de paroisses")
+    ggtitle("Évolution du nombre de paroisses") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$paroissesNbFilter <- renderPlot({
@@ -19,7 +20,8 @@ output$paroissesNbFilter <- renderPlot({
   ggplot(nombre_paroisses, aes(factor(Annee), nb)) +
     geom_tufteboxplot() +
     xlab("Temps") + ylab("Nombre de paroisses") +
-    ggtitle("Évolution du nombre de paroisses")
+    ggtitle("Évolution du nombre de paroisses") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$paroissesCompo <- renderPlot({
@@ -36,7 +38,8 @@ output$paroissesCompo <- renderPlot({
     geom_tufteboxplot() +
     facet_wrap(~Annee, scales = "free") +
     xlab("Nombre de paroissiens") + ylab("Fréquence") +
-    ggtitle("Evolution de la composition des paroisses")
+    ggtitle("Evolution de la composition des paroisses") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$paroissesCompoFilter <- renderPlot({
@@ -54,7 +57,8 @@ output$paroissesCompoFilter <- renderPlot({
     geom_tufteboxplot() +
     facet_wrap(~Annee, scales = "free") +
     xlab("Nombre de paroissiens") + ylab("Fréquence") +
-    ggtitle("Evolution de la composition des paroisses")
+    ggtitle("Evolution de la composition des paroisses") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$paroissesSuperficie <- renderPlot({
@@ -76,7 +80,8 @@ output$paroissesSuperficie <- renderPlot({
     geom_tufteboxplot() + facet_wrap(~Annee) +
     xlab("Superficie des paroisses (km²)") + ylab("Fréquence") +
     ggtitle("Évolution de la superficie des paroisses") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(subtitle = "Variabilité : Réplications")
   
 })
 
@@ -97,7 +102,8 @@ output$paroissesSuperficieFilter <- renderPlot({
     geom_tufteboxplot() + facet_wrap(~Annee) +
     xlab("Superficie des paroisses (km²)") + ylab("Fréquence") +
     ggtitle("Evolution de la superficie des paroisses") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(subtitle = "Variabilité : Réplications")
   
 })
 
@@ -117,7 +123,8 @@ output$paroissesPromo <- renderPlot({
     geom_tufteboxplot() +
     facet_wrap(~ mode_promotion, ncol = 1) +
     xlab("Temps") + ylab("Nombre de nouvelles paroisses\nà chaque pas de temps") +
-    ggtitle("Évolution des modes de création de nouvelles paroisses")
+    ggtitle("Évolution des modes de création de nouvelles paroisses") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$paroissesPromoFilter <- renderPlot({
@@ -137,5 +144,6 @@ output$paroissesPromoFilter <- renderPlot({
     geom_tufteboxplot() +
     facet_wrap(~ mode_promotion, ncol = 1) +
     xlab("Temps") + ylab("Nombre de nouvelles paroisses\nà chaque pas de temps") +
-    ggtitle("Évolution des modes de création de nouvelles paroisses")
+    ggtitle("Évolution des modes de création de nouvelles paroisses") +
+    labs(subtitle = "Variabilité : Réplications")
 })
