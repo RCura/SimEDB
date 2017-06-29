@@ -227,15 +227,14 @@ output$seigneursRedevances <- renderPlot({
     mutate(initial = replace(initial, initial == "true", "Initialement\nPrésent")) %>%
     mutate(initial = replace(initial, initial == "false", "Arrivé\nen cours")) %>%
     mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
-    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur"))) %>%
-    group_by(seed, type, initial) %>%
-    summarise(Redevances = mean(nbFPassujettis))
+    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur")))
   
-  ggplot(redevances_seigneurs, aes(Redevances)) +
-    geom_histogram(bins=20) + 
-    facet_grid(initial ~ type, scales = "free") +
-    ylab("Fréquence") + xlab("Nombre de FP assujetis") +
-    ggtitle("Distribution des redevances")
+  ggplot(redevances_seigneurs, aes(type, nbFPassujettis)) +
+    geom_tufteboxplot() +
+    scale_y_log10(breaks = c(10,50,100, 500,1000, 2000)) +
+    xlab("Types de seigneurs") + ylab("Nombre de FP assujetis\n(Échelle logarithmique)") +
+    ggtitle("Distribution des redevances en fin de simulation") +
+    labs(subtitle = "Variabilité : Seigneurs et réplications")
 })
 
 output$seigneursRedevancesFilter <- renderPlot({
@@ -247,15 +246,14 @@ output$seigneursRedevancesFilter <- renderPlot({
     mutate(initial = replace(initial, initial == "true", "Initialement\nPrésent")) %>%
     mutate(initial = replace(initial, initial == "false", "Arrivé\nen cours")) %>%
     mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
-    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur"))) %>%
-    group_by(seed, type, initial) %>%
-    summarise(Redevances = mean(nbFPassujettis))
+    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur")))
   
-  ggplot(redevances_seigneurs, aes(Redevances)) +
-    geom_histogram(bins=20) + 
-    facet_grid(initial ~ type, scales = "free") +
-    ylab("Fréquence") + xlab("Nombre de FP assujetis") +
-    ggtitle("Distribution des redevances")
+  ggplot(redevances_seigneurs, aes(type, nbFPassujettis)) +
+    geom_tufteboxplot() +
+    scale_y_log10(breaks = c(10,50,100, 500,1000, 2000)) +
+    xlab("Types de seigneurs") + ylab("Nombre de FP assujetis\n(Échelle logarithmique)") +
+    ggtitle("Distribution des redevances en fin de simulation") +
+    labs(subtitle = "Variabilité : Seigneurs et réplications")
 })
 
 output$seigneursPuissance <- renderPlot({
