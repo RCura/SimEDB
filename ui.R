@@ -1,10 +1,7 @@
 library(shiny)
 
 shinyUI(fluidPage(theme = shinytheme("cerulean"),
-  fluidRow(
-    column(8, titlePanel("SimVADB")),
-    column(4,fileInput("simResultsFiles", label = "Sorties de simulation", multiple = TRUE))
-  ),             
+  fluidRow(titlePanel("SimVADB")),             
   textOutput("dataVolume",inline =  TRUE),
   
   fluidRow(
