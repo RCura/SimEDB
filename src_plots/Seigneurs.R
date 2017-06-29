@@ -223,10 +223,7 @@ output$seigneursVassauxFilter <- renderPlot({
 output$seigneursRedevances <- renderPlot({
   redevances_seigneurs <- sim_seigneurs %>%
     filter(Annee == 1160) %>%
-    select(seed, Annee, type, initial, nbFPassujettis) %>%
-    mutate(initial = replace(initial, initial == "true", "Initialement\nPrésent")) %>%
-    mutate(initial = replace(initial, initial == "false", "Arrivé\nen cours")) %>%
-    mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
+    select(seed, Annee, type, nbFPassujettis) %>%
     mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur")))
   
   ggplot(redevances_seigneurs, aes(type, nbFPassujettis)) +
@@ -242,10 +239,7 @@ output$seigneursRedevancesFilter <- renderPlot({
   
   redevances_seigneurs <- filtred$seigneurs %>%
     filter(Annee == 1160) %>%
-    select(seed, Annee, type, initial, nbFPassujettis) %>%
-    mutate(initial = replace(initial, initial == "true", "Initialement\nPrésent")) %>%
-    mutate(initial = replace(initial, initial == "false", "Arrivé\nen cours")) %>%
-    mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
+    select(seed, Annee, type, nbFPassujettis) %>%
     mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur")))
   
   ggplot(redevances_seigneurs, aes(type, nbFPassujettis)) +
@@ -255,6 +249,76 @@ output$seigneursRedevancesFilter <- renderPlot({
     ggtitle("Distribution des redevances en fin de simulation") +
     labs(subtitle = "Variabilité : Seigneurs et réplications")
 })
+
+output$PSredevances <- renderPlot({
+  
+  redevancesLevels <- c("0","1-5","6-15","16-30","30-100",">100")
+  redevancesBreaks <- rlang::exprs(
+    .data[[x]] == 0 ~ "0",
+    .data[[x]] <= 5 ~ "1-5",
+    .data[[x]] <= 15 ~ "6-15",
+    .data[[x]] <= 30 ~ "16-30",
+    .data[[x]] <= 100 ~ "30-100",
+    .data[[x]] > 100 ~ ">100"
+  )
+  
+  x <- "nbFPassujettis"
+  
+  redevances_PS <- sim_seigneurs %>%
+    filter(Annee == 1160) %>%
+    filter(type != "Grand Seigneur") %>%
+    select(seed, Annee, type, nbFPassujettis) %>%
+    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain"))) %>%
+    mutate(nbFP_cut = case_when(!!!redevancesBreaks)) %>%
+    mutate(nbFP_cut =  factor(nbFP_cut, levels = redevancesLevels)) %>%
+    group_by(seed, type,nbFP_cut) %>%
+    summarise(N = n())
+
+  ggplot(redevances_PS, aes(nbFP_cut, N)) +
+    geom_tufteboxplot() +
+    facet_wrap(~type) +
+    xlab("Nombre de FP assujetis\n(Échelle logarithmique)") +
+    ylab("Nombre de seigneurs") +
+    ggtitle("Distribution des redevances en fin de simulation") +
+    labs(subtitle = "Variabilité : Réplications") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+})
+
+output$PSredevancesFilter <- renderPlot({
+  req(filtred$seigneurs)
+  
+  redevancesLevels <- c("0","1-5","6-15","16-30","30-100",">100")
+  redevancesBreaks <- rlang::exprs(
+    .data[[x]] == 0 ~ "0",
+    .data[[x]] <= 5 ~ "1-5",
+    .data[[x]] <= 15 ~ "6-15",
+    .data[[x]] <= 30 ~ "16-30",
+    .data[[x]] <= 100 ~ "30-100",
+    .data[[x]] > 100 ~ ">100"
+  )
+  
+  x <- "nbFPassujettis"
+  
+  redevances_PS <- filtred$seigneurs %>%
+    filter(Annee == 1160) %>%
+    filter(type != "Grand Seigneur") %>%
+    select(seed, Annee, type, nbFPassujettis) %>%
+    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain"))) %>%
+    mutate(nbFP_cut = case_when(!!!redevancesBreaks)) %>%
+    mutate(nbFP_cut =  factor(nbFP_cut, levels = redevancesLevels)) %>%
+    group_by(seed, type,nbFP_cut) %>%
+    summarise(N = n())
+  
+  ggplot(redevances_PS, aes(nbFP_cut, N)) +
+    geom_tufteboxplot() +
+    facet_wrap(~type) +
+    xlab("Nombre de FP assujetis\n(Échelle logarithmique)") +
+    ylab("Nombre de seigneurs") +
+    ggtitle("Distribution des redevances en fin de simulation") +
+    labs(subtitle = "Variabilité : Réplications") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+})
+
 
 output$seigneursPuissance <- renderPlot({
   
