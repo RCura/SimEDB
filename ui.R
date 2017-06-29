@@ -65,6 +65,11 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                                    )),
               tabPanel("Seigneurs",
                        tabsetPanel(id = "seigneursPlots",
+                                   tabPanel("Nombre",
+                                            fluidRow(
+                                              column(6,plotOutput("nbSeigneurs")),
+                                              column(6, plotOutput("nbSeigneursFilter"))
+                                            )),
                                    tabPanel("Chateaux",
                                             fluidRow(
                                               column(6,plotOutput("seigneursChateaux")),

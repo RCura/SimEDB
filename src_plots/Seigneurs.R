@@ -1,3 +1,38 @@
+output$nbSeigneurs <- renderPlot({
+  nbSeigneurs <- sim_seigneurs %>%
+    filter(type != "Grand Seigneur") %>%
+    group_by(seed, Annee, type) %>%
+    summarise(N = n())
+  
+  ggplot(nbSeigneurs, aes(factor(Annee), col = type, fill = type, y = N)) +
+    geom_tufteboxplot() +
+    scale_color_discrete(name = "Type de seigneur") +
+    scale_fill_discrete(name = "Type de seigneur") +
+    ylab("Nombre de seigneurs") +
+    xlab("Temps") +
+    labs(title = "Évolution du nombre de seigneurs",
+         subtitle = "Variabilité : Réplications")
+})
+
+output$nbSeigneursFilter <- renderPlot({
+  req(filtred$seigneurs)
+  
+  nbSeigneurs <- filtred$seigneurs %>%
+    filter(type != "Grand Seigneur") %>%
+    group_by(seed, Annee, type) %>%
+    summarise(N = n())
+  
+  ggplot(nbSeigneurs, aes(factor(Annee), col = type, fill = type, y = N)) +
+    geom_tufteboxplot() +
+    scale_color_discrete(name = "Type de seigneur") +
+    scale_fill_discrete(name = "Type de seigneur") +
+    ylab("Nombre de seigneurs") +
+    xlab("Temps") +
+    labs(title = "Évolution du nombre de seigneurs",
+         subtitle = "Variabilité : Réplications")
+})
+
+
 output$seigneursChateaux <- renderPlot({
   
   breaksGS <- c(-0,1,2,3,4,5,10,25,50,1000)
