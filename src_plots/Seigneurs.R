@@ -1,4 +1,4 @@
-output$nbSeigneurs <- renderPlot({
+output$Seigneurs_Nb <- renderPlot({
   nbSeigneurs <- sim_seigneurs %>%
     filter(type != "Grand Seigneur") %>%
     group_by(seed, Annee, type) %>%
@@ -14,7 +14,7 @@ output$nbSeigneurs <- renderPlot({
          subtitle = "Variabilité : Réplications")
 })
 
-output$nbSeigneursFilter <- renderPlot({
+output$Seigneurs_Nb_Filter <- renderPlot({
   req(filtred$seigneurs)
   
   nbSeigneurs <- filtred$seigneurs %>%
@@ -33,7 +33,7 @@ output$nbSeigneursFilter <- renderPlot({
 })
 
 
-output$seigneursChateaux <- renderPlot({
+output$Seigneurs_Chateaux <- renderPlot({
   
   breaksGS <- c(-0,1,2,3,4,5,10,25,50,1000)
   labelsGS <- c("1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
@@ -95,7 +95,7 @@ output$seigneursChateaux <- renderPlot({
                )
 })
 
-output$seigneursChateauxFilter <- renderPlot({
+output$Seigneurs_Chateaux_Filter <- renderPlot({
   req(filtred$seigneurs)
   breaksGS <- c(-0,1,2,3,4,5,10,25,50,1000)
   labelsGS <- c("1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
@@ -156,7 +156,7 @@ output$seigneursChateauxFilter <- renderPlot({
                Variabilité : Réplications")
 })
 
-output$seigneursVassaux <- renderPlot({
+output$Seigneurs_Vassaux <- renderPlot({
   myBreaks <- c(-1,0,1,2,3,4,5,10,25,50,1000)
   myLabels <- c("0","1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
   
@@ -207,7 +207,7 @@ output$seigneursVassaux <- renderPlot({
   
 })
 
-output$seigneursVassauxFilter <- renderPlot({
+output$Seigneurs_Vassaux_Filter <- renderPlot({
   req(filtred$seigneurs)
   
   myBreaks <- c(-1,0,1,2,3,4,5,10,25,50,1000)
@@ -260,7 +260,7 @@ output$seigneursVassauxFilter <- renderPlot({
   
 })
 
-output$seigneursRedevances <- renderPlot({
+output$Seigneurs_Redevances <- renderPlot({
   redevances_seigneurs <- sim_seigneurs %>%
     filter(Annee == 1160) %>%
     select(seed, Annee, type, nbFPassujettis) %>%
@@ -274,7 +274,7 @@ output$seigneursRedevances <- renderPlot({
     labs(subtitle = "Variabilité : Seigneurs et réplications")
 })
 
-output$seigneursRedevancesFilter <- renderPlot({
+output$Seigneurs_Redevances_Filter <- renderPlot({
   req(filtred$seigneurs)
   
   redevances_seigneurs <- filtred$seigneurs %>%
@@ -290,7 +290,7 @@ output$seigneursRedevancesFilter <- renderPlot({
     labs(subtitle = "Variabilité : Seigneurs et réplications")
 })
 
-output$PSredevances <- renderPlot({
+output$Seigneurs_Redevances_PS <- renderPlot({
   
   redevancesLevels <- c("0","1-5","6-15","16-30","30-100",">100")
   redevancesBreaks <- rlang::exprs(
@@ -324,7 +324,7 @@ output$PSredevances <- renderPlot({
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 })
 
-output$PSredevancesFilter <- renderPlot({
+output$Seigneurs_Redevances_PS_Filter <- renderPlot({
   req(filtred$seigneurs)
   
   redevancesLevels <- c("0","1-5","6-15","16-30","30-100",">100")
@@ -360,7 +360,7 @@ output$PSredevancesFilter <- renderPlot({
 })
 
 
-output$seigneursPuissance <- renderPlot({
+output$Seigneurs_Puissance <- renderPlot({
   
   seigneurs_puissance <- sim_seigneurs %>%
     filter(puissance > 0) %>%
@@ -380,7 +380,7 @@ output$seigneursPuissance <- renderPlot({
     labs(subtitle = "Variabilité : Réplications")
 })
 
-output$seigneursPuissanceFilter <- renderPlot({
+output$Seigneurs_Puissance_Filter <- renderPlot({
   req(filtred$seigneurs)
   
   seigneurs_puissance <- filtred$seigneurs %>%
@@ -401,7 +401,7 @@ output$seigneursPuissanceFilter <- renderPlot({
     labs(subtitle = "Variabilité : Réplications")
 })
 
-output$seigneursAgregats <- renderPlot({
+output$Seigneurs_Agregats <- renderPlot({
   
   nbAgregatsLevels <- c("0","1","2","3-5",">5")
   nbAgregatsBreaks <- rlang::exprs(
@@ -437,7 +437,7 @@ output$seigneursAgregats <- renderPlot({
          subtitle = "Variabilité : Réplications")
 })
 
-output$seigneursAgregatsFilter <- renderPlot({
+output$Seigneurs_Agregats_Filter <- renderPlot({
   req(filtred$seigneurs, filtred$agregats)
   
   nbAgregatsLevels <- c("0","1","2","3-5",">5")

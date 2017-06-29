@@ -1,4 +1,47 @@
-output$fpDeplacementsDetail <- renderPlot({
+output$FP_TypeDeplacements <- renderPlot({
+  types_deplacements <- sim_FP %>%
+    group_by(Annee, seed, type_deplacement) %>%
+    summarise(N = n()) %>%
+    group_by(Annee, seed) %>%
+    mutate(Tx = N / sum(N)) %>%
+    filter(type_deplacement != "nil")
+  
+  ggplot(types_deplacements, aes(factor(Annee), Tx, col = type_deplacement)) +
+    geom_tufteboxplot(size = 1) +
+    geom_line() +
+    facet_wrap(~ type_deplacement) +
+    scale_y_continuous(labels = percent) +
+    scale_color_discrete(guide = FALSE) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    theme(legend.position="bottom") +
+    xlab("Temps") + ylab("Part des Foyers Paysans") +
+    ggtitle("Type de déplacement des Foyers Paysans") +
+    labs(subtitle = "Variabilité : Foyers Paysans et Réplications")
+})
+
+output$FP_TypeDeplacements_filter <- renderPlot({
+  req(filtred$FP)
+  types_deplacements <- filtred$sim_FP %>%
+    group_by(Annee, seed, type_deplacement) %>%
+    summarise(N = n()) %>%
+    group_by(Annee, seed) %>%
+    mutate(Tx = N / sum(N)) %>%
+    filter(type_deplacement != "nil")
+  
+  ggplot(types_deplacements, aes(factor(Annee), Tx, col = type_deplacement)) +
+    geom_tufteboxplot(size = 1) +
+    geom_line() +
+    facet_wrap(~ type_deplacement) +
+    scale_y_continuous(labels = percent) +
+    scale_color_discrete(guide = FALSE) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    theme(legend.position="bottom") +
+    xlab("Temps") + ylab("Part des Foyers Paysans") +
+    ggtitle("Type de déplacement des Foyers Paysans") +
+    labs(subtitle = "Variabilité : Foyers Paysans et Réplications")
+})
+
+output$FP_DeplacementsDetail <- renderPlot({
   details_deplacement <- sim_FP %>%
     filter(Annee %in% c(820, 940, 1040, 1160)) %>%
     group_by(seed, Annee, deplacement_from, deplacement_to) %>%
@@ -29,7 +72,7 @@ output$fpDeplacementsDetail <- renderPlot({
   
 })
 
-output$fpDeplacementsDetailFilter <- renderPlot({
+output$FP_DeplacementsDetail_Filter <- renderPlot({
   req(filtred$FP)
   
   details_deplacement <- filtred$FP %>%
@@ -62,73 +105,7 @@ output$fpDeplacementsDetailFilter <- renderPlot({
   
 })
 
-output$fpTypeDeplacements <- renderPlot({
-  types_deplacements <- sim_FP %>%
-    group_by(Annee, seed, type_deplacement) %>%
-    summarise(N = n()) %>%
-    group_by(Annee, seed) %>%
-    mutate(Tx = N / sum(N)) %>%
-    filter(type_deplacement != "nil")
-
-  ggplot(types_deplacements, aes(factor(Annee), Tx, col = type_deplacement)) +
-    geom_tufteboxplot(size = 1) +
-    geom_line() +
-    facet_wrap(~ type_deplacement) +
-    scale_y_continuous(labels = percent) +
-    scale_color_discrete(guide = FALSE) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(legend.position="bottom") +
-    xlab("Temps") + ylab("Part des Foyers Paysans") +
-    ggtitle("Type de déplacement des Foyers Paysans") +
-    labs(subtitle = "Variabilité : Foyers Paysans et Réplications")
-})
-
-output$fpTypeDeplacementsFilter <- renderPlot({
-  req(filtred$FP)
-  types_deplacements <- filtred$sim_FP %>%
-    group_by(Annee, seed, type_deplacement) %>%
-    summarise(N = n()) %>%
-    group_by(Annee, seed) %>%
-    mutate(Tx = N / sum(N)) %>%
-    filter(type_deplacement != "nil")
-  
-  ggplot(types_deplacements, aes(factor(Annee), Tx, col = type_deplacement)) +
-    geom_tufteboxplot(size = 1) +
-    geom_line() +
-    facet_wrap(~ type_deplacement) +
-    scale_y_continuous(labels = percent) +
-    scale_color_discrete(guide = FALSE) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(legend.position="bottom") +
-    xlab("Temps") + ylab("Part des Foyers Paysans") +
-    ggtitle("Type de déplacement des Foyers Paysans") +
-    labs(subtitle = "Variabilité : Foyers Paysans et Réplications")
-})
-
-output$fpDeplacementsFilter <- renderPlot({
-  req(filtred$FP)
-  gatherFP <- filtred$FP %>%
-    group_by(Annee) %>%
-    summarise_each(funs(mean)) %>%
-    gather(Type, Value, nbInInIntra:nbOutOutInter) %>%
-    mutate(GrandType =  substr(Type, nchar(Type) - 4, nchar(Type))) %>%
-    mutate(Type = gsub("Inter", "", Type)) %>%
-    mutate(Type = gsub("Intra", "", Type)) %>%
-    mutate(Type = gsub("nb", "", Type))
-
-  TypeDeplacement <- ggplot(gatherFP, aes(x=factor(Annee), y = Value)) +
-    geom_bar(stat = "identity", aes(fill=Type) ) +
-    facet_wrap(~GrandType) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(legend.position="bottom") +
-    xlab("Temps") + ylab("Nombre de Foyers Paysans") +
-    ggtitle("Type de déplacement des Foyers Paysans")
-
-  TypeDeplacement
-})
-
-
-output$fpConcentration <- renderPlot({
+output$FP_Concentration <- renderPlot({
   ggplot(sim_results, aes(factor(Annee), prop_FP_isoles)) +
     geom_tufteboxplot() +
     ggtitle("Évolution de la part de FP isolés") +
@@ -137,7 +114,7 @@ output$fpConcentration <- renderPlot({
     labs(subtitle = "Variabilité : Réplications")
 })
 
-output$fpConcentrationFilter <- renderPlot({
+output$FP_Concentration_Filter <- renderPlot({
   req(filtred$results)
   ggplot(filtred$results, aes(factor(Annee), prop_FP_isoles)) +
     geom_tufteboxplot() +
@@ -148,7 +125,7 @@ output$fpConcentrationFilter <- renderPlot({
 })
 
 
-output$fpSatisfaction <- renderPlot({
+output$FP_Satisfaction <- renderPlot({
   satisfaction_data <- sim_FP %>%
       select(Annee, sMat, sRel, sProt, Satis) %>%
       rename(
@@ -174,7 +151,7 @@ output$fpSatisfaction <- renderPlot({
    
 })
 
-output$fpSatisfactionFilter <- renderPlot({
+output$FP_Satisfaction_Filter <- renderPlot({
   req(filtred$FP)
   satisfaction_data <- filtred$FP %>%
       select(Annee, sMat, sRel, sProt, Satis) %>%

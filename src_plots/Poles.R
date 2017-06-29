@@ -1,4 +1,4 @@
-output$polesNb <- renderPlot({
+output$Poles_Nb <- renderPlot({
   PolesTous <- sim_poles %>%
     group_by(seed, Annee) %>%
     summarise(NbPoles = n()) %>%
@@ -12,7 +12,7 @@ output$polesNb <- renderPlot({
   
 })
 
-output$polesNbFilter <- renderPlot({
+output$Poles_Nb_Filter <- renderPlot({
   req(filtred$poles)
   PolesTous <- filtred$poles %>%
     group_by(seed, Annee) %>%
@@ -27,7 +27,7 @@ output$polesNbFilter <- renderPlot({
   
 })
 
-output$polesAgregats <- renderPlot({
+output$Poles_Agregats <- renderPlot({
   
   PolesTous <- sim_poles %>%
     group_by(seed, Annee) %>%
@@ -60,7 +60,7 @@ output$polesAgregats <- renderPlot({
   
 })
 
-output$polesAgregatsFilter <- renderPlot({
+output$Poles_Agregats_Filter <- renderPlot({
   req(filtred$poles)
   PolesTous <- filtred$poles %>%
     group_by(seed, Annee) %>%
@@ -93,7 +93,7 @@ output$polesAgregatsFilter <- renderPlot({
   
 })
 
-output$polesCompo <- renderPlot({
+output$Poles_Compo <- renderPlot({
   poles_temps <- sim_poles %>%
     filter(Annee %in% c(820, 940, 1040, 1160))
   
@@ -113,7 +113,7 @@ output$polesCompo <- renderPlot({
 
 })
 
-output$polesCompoFilter <- renderPlot({
+output$Poles_Compo_Filter <- renderPlot({
   req(filtred$poles)
   
   poles_temps <- filtred$poles %>%
@@ -135,7 +135,7 @@ output$polesCompoFilter <- renderPlot({
 })
 
 
-output$polesAttrac <- renderPlot({
+output$Poles_Attrac <- renderPlot({
   poles_temps <- sim_poles %>%
     filter(Annee %in% c(820, 940, 1040, 1160))
   
@@ -154,7 +154,7 @@ output$polesAttrac <- renderPlot({
     labs(subtitle = "Variabilité : Réplications")
 })
 
-output$polesAttracFilter <- renderPlot({
+output$Poles_Attrac_Filter <- renderPlot({
   req(filtred$poles)
   
   poles_temps <- filtred$poles %>%
@@ -175,7 +175,7 @@ output$polesAttracFilter <- renderPlot({
     labs(subtitle = "Variabilité : Réplications")
 })
 
-output$polesRT <- renderPlot({
+output$Poles_RT <- renderPlot({
   
   rtPoles_data <- sim_poles %>%
     filter(Annee %in% c(820, 940, 1040, 1160)) %>%
@@ -204,7 +204,7 @@ output$polesRT <- renderPlot({
 
 })
 
-output$polesRTFilter <- renderPlot({
+output$Poles_RT_Filter <- renderPlot({
   req(filtred$poles)
   
   rtPoles_data <- filtred$poles %>%

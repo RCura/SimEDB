@@ -1,4 +1,4 @@
-output$agregatsNb <- renderPlot({
+output$Agregats_Nb <- renderPlot({
   
   nombre_agregats <- sim_agregats %>%
     group_by(Annee, seed) %>%
@@ -11,7 +11,7 @@ output$agregatsNb <- renderPlot({
     labs(subtitle = "Variabilité : Réplications")
 })
 
-output$agregatsNbFilter <- renderPlot({
+output$Agregats_Nb_Filter <- renderPlot({
   req(filtred$agregats)
   nombre_agregats <- filtred$agregats %>%
     group_by(Annee, seed) %>%
@@ -24,7 +24,7 @@ output$agregatsNbFilter <- renderPlot({
     labs(subtitle = "Variabilité : Réplications")
 })
 
-output$agregatsPoles <- renderPlot({
+output$Agregats_Poles <- renderPlot({
 txAgregatsPoles <- sim_agregats %>%
   mutate(pole = if_else(monPole == "nil", FALSE, TRUE)) %>%
   group_by(seed, Annee, pole) %>%
@@ -43,7 +43,7 @@ ggplot(txAgregatsPoles, aes(Annee, TxAgregatPole, group = factor(Annee))) +
   labs(subtitle = "Variabilité : Réplications")
 })
 
-output$agregatsPolesFilter <- renderPlot({
+output$Agregats_Poles_Filter <- renderPlot({
   req(filtred$agregats)
   txAgregatsPoles <- filtred$agregats %>%
     mutate(pole = if_else(monPole == "nil", FALSE, TRUE)) %>%
@@ -63,7 +63,7 @@ output$agregatsPolesFilter <- renderPlot({
     labs(subtitle = "Variabilité : Réplications")
 })
 
-output$agregatsCA <- renderPlot({
+output$Agregats_CA <- renderPlot({
   
   nombre_agregats <- sim_agregats %>%
     filter(communaute == "true") %>%
@@ -77,7 +77,7 @@ output$agregatsCA <- renderPlot({
     labs(subtitle = "Variabilité : Réplications")
 })
 
-output$agregatsCAFilter <- renderPlot({
+output$Agregats_CA_Filter <- renderPlot({
   req(filtred$agregats)
   nombre_agregats <- filtred$agregats %>%
     filter(communaute == "true") %>%
@@ -90,7 +90,7 @@ output$agregatsCAFilter <- renderPlot({
     labs(subtitle = "Variabilité : Réplications")
 })
 
-output$agregatsRT <- renderPlot({
+output$Agregats_RT <- renderPlot({
   rtAgregats <- sim_agregats %>%
     filter(Annee %in% c(820, 940, 1040, 1160)) %>%
     group_by(seed, Annee) %>%
@@ -104,7 +104,6 @@ output$agregatsRT <- renderPlot({
     ungroup() %>%
     mutate(Annee = Annee - 20)
   
-  
   ggplot(rtAgregats, aes(Rank, Value, group = `Méthode d'agrégation`, colour = `Méthode d'agrégation`)) +
     geom_line(size = 0.3, linetype = "dotted") +
     geom_point(size = 0.3) +
@@ -117,7 +116,7 @@ output$agregatsRT <- renderPlot({
     labs(subtitle = "Variabilité : Moyenne, Q1 et Q3 des Réplications")
 })
 
-output$agregatsRTFilter <- renderPlot({
+output$Agregats_RT_Filter <- renderPlot({
   req(filtred$agregats)
   rtAgregats <- filtred$agregats %>%
     filter(Annee %in% c(820, 940, 1040, 1160)) %>%
@@ -131,8 +130,6 @@ output$agregatsRTFilter <- renderPlot({
     tbl_df() %>%
     ungroup() %>%
     mutate(Annee = Annee - 20)
-  
-  
   
   ggplot(rtAgregats, aes(Rank, Value, group = `Méthode d'agrégation`, colour = `Méthode d'agrégation`)) +
     geom_line(size = 0.3, linetype = "dotted") +
