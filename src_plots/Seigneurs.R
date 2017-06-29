@@ -360,12 +360,15 @@ output$seigneursPuissance <- renderPlot({
   seigneurs_puissance <- sim_seigneurs %>%
     filter(puissance > 0) %>%
     group_by(seed, Annee, type) %>%
-    summarise(Q1 =quantile(puissance, 0.25), Mean = mean(puissance), Max = max(puissance)) %>%
+    summarise(Q1 = quantile(puissance, 0.25),
+              Mean = mean(puissance),
+              Max = max(puissance)) %>%
     gather(TypeIndic, puissance, Q1:Max)
   
   
-  ggplot(seigneurs_puissance, aes(factor(Annee), puissance)) +geom_tufteboxplot() +
-    facet_grid(type~TypeIndic, scale="free") +
+  ggplot(seigneurs_puissance, aes(factor(Annee), puissance)) +
+    geom_tufteboxplot() +
+    facet_grid(type~TypeIndic, scales = "free") +
     xlab("Temps") + ylab("Puissance") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)")
@@ -377,12 +380,15 @@ output$seigneursPuissanceFilter <- renderPlot({
   seigneurs_puissance <- filtred$seigneurs %>%
     filter(puissance > 0) %>%
     group_by(seed, Annee, type) %>%
-    summarise(Q1 =quantile(puissance, 0.25), Mean = mean(puissance), Max = max(puissance)) %>%
+    summarise(Q1 = quantile(puissance, 0.25),
+              Mean = mean(puissance),
+              Max = max(puissance)) %>%
     gather(TypeIndic, puissance, Q1:Max)
   
   
-  ggplot(seigneurs_puissance, aes(factor(Annee), puissance)) +geom_tufteboxplot() +
-    facet_grid(type~TypeIndic, scale="free") +
+  ggplot(seigneurs_puissance, aes(factor(Annee), puissance)) +
+    geom_tufteboxplot() +
+    facet_grid(type~TypeIndic, scales = "free") +
     xlab("Temps") + ylab("Puissance") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)")
