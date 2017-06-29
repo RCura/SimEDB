@@ -209,6 +209,7 @@ shinyServer(function(session, input, output) {
   source("src_plots/Seigneurs.R", local = TRUE, encoding = 'utf8')
   source("src_plots/Poles.R", local = TRUE, encoding = 'utf8')
   source("src_plots/Paroisses.R", local = TRUE, encoding = 'utf8')
+  source("src_plots/download_plots.R", local = TRUE, encoding = 'utf8')
   
   
   
