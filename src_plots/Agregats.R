@@ -7,7 +7,8 @@ output$agregatsNb <- renderPlot({
   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
     geom_tufteboxplot() +
     xlab("Temps") + ylab("Nombre d'agrégats") +
-    ggtitle("Évolution du nombre d'agrégats")
+    ggtitle("Évolution du nombre d'agrégats") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$agregatsNbFilter <- renderPlot({
@@ -19,7 +20,8 @@ output$agregatsNbFilter <- renderPlot({
   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
     geom_tufteboxplot() +
     xlab("Temps") + ylab("Nombre d'agrégats") +
-    ggtitle("Évolution du nombre d'agrégats")
+    ggtitle("Évolution du nombre d'agrégats") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$agregatsPoles <- renderPlot({
@@ -37,7 +39,8 @@ ggplot(txAgregatsPoles, aes(Annee, TxAgregatPole, group = factor(Annee))) +
   geom_tufteboxplot() +
   scale_y_continuous(labels = percent, limits = c(0,1)) +
   xlab("Temps") + ylab("Taux d'agrégats\n contenant un pôle") +
-  ggtitle("Évolution du taux d'agrégats avec pôle")
+  ggtitle("Évolution du taux d'agrégats avec pôle") +
+  labs(subtitle = "Variabilité : Réplications")
 })
 
 output$agregatsPolesFilter <- renderPlot({
@@ -56,7 +59,8 @@ output$agregatsPolesFilter <- renderPlot({
     geom_tufteboxplot() +
     scale_y_continuous(labels = percent, limits = c(0,1)) +
     xlab("Temps") + ylab("Taux d'agrégats\n contenant un pôle") +
-    ggtitle("Évolution du taux d'agrégats avec pôle")
+    ggtitle("Évolution du taux d'agrégats avec pôle") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$agregatsCA <- renderPlot({
@@ -69,7 +73,8 @@ output$agregatsCA <- renderPlot({
   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
     geom_tufteboxplot() +
     xlab("Temps") + ylab("Nombre d'agrégats") +
-    ggtitle("Évolution du nombre d'agrégats ayant une CA")
+    ggtitle("Évolution du nombre d'agrégats ayant une CA") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$agregatsCAFilter <- renderPlot({
@@ -81,7 +86,8 @@ output$agregatsCAFilter <- renderPlot({
   ggplot(nombre_agregats, aes(factor(Annee), nb)) +
     geom_tufteboxplot() +
     xlab("Temps") + ylab("Nombre d'agrégats") +
-    ggtitle("Évolution du nombre d'agrégats ayant une CA")
+    ggtitle("Évolution du nombre d'agrégats ayant une CA") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$agregatsRT <- renderPlot({
@@ -107,7 +113,8 @@ output$agregatsRT <- renderPlot({
     scale_x_log10() + scale_y_log10() +
     ggtitle("Évolution rang-taille de la composition des agrégats") +
     theme(legend.position = "bottom") +
-    xlab("Rang (log10)") + ylab("Nombre de FP\ncontenus (log10)")
+    xlab("Rang (log10)") + ylab("Nombre de FP\ncontenus (log10)") +
+    labs(subtitle = "Variabilité : Moyenne, Q1 et Q3 des Réplications")
 })
 
 output$agregatsRTFilter <- renderPlot({
@@ -135,5 +142,6 @@ output$agregatsRTFilter <- renderPlot({
     scale_x_log10() + scale_y_log10() +
     ggtitle("Évolution rang-taille de la composition des agrégats") +
     theme(legend.position = "bottom") +
-    xlab("Rang (log10)") + ylab("Nombre de FP\ncontenus (log10)")
+    xlab("Rang (log10)") + ylab("Nombre de FP\ncontenus (log10)") +
+    labs(subtitle = "Variabilité : Moyenne, Q1 et Q3 des Réplications")
 })
