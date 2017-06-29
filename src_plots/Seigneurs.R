@@ -88,9 +88,11 @@ output$seigneursChateaux <- renderPlot({
     theme(plot.title = element_text(size = rel(1), face = "italic")) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
-  grid.arrange(plotChat, plotGS, nrow=2,
-               bottom = "Nombre de châteaux", left="Fréquence",
-               top="Distribution des possessions \net gardiennages de châteaux")
+  grid.arrange(plotChat, plotGS, nrow = 2,
+               bottom = "Nombre de châteaux", left = "Fréquence",
+               top = "Distribution des possessions et gardiennages de châteaux
+               Variabilité : Réplications"
+               )
 })
 
 output$seigneursChateauxFilter <- renderPlot({
@@ -150,7 +152,8 @@ output$seigneursChateauxFilter <- renderPlot({
   
   grid.arrange(plotChat, plotGS, nrow=2,
                bottom = "Nombre de châteaux", left="Fréquence",
-               top="Distribution des possessions \net gardiennages de châteaux")
+               top="Distribution des possessions et gardiennages de châteaux
+               Variabilité : Réplications")
 })
 
 output$seigneursVassaux <- renderPlot({
@@ -199,7 +202,8 @@ output$seigneursVassaux <- renderPlot({
   
   grid.arrange(plotNonCPS, plotInitCPS, plotGS, nrow=1, layout_matrix = lay,
                bottom="Nombre de Vassaux", left = "Fréquence",
-               top ="Distribution du nombre\n de vassaux selon les types de seigneurs")
+               top ="Distribution du nombre de vassaux selon les types de seigneurs
+               Variabilité : Réplications")
   
 })
 
@@ -251,7 +255,8 @@ output$seigneursVassauxFilter <- renderPlot({
   
   grid.arrange(plotNonCPS, plotInitCPS, plotGS, nrow=1, layout_matrix = lay,
                bottom="Nombre de Vassaux", left = "Fréquence",
-               top ="Distribution du nombre\n de vassaux selon les types de seigneurs")
+               top ="Distribution du nombre de vassaux selon les types de seigneurs
+               Variabilité : Réplications")
   
 })
 
@@ -371,7 +376,8 @@ output$seigneursPuissance <- renderPlot({
     facet_grid(type~TypeIndic, scales = "free") +
     xlab("Temps") + ylab("Puissance") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)")
+    ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$seigneursPuissanceFilter <- renderPlot({
@@ -391,7 +397,8 @@ output$seigneursPuissanceFilter <- renderPlot({
     facet_grid(type~TypeIndic, scales = "free") +
     xlab("Temps") + ylab("Puissance") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)")
+    ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)") +
+    labs(subtitle = "Variabilité : Réplications")
 })
 
 output$seigneursAgregats <- renderPlot({
