@@ -85,7 +85,7 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                                               column(6,plotOutput("seigneursRedevances")),
                                               column(6, plotOutput("seigneursRedevancesFilter"))
                                             )),
-                                   tabPanel("Redevances (Petits seigneurs et châtelains)",
+                                   tabPanel("Redevances (détail)",
                                             fluidRow(
                                               column(6,plotOutput("PSredevances")),
                                               column(6, plotOutput("PSredevancesFilter"))
@@ -94,6 +94,11 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                                             fluidRow(
                                               column(6,plotOutput("seigneursPuissance")),
                                               column(6, plotOutput("seigneursPuissanceFilter"))
+                                            )),
+                                   tabPanel("Agrégats",
+                                            fluidRow(
+                                              column(6,plotOutput("seigneursAgregats")),
+                                              column(6, plotOutput("seigneursAgregatsFilter"))
                                             ))
                        )),
               tabPanel("Pôles",

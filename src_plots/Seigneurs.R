@@ -393,3 +393,76 @@ output$seigneursPuissanceFilter <- renderPlot({
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)")
 })
+
+output$seigneursAgregats <- renderPlot({
+  
+  nbAgregatsLevels <- c("0","1","2","3-5",">5")
+  nbAgregatsBreaks <- rlang::exprs(
+    .data[[x]] == 0 ~ "0",
+    .data[[x]] == 1 ~ "1",
+    .data[[x]] == 2 ~ "2",
+    .data[[x]] <= 5 ~ "3-5",
+    .data[[x]] > 5 ~ ">5"
+  )
+  
+  x <- "NbAgregats"
+  
+  
+  seigneurs_agregats <- sim_seigneurs %>%
+    filter(Annee ==  1160) %>%
+    group_by(seed, monAgregat) %>%
+    summarise(NbAgregats = n()) %>%
+    mutate(NbAgregats = case_when(!!!nbAgregatsBreaks)) %>%
+    mutate(NbAgregats = factor(NbAgregats, levels = nbAgregatsLevels)) %>%
+    right_join(sim_agregats %>%
+                 filter(Annee == 1160) %>%
+                 select(seed, self),
+               by = c("seed", "monAgregat" = "self")) %>%
+    mutate(NbAgregats = fct_explicit_na(NbAgregats, "0")) %>%
+    group_by(seed, NbAgregats) %>%
+    summarise(NbCas = n())
+  
+  ggplot(seigneurs_agregats, aes(factor(NbAgregats), NbCas)) +
+    geom_tufteboxplot() +
+    labs(x = "Nombre de seigneurs par agrégat",
+         y = "Nombre d'agrégats",
+         title = "Nombre de seigneurs par agrégat en fin de simulation",
+         subtitle = "Variabilité : Réplications")
+})
+
+output$seigneursAgregatsFilter <- renderPlot({
+  req(filtred$seigneurs, filtred$agregats)
+  
+  nbAgregatsLevels <- c("0","1","2","3-5",">5")
+  nbAgregatsBreaks <- rlang::exprs(
+    .data[[x]] == 0 ~ "0",
+    .data[[x]] == 1 ~ "1",
+    .data[[x]] == 2 ~ "2",
+    .data[[x]] <= 5 ~ "3-5",
+    .data[[x]] > 5 ~ ">5"
+  )
+  
+  x <- "NbAgregats"
+  
+  
+  seigneurs_agregats <- filtred$seigneurs %>%
+    filter(Annee ==  1160) %>%
+    group_by(seed, monAgregat) %>%
+    summarise(NbAgregats = n()) %>%
+    mutate(NbAgregats = case_when(!!!nbAgregatsBreaks)) %>%
+    mutate(NbAgregats = factor(NbAgregats, levels = nbAgregatsLevels)) %>%
+    right_join(filtred$agregats %>%
+                 filter(Annee == 1160) %>%
+                 select(seed, self),
+               by = c("seed", "monAgregat" = "self")) %>%
+    mutate(NbAgregats = fct_explicit_na(NbAgregats, "0")) %>%
+    group_by(seed, NbAgregats) %>%
+    summarise(NbCas = n())
+  
+  ggplot(seigneurs_agregats, aes(factor(NbAgregats), NbCas)) +
+    geom_tufteboxplot() +
+    labs(x = "Nombre de seigneurs par agrégat",
+         y = "Nombre d'agrégats",
+         title = "Nombre de seigneurs par agrégat en fin de simulation",
+         subtitle = "Variabilité : Réplications")
+})
