@@ -7,6 +7,7 @@ suppressPackageStartupMessages({
 
   # Data wrangling
   library(tidyverse)
+  library(stringr)
   #library(data.table)
 
   
