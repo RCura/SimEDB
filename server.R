@@ -181,7 +181,7 @@ shinyServer(function(session, input, output) {
                   area(row = 6, col = 2:7) ~ formatter("span",  function(x){paste(round(x), "m")}),
                   area(row = 7, col = 2:6) ~ formatter("span",  function(x){paste(round(x * 100), "%")}),
                   area(row = 7, col = 7) ~ formatter("span",  function(x){paste(round(x * 100, digits = 1), "%")}),
-                  area(row = 8, col = 2:6) ~ formatter("span", function(x){ paste("x", round(x)) }),
+                  area(row = 8, col = 2:6) ~ formatter("span", function(x){ paste("x", round(x,digits = 1)) }),
                   area(row = 8, col = 7) ~ formatter("span", function(x){ paste("x", round(x, digits = 2)) })
                 ))
   })
