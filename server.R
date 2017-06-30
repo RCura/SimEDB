@@ -204,6 +204,62 @@ shinyServer(function(session, input, output) {
               ))
   })
   
+  output$simNames <- renderPlot({
+    simNames <- sim_parameters %>%
+      group_by(sim_name) %>%
+      summarise(N = n())
+    
+    simNamesPlot <- ggplot(simNames, aes(x = sim_name, y = N)) +
+      geom_col(fill = "#43a2ca", alpha = .3, colour = "#053144") +
+      labs(x = "Expériences", y = "Nombre de simulations",
+           title = "Distribution des simulations") +
+      theme_minimal()
+    
+    if ( length( filtred$parameters ) > 1 ) {
+      simNamesFiltred <- filtred$parameters %>%
+        group_by(sim_name) %>%
+        summarise(N = n())
+      
+      simNamesPlot <- simNamesPlot +
+        geom_col(data = simNamesFiltred,
+                 fill = "red", alpha = 0.3, colour = "#67000d")
+    }
+    simNamesPlot
+  })
+  
+  output$resultsPlot <- renderPlot({
+    
+    Objectifs <- data_frame(
+      Var = c("NbAgregats", "nbChateaux", "nbGdChateaux", "NbSeigneurs","nbEglisesParoissiales", "distance_eglises_paroissiales", "prop_FP_isoles", "RatioChargeFiscale"),
+      RealVar = c("Agrégats", "Châteaux",  "Gros châteaux", "Seigneurs",
+                  "Églises paroissiales", "Distance moyenne entre églises",  
+                  "Part de foyers paysans isolés",
+                  "Augmentation de la charge fiscale des foyers paysans"),
+      Objectif = c(200, 50, 10, 200, 300, 3000, 0.2, 3),
+      Ordre = 1:8
+    )
+    
+    resultsData <- sim_results %>%
+      filter(Annee == 1160) %>%
+      select(-sim_name, -Annee) %>%
+      gather(key = Variable,
+             value = Valeur) %>%
+      left_join(Objectifs, by = c("Variable" = "Var")) %>%
+      filter(!is.na(RealVar)) %>%
+      mutate(VarCut = str_wrap(RealVar, width = 20)) %>%
+      arrange(Ordre) %>%
+      mutate(VarCut = factor(VarCut, levels = unique(VarCut)))
+    
+    ggplot(resultsData %>% filter(Variable != "seed"), aes(VarCut, Valeur)) +
+      geom_violin(scale = "area",  na.rm = TRUE, fill = "#43a2ca", alpha = .3, colour = "#053144") +
+      facet_wrap(~ VarCut, scales = "free", nrow = 1) +
+      theme_minimal() +
+      theme(strip.background = element_blank(),
+            strip.text = element_blank()) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs(x = "Indicateurs", y = "Valeur", title = "Distribution des indicateurs de sortie")
+  })
+  
   source("src_plots/FP.R", local = TRUE, encoding = 'utf8')
   source("src_plots/Agregats.R", local = TRUE, encoding = 'utf8')
   source("src_plots/Seigneurs.R", local = TRUE, encoding = 'utf8')
