@@ -272,7 +272,8 @@ Seigneurs_Agregats <- function(seigneurs_data, agregats_data){
     labs(x = "Nombre de seigneurs par agrégat",
          y = "Nombre d'agrégats",
          title = "Nombre de seigneurs par agrégat en fin de simulation",
-         subtitle = "Variabilité : Réplications")
+         subtitle = "Variabilité : Réplications",
+         caption = "N.B : Sont considérés comme dans un agrégat les seigneurs localisés à moins de 200m")
 }
 
 output$Seigneurs_Agregats <- renderPlot({
