@@ -102,7 +102,7 @@ FP_Satisfaction <- function(FP_data){
   ggplot(satisfaction_data, aes(Annee, Satisfaction, col = Type, fill = Type)) +
     geom_violin(aes(group = factor(Annee))) +
     facet_wrap(~ Type) +
-    geom_smooth(alpha = .3, se = FALSE, na.rm = TRUE) +
+    geom_smooth(alpha = .3, se = FALSE, na.rm = TRUE, method = "gam", formula = y ~ s(x, bs = "cs")) +
     theme(legend.position = "none") +
     ggtitle("Évolution de la satisfaction des FP\n(Échantillon de 4000 FP / an)") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +

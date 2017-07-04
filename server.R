@@ -17,8 +17,8 @@ shinyServer(function(session, input, output) {
       group_by(Var, Value) %>%
       mutate(Freq = n()) %>%
       filter(Freq != nrow(sim_parameters)) %>%
-      pull("Var") %>%
-      unique(.)
+      distinct(Var) %>%
+      pull(Var)
     
     sim_parameters %>% select(!!nonUniqueParams)
   })
@@ -93,7 +93,7 @@ shinyServer(function(session, input, output) {
       
     tableau_resultats <- sim_results %>%
       filter(Annee == 1160) %>%
-      left_join(nbSeigneurs) %>%
+      left_join(nbSeigneurs, by = c("seed", "Annee")) %>%
       select(-seed) %>%
       rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
       summarise_if(is.numeric,funs(
@@ -143,7 +143,7 @@ shinyServer(function(session, input, output) {
 
     tableau_resultats <- filtred$results %>%
       filter(Annee == 1160) %>%
-      left_join(nbSeigneurs) %>%
+      left_join(nbSeigneurs, by = c("seed", "Annee")) %>%
       select(-seed) %>%
       rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
       summarise_if(is.numeric,funs(
