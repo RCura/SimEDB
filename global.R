@@ -22,6 +22,7 @@ suppressPackageStartupMessages({
 
   # Spatial
   #library(sp)
+  library(ShinyRatingInput) # devtools::install_github("stefanwilhelm/ShinyRatingInput")
   
 })
 
