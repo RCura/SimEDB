@@ -5,8 +5,8 @@ shinyUI(fluidPage(
   sidebarLayout(sidebarPanel(width = 4,fluid = TRUE,
                              textInput("userName", "Votre nom",  value = "Robin"),
                              textOutput("dataVolume",inline =  TRUE),
-                             #parcoordsOutput("paramParCoords", width = "100%", height = "300px"),
-                             #dataTableOutput("paramLegend"),
+                             parcoordsOutput("paramParCoords", width = "100%", height = "300px"),
+                             dataTableOutput("paramLegend"),
                              plotOutput("simNames"),
                              plotOutput("resultsPlot")
   ),

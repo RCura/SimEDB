@@ -52,19 +52,20 @@ shinyServer(function(session, input, output) {
     }
   })
   
-  # output$paramParCoords <- renderParcoords({
-  #   parcoords(parameters_data() %>% select(-seed, -sim_name) %>% set_colnames(LETTERS[1:ncol(.)]),
-  #             rownames=FALSE,
-  #             brushMode="1d",
-  #             reorderable = TRUE,
-  #             autoresize = TRUE)
-  # })
-  # 
-  # output$paramLegend <- renderDataTable({
-  #   thoseParameters <- parameters_data() %>% select(-seed, -sim_name)
-  #   thisDF <- data_frame(Key = LETTERS[1:ncol(thoseParameters)], Value = colnames(thoseParameters))
-  #   thisDF
-  # },options = list(pageLength = 5, lengthChange =  FALSE))
+  output$paramParCoords <- renderParcoords({
+    parcoords(parameters_data() %>% select(-seed, -sim_name) %>%
+                set_colnames(LETTERS[1:ncol(.)]),
+              rownames=FALSE,
+              brushMode="1d",
+              reorderable = TRUE,
+              autoresize = TRUE)
+  })
+
+  output$paramLegend <- renderDataTable({
+    thoseParameters <- parameters_data() %>% select(-seed, -sim_name)
+    thisDF <- data_frame(Key = LETTERS[1:ncol(thoseParameters)], Value = colnames(thoseParameters))
+    thisDF
+  },options = list(pageLength = 5, lengthChange =  FALSE))
   
   output$dataVolume <- renderText({
     blob <- ifelse(length(input$paramParCoords_brushed_row_names)>0,
@@ -251,7 +252,7 @@ shinyServer(function(session, input, output) {
       arrange(Ordre) %>%
       mutate(VarCut = factor(VarCut, levels = unique(VarCut)))
     
-    ggplot(resultsData %>% filter(Variable != "seed"), aes(VarCut, Valeur)) +
+    resultPlot <- ggplot(resultsData %>% filter(Variable != "seed"), aes(VarCut, Valeur)) +
       geom_violin(scale = "area",  na.rm = TRUE, fill = "#43a2ca", alpha = .3, colour = "#053144") +
       facet_wrap(~ VarCut, scales = "free", nrow = 1) +
       theme_minimal() +
@@ -259,6 +260,25 @@ shinyServer(function(session, input, output) {
             strip.text = element_blank()) +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       labs(x = "Indicateurs", y = "Valeur", title = "Distribution des indicateurs de sortie")
+    
+    if ( length( filtred$results ) > 1 ) {
+      resultsFiltredData <- filtred$results %>%
+        filter(Annee == 1160) %>%
+        select(-sim_name, -Annee) %>%
+        gather(key = Variable,
+               value = Valeur) %>%
+        left_join(Objectifs, by = c("Variable" = "Var")) %>%
+        filter(!is.na(RealVar)) %>%
+        mutate(VarCut = str_wrap(RealVar, width = 20)) %>%
+        arrange(Ordre) %>%
+        mutate(VarCut = factor(VarCut, levels = unique(VarCut)))
+      
+      resultPlot <- resultPlot +
+        geom_violin(data = resultsFiltredData,
+                    scale = "area",  na.rm = TRUE, fill = "red", alpha = .3, colour = "#67000d")
+    }
+    resultPlot
+    
   })
   
   source("src_plots/FP.R", local = TRUE, encoding = 'utf8')
