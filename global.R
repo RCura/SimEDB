@@ -7,9 +7,9 @@ suppressPackageStartupMessages({
 
   # Data wrangling
   library(tidyverse)
+  library(magrittr)
   library(stringr)
   library(forcats)
-  #library(data.table)
 
   
   # Plots

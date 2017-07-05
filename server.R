@@ -16,6 +16,7 @@ shinyServer(function(session, input, output) {
       gather(key = "Var", value = "Value") %>%
       group_by(Var, Value) %>%
       mutate(Freq = n()) %>%
+      ungroup() %>%
       filter(Freq != nrow(sim_parameters)) %>%
       distinct(Var) %>%
       pull(Var)
