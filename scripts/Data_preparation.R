@@ -85,11 +85,12 @@ sim_results <- sim_results %>%
 
 
 #### Add to current data ####
+library(tidyverse)
 library(dbplyr)
 library(DBI)
 library(RSQLite)
 
-con <- DBI::dbConnect(RSQLite::SQLite(), "data/outputs_TR8.sqlite")
+con <- DBI::dbConnect(RSQLite::SQLite(), "data/outputs_TR8_indexSimName.sqlite")
 
 dbWriteTable(conn = con, value = goodSeeds, name = "goodSeeds", append = TRUE, row.names = FALSE)
 dbWriteTable(conn = con, value = sim_agregats, name = "agregats", append = TRUE, row.names = FALSE)
@@ -100,13 +101,26 @@ dbWriteTable(conn = con, value = sim_poles, name = "poles",   append = TRUE, row
 dbWriteTable(conn = con, value = sim_results, name = "results",   append = TRUE, row.names = FALSE)
 dbWriteTable(conn = con, value = sim_seigneurs, name = "seigneurs",   append = TRUE, row.names = FALSE)
 
-sim_FP_db <- tbl(con, "fp")
 
-system.time({
-  sim_FP_db <- tbl(con, "fp")
-  sim_FP_db %>% group_by(seed, sim_name, Annee) %>% summarise(N = n()) %>% collect() -> blob
-})
+# system.time({
+#   con <- DBI::dbConnect(RSQLite::SQLite(), "data/outputs_TR8.sqlite")
+#   sim_FP_db <- tbl(con, "fp")
+#   sim_FP_db %>% filter(sim_name %in% "4_4_B") %>% collect() -> blob1
+#   DBI::dbDisconnect(con)
+#   print(blob1 %>% count())
+# })
+# rm(blob1)
+# 
+# system.time({
+#   con <- DBI::dbConnect(RSQLite::SQLite(), "data/outputs_TR8_indexSimName.sqlite")
+#   sim_FP_db <- tbl(con, "fp")
+#   sim_FP_db %>% filter(sim_name %in% "4_4_B") %>% collect() -> blob2
+#   DBI::dbDisconnect(con)
+#   print(blob2 %>% count())
+# })
+# rm(blob2)
 
+dbGetQuery(con,"CREATE INDEX index_simname ON fp (sim_name)")
 DBI::dbDisconnect(con)
 
 # 

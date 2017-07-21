@@ -28,7 +28,7 @@ suppressPackageStartupMessages({
   
 })
 
-con <- DBI::dbConnect(RSQLite::SQLite(), "data/outputs_TR8.sqlite")
+con <- DBI::dbConnect(RSQLite::SQLite(), "data/outputs_TR8_indexSimName.sqlite")
 
 seeds <- tbl(con, "goodSeeds")
 agregats <- tbl(con, "agregats")
