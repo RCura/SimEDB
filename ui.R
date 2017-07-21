@@ -3,10 +3,15 @@ library(shiny)
 shinyUI(fluidPage(
   titlePanel("SimVADB"),
   sidebarLayout(sidebarPanel(width = 4,fluid = TRUE,
-                             textInput("userName", "Votre nom",  value = "Robin"),
+                             column(6,textInput("userName", "Votre nom",  value = "Robin")),
+                             column(6, selectInput("selectedSims",  label = "Experiences",
+                                                   choices = c("4_4_A", "4_4_B",
+                                                               "4_4_C", "4_4_D"),
+                                                   selected = "4_4_B",
+                                                   multiple = TRUE)),
                              textOutput("dataVolume",inline =  TRUE),
-                             parcoordsOutput("paramParCoords", width = "100%", height = "300px"),
-                             dataTableOutput("paramLegend"),
+                             fluidRow(column(12,parcoordsOutput("paramParCoords", width = "100%", height = "300px"))),
+                             # dataTableOutput("paramLegend"),
                              plotOutput("simNames"),
                              plotOutput("resultsPlot")
   ),
@@ -195,7 +200,7 @@ shinyUI(fluidPage(
                                   fluidRow(
                                     column(10,plotOutput("Seigneurs_Puissance_Filter")),
                                     column(2, fluidRow(downloadButton("Seigneurs_Puissance_Filter_DL", label = "")),
-                                           fluidRow(ratingInput(inputId = "Seigneurs_Puissance_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
+                                           fluidRow(ratingInput(inputId = "Seigneurs_Puissance_Filter_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
                                   )
                          ),
                          tabPanel("Agrégats",

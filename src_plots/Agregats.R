@@ -11,7 +11,7 @@ Agregats_Nb <- function(agregats_data){
 }
 
 output$Agregats_Nb <- renderPlot({
-  Agregats_Nb(sim_agregats)
+  Agregats_Nb(sim$agregats)
 })
 
 output$Agregats_Nb_Filter <- renderPlot({
@@ -39,7 +39,7 @@ Agregats_Poles <- function(agregats_data){
 }
 
 output$Agregats_Poles <- renderPlot({
-  Agregats_Poles(agregats_data = sim_agregats)
+  Agregats_Poles(agregats_data = sim$agregats)
 })
 
 output$Agregats_Poles_Filter <- renderPlot({
@@ -49,7 +49,7 @@ output$Agregats_Poles_Filter <- renderPlot({
 
 Agregats_CA <- function(agregats_data){
   nombre_agregats <- agregats_data %>%
-    filter(communaute == "true") %>%
+    filter(communaute) %>%
     group_by(Annee, seed) %>%
     summarise(nb = n())
   
@@ -61,7 +61,7 @@ Agregats_CA <- function(agregats_data){
 }
 
 output$Agregats_CA <- renderPlot({
-  Agregats_CA(agregats_data = sim_agregats)
+  Agregats_CA(agregats_data = sim$agregats)
 })
 
 output$Agregats_CA_Filter <- renderPlot({
@@ -96,7 +96,7 @@ Agregats_RT <- function(agregats_data){
 }
 
 output$Agregats_RT <- renderPlot({
-  Agregats_RT(agregats_data = sim_agregats)
+  Agregats_RT(agregats_data = sim$agregats)
 })
 
 output$Agregats_RT_Filter <- renderPlot({

@@ -11,7 +11,7 @@ Paroisses_Nb <- function(paroisses_data){
 }
 
 output$Paroisses_Nb <- renderPlot({
-  Paroisses_Nb(paroisses_data = sim_paroisses)
+  Paroisses_Nb(paroisses_data = sim$paroisses)
 })
 
 output$Paroisses_Nb_Filter <- renderPlot({
@@ -38,7 +38,7 @@ Paroisses_Compo <- function(paroisses_data){
 }
 
 output$Paroisses_Compo <- renderPlot({
-  Paroisses_Compo(paroisses_data = sim_paroisses)
+  Paroisses_Compo(paroisses_data = sim$paroisses)
 })
 
 output$Paroisses_Compo_Filter <- renderPlot({
@@ -67,7 +67,7 @@ Paroisses_Promo <- function(paroisses_data){
 }
 
 output$Paroisses_Promo <- renderPlot({
-  Paroisses_Promo(paroisses_data = sim_paroisses)
+  Paroisses_Promo(paroisses_data = sim$paroisses)
 })
 
 output$Paroisses_Promo_Filter <- renderPlot({
@@ -98,7 +98,7 @@ Paroisses_Superficie <- function(paroisses_data){
 }
 
 output$Paroisses_Superficie <- renderPlot({
-  Paroisses_Superficie(paroisses_data = sim_paroisses)
+  Paroisses_Superficie(paroisses_data = sim$paroisses)
 })
 
 output$Paroisses_Superficie_Filter <- renderPlot({

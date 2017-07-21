@@ -1,79 +1,152 @@
 library(shiny)
 
 shinyServer(function(session, input, output) {
+  # session$onSessionEnded(function() {
+  #   DBI::dbDisconnect(con)
+  # })
   
-  filtred <- reactiveValues(agregats = NA,
-                            FP = NA,
-                            parameters = NA,
-                            paroisses = NA,
-                            poles = NA,
-                            results = NA,
-                            seigneurs = NA
+  sim <- reactiveValues(agregats = sim_agregats,
+                        FP =  sim_FP,
+                        parameters = sim_parameters,
+                        paroisses = sim_paroisses,
+                        poles = sim_poles,
+                        results = sim_results,
+                        seigneurs = sim_seigneurs,
+                        seeds = goodSeeds)
+  
+  filtred <- reactiveValues(agregats = NULL,
+                            FP = NULL,
+                            parameters = NULL,
+                            paroisses = NULL,
+                            poles = NULL,
+                            results = NULL,
+                            seigneurs = NULL
   )
   
+  observe({
+    req(input$selectedSims)
+    
+    simNames <- input$selectedSims
+    
+    if (length(simNames) == 1 && simNames == c("4_4_B")) {
+      sim$seeds <- goodSeeds
+      sim$agregats <- sim_agregats %>%  mutate(communaute = as.logical(communaute))
+      sim$FP <- sim_FP %>%
+        mutate(communaute = as.logical(communaute)) %>%
+        mutate(mobile = as.logical(mobile))
+      sim$parameters <- sim_parameters
+      sim$paroisses <- sim_paroisses
+      sim$poles <- sim_poles
+      sim$results <- sim_results
+      sim$seigneurs <- sim_seigneurs %>%
+        mutate(initial = as.logical(initial))
+    } else {
+      sim$seeds <- seeds %>% filter(sim_name %in% simNames) %>% collect()
+      sim$agregats <- agregats %>% filter(sim_name %in% simNames) %>% collect() %>%
+        mutate(communaute = as.logical(communaute))
+      sim$FP <- fp %>% filter(sim_name %in% simNames) %>% collect() %>%
+        mutate(communaute = as.logical(communaute)) %>%
+        mutate(mobile = as.logical(mobile))
+      sim$parameters <- parameters %>% filter(sim_name %in% simNames) %>% collect()
+      sim$paroisses <- paroisses %>% filter(sim_name %in% simNames) %>% collect()
+      sim$poles <- poles %>% filter(sim_name %in% simNames) %>% collect()
+      sim$results <- results %>% filter(sim_name %in% simNames) %>% collect()
+      sim$seigneurs <- seigneurs %>% filter(sim_name %in% simNames) %>% collect() %>%
+        mutate(initial = as.logical(initial))
+    }
+  })
+  
   parameters_data <- reactive({
-    nonUniqueParams <- sim_parameters %>%
+    
+    tmp_parameters <- sim$parameters %>% collect()
+    nonUniqueParams <- tmp_parameters %>%
+      collect() %>%
       gather(key = "Var", value = "Value") %>%
       group_by(Var, Value) %>%
       mutate(Freq = n()) %>%
       ungroup() %>%
-      filter(Freq != nrow(sim_parameters)) %>%
+      filter(Freq != nrow(tmp_parameters)) %>%
       distinct(Var) %>%
       pull(Var)
     
-    sim_parameters %>% select(!!nonUniqueParams)
+    tmp_parameters %>% dplyr::select(!!nonUniqueParams) %>% collect()
   })
   
   filtredSeeds <- reactive({
-    if (length(input$paramParCoords_brushed_row_names) > 0){
-      goodSeeds$seed[as.numeric(input$paramParCoords_brushed_row_names)]
+    req(sim$seeds)
+    tmp_seeds <- sim$seeds %>% collect()
+    nbBrushed <- length(input$paramParCoords_brushed_row_names)
+    nbTotal <- tmp_seeds %>% nrow()
+    if (nbBrushed > 0 & nbBrushed < nbTotal) {
+      tmp_seeds$seed[as.numeric(input$paramParCoords_brushed_row_names)]
     } else {
-      goodSeeds$seed
+      NULL
     }
   })
   
   observe({
-    if (length(input$paramParCoords_brushed_row_names) > 0){
-      filtred$agregats <- sim_agregats %>% filter(seed %in% filtredSeeds())
-      filtred$FP <- sim_FP %>% filter(seed %in% filtredSeeds()) 
-      filtred$parameters <- sim_parameters %>% filter(seed %in% filtredSeeds())
-      filtred$paroisses <- sim_paroisses %>% filter(seed %in% filtredSeeds())
-      filtred$poles <- sim_poles %>% filter(seed %in% filtredSeeds())
-      filtred$results <- sim_results %>% filter(seed %in% filtredSeeds())
-      filtred$seigneurs <- sim_seigneurs %>% filter(seed %in% filtredSeeds())
+    if (length(filtredSeeds()) > 0) {
+      filtred_seeds <- filtredSeeds()
+      filtred$agregats <- sim$agregats %>% filter(seed %in% filtred_seeds)
+      filtred$FP <- sim$FP %>% filter(seed %in% filtred_seeds)
+      filtred$parameters <- sim$parameters %>% filter(seed %in% filtred_seeds)
+      filtred$paroisses <- sim$paroisses %>% filter(seed %in% filtred_seeds)
+      filtred$poles <- sim$poles %>% filter(seed %in% filtred_seeds)
+      filtred$results <- sim$results %>% filter(seed %in% filtred_seeds)
+      filtred$seigneurs <- sim$seigneurs %>% filter(seed %in% filtred_seeds)
     } else {
-      filtred$agregats <- NA
-      filtred$FP <- NA
-      filtred$parameters <- NA
-      filtred$paroisses <- NA
-      filtred$poles <- NA
-      filtred$results <- NA
-      filtred$seigneurs <- NA
+      filtred$agregats <- NULL
+      filtred$FP <- NULL
+      filtred$parameters <- NULL
+      filtred$paroisses <- NULL
+      filtred$poles <- NULL
+      filtred$results <- NULL
+      filtred$seigneurs <- NULL
     }
   })
   
+  # output$paramParCoords <- renderParcoords({
+  #   parcoords(parameters_data() %>% collect() %>% select(-seed, -matches("sim_name")) %>%
+  #               set_colnames(LETTERS[1:ncol(.)]),
+  #             rownames = FALSE,
+  #             brushMode = "1d",
+  #             reorderable = TRUE,
+  #             autoresize = TRUE)
+  # })
+  
   output$paramParCoords <- renderParcoords({
-    parcoords(parameters_data() %>% select(-seed, -sim_name) %>%
-                set_colnames(LETTERS[1:ncol(.)]),
-              rownames=FALSE,
-              brushMode="1d",
+    parcoords(parameters_data() %>% collect() %>% select(-seed),
+              color = list(
+                colorBy = "sim_name",
+                colorScale = htmlwidgets::JS('d3.scale.category10()')
+              ),
+              rownames = FALSE,
+              brushMode = "1d",
               reorderable = TRUE,
               autoresize = TRUE)
   })
+  
+  # output$paramParCoords <- renderParcoords({
+  #   parcoords(parameters_data() %>% select(-seed),
+  #             rownames = FALSE,
+  #             brushMode = "1d",
+  #             reorderable = TRUE,
+  #             autoresize = TRUE)
+  # })
 
-  output$paramLegend <- renderDataTable({
-    thoseParameters <- parameters_data() %>% select(-seed, -sim_name)
-    thisDF <- data_frame(Key = LETTERS[1:ncol(thoseParameters)], Value = colnames(thoseParameters))
-    thisDF
-  },options = list(pageLength = 5, lengthChange =  FALSE))
+  # output$paramLegend <- renderDataTable({
+  #   thoseParameters <- parameters_data() %>% select(-seed,
+  #                                                   -matches("sim_name"))
+  #   thisDF <- data_frame(Key = LETTERS[1:ncol(thoseParameters)], Value = colnames(thoseParameters))
+  #   thisDF
+  # },options = list(pageLength = 5, lengthChange =  FALSE))
+  # 
   
   output$dataVolume <- renderText({
-    blob <- ifelse(length(input$paramParCoords_brushed_row_names)>0,
-                   length(input$paramParCoords_brushed_row_names),
-                   "Toutes les")
+    blob <- length(input$paramParCoords_brushed_row_names)
     sprintf("%s simulations sélectionnées sur un total de %s",
-            blob, 
-            nrow(sim_parameters))
+            blob,
+            sim$parameters %>% count() %>% collect() %>% pull())
   })
   
   
@@ -89,14 +162,15 @@ shinyServer(function(session, input, output) {
       Ordre = 1:8
     )
     
-    nbSeigneurs <- sim_seigneurs %>%
+    nbSeigneurs <- sim$seigneurs %>%
       group_by(seed, Annee) %>%
       summarise(NbSeigneurs = n())
       
-    tableau_resultats <- sim_results %>%
+    tableau_resultats <- sim$results %>%
       filter(Annee == 1160) %>%
       left_join(nbSeigneurs, by = c("seed", "Annee")) %>%
       select(-seed) %>%
+      collect() %>%
       rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
       summarise_if(is.numeric,funs(
         Moyenne = mean,
@@ -147,6 +221,7 @@ shinyServer(function(session, input, output) {
       filter(Annee == 1160) %>%
       left_join(nbSeigneurs, by = c("seed", "Annee")) %>%
       select(-seed) %>%
+      collect() %>%
       rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
       summarise_if(is.numeric,funs(
         Moyenne = mean,
@@ -207,9 +282,10 @@ shinyServer(function(session, input, output) {
   })
   
   output$simNames <- renderPlot({
-    simNames <- sim_parameters %>%
+    simNames <- sim$parameters %>%
       group_by(sim_name) %>%
-      summarise(N = n())
+      summarise(N = n()) %>%
+      collect()
     
     simNamesPlot <- ggplot(simNames, aes(x = sim_name, y = N)) +
       geom_col(fill = "#43a2ca", alpha = .3, colour = "#053144") +
@@ -220,7 +296,8 @@ shinyServer(function(session, input, output) {
     if ( length( filtred$parameters ) > 1 ) {
       simNamesFiltred <- filtred$parameters %>%
         group_by(sim_name) %>%
-        summarise(N = n())
+        summarise(N = n()) %>%
+        collect()
       
       simNamesPlot <- simNamesPlot +
         geom_col(data = simNamesFiltred,
@@ -241,9 +318,10 @@ shinyServer(function(session, input, output) {
       Ordre = 1:8
     )
     
-    resultsData <- sim_results %>%
+    resultsData <- sim$results %>%
       filter(Annee == 1160) %>%
       select(-sim_name, -Annee) %>%
+      collect() %>%
       gather(key = Variable,
              value = Valeur) %>%
       left_join(Objectifs, by = c("Variable" = "Var")) %>%
@@ -265,6 +343,7 @@ shinyServer(function(session, input, output) {
       resultsFiltredData <- filtred$results %>%
         filter(Annee == 1160) %>%
         select(-sim_name, -Annee) %>%
+        collect() %>%
         gather(key = Variable,
                value = Valeur) %>%
         left_join(Objectifs, by = c("Variable" = "Var")) %>%
@@ -288,5 +367,11 @@ shinyServer(function(session, input, output) {
   source("src_plots/Paroisses.R", local = TRUE, encoding = 'utf8')
   source("src_plots/download_plots.R", local = TRUE, encoding = 'utf8')
   source("src_plots/rating.R", local = TRUE, encoding = "utf8")
+  
+  
+  session$onSessionEnded(function() {
+    DBI::dbDisconnect(con)
+  })
+
 
 })

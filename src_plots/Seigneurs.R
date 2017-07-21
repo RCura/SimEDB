@@ -15,7 +15,7 @@ Seigneurs_Nb <- function(seigneurs_data){
 }
 
 output$Seigneurs_Nb <- renderPlot({
-  Seigneurs_Nb(seigneurs_data = sim_seigneurs)
+  Seigneurs_Nb(seigneurs_data = sim$seigneurs)
 })
 
 output$Seigneurs_Nb_Filter <- renderPlot({
@@ -85,7 +85,7 @@ Seigneurs_Chateaux <- function(seigneurs_data){
 }
 
 output$Seigneurs_Chateaux <- renderPlot({
-  Seigneurs_Chateaux(seigneurs_data = sim_seigneurs)
+  Seigneurs_Chateaux(seigneurs_data = sim$seigneurs)
 })
 
 output$Seigneurs_Chateaux_Filter <- renderPlot({
@@ -97,11 +97,10 @@ Seigneurs_Vassaux <- function(seigneurs_data){
   myBreaks <- c(-1,0,1,2,3,4,5,10,25,50,1000)
   myLabels <- c("0","1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
   
-  debiteurs_seigneurs<- seigneurs_data %>%
+  debiteurs_seigneurs <- seigneurs_data %>%
     filter(Annee == 1160) %>%
     select(seed, Annee, type, initial, nbDebiteurs) %>%
-    mutate(initial = replace(initial, initial=="true", "Initialement\nPrésent")) %>%
-    mutate(initial = replace(initial, initial=="false", "Arrivé\nen cours")) %>%
+    mutate(initial = if_else(initial, "Initialement\nPrésent", "Arrivé\nen cours")) %>%
     mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
     mutate(nbDebiteursBreaks =  cut(nbDebiteurs, breaks = myBreaks, labels =  myLabels)) %>%  
     group_by(seed, type, initial, nbDebiteursBreaks) %>%
@@ -136,13 +135,13 @@ Seigneurs_Vassaux <- function(seigneurs_data){
                c(2,2,2,3))
   
   grid.arrange(plotNonCPS, plotInitCPS, plotGS, nrow = 1, layout_matrix = lay,
-               bottom = "Nombre de Vassaux", left = "Fréquence",
-               top = "Distribution du nombre de vassaux selon les types de seigneurs
+                       bottom = "Nombre de Vassaux", left = "Fréquence",
+                       top = "Distribution du nombre de vassaux selon les types de seigneurs
                Variabilité : Réplications")
 }
 
 output$Seigneurs_Vassaux <- renderPlot({
- Seigneurs_Vassaux(seigneurs_data = sim_seigneurs)
+  Seigneurs_Vassaux(seigneurs_data = sim$seigneurs)
 })
 
 output$Seigneurs_Vassaux_Filter <- renderPlot({
@@ -165,7 +164,7 @@ Seigneurs_Redevances <- function(seigneurs_data){
 }
 
 output$Seigneurs_Redevances <- renderPlot({
-  Seigneurs_Redevances(seigneurs_data = sim_seigneurs)
+  Seigneurs_Redevances(seigneurs_data = sim$seigneurs)
 })
 
 output$Seigneurs_Redevances_Filter <- renderPlot({
@@ -206,7 +205,7 @@ Seigneurs_Redevances_PS <- function(seigneurs_data){
 }
 
 output$Seigneurs_Redevances_PS <- renderPlot({
-  Seigneurs_Redevances_PS(seigneurs_data = sim_seigneurs)
+  Seigneurs_Redevances_PS(seigneurs_data = sim$seigneurs)
 })
 
 output$Seigneurs_Redevances_PS_Filter <- renderPlot({
@@ -233,7 +232,7 @@ Seigneurs_Puissance <- function(seigneurs_data){
 }
 
 output$Seigneurs_Puissance <- renderPlot({
-  Seigneurs_Puissance(seigneurs_data = sim_seigneurs)
+  Seigneurs_Puissance(seigneurs_data = sim$seigneurs)
 })
 
 output$Seigneurs_Puissance_Filter <- renderPlot({
@@ -261,8 +260,8 @@ Seigneurs_Agregats <- function(seigneurs_data, agregats_data){
     mutate(NbAgregats = factor(NbAgregats, levels = nbAgregatsLevels)) %>%
     right_join(agregats_data %>%
                  filter(Annee == 1160) %>%
-                 select(seed, self),
-               by = c("seed", "monAgregat" = "self")) %>%
+                 select(seed, ID_agregat),
+               by = c("seed", "monAgregat" = "ID_agregat")) %>%
     mutate(NbAgregats = fct_explicit_na(NbAgregats, "0")) %>%
     group_by(seed, NbAgregats) %>%
     summarise(NbCas = n())
@@ -277,8 +276,8 @@ Seigneurs_Agregats <- function(seigneurs_data, agregats_data){
 }
 
 output$Seigneurs_Agregats <- renderPlot({
-  Seigneurs_Agregats(seigneurs_data = sim_seigneurs,
-                     agregats_data = sim_agregats)
+  Seigneurs_Agregats(seigneurs_data = sim$seigneurs,
+                     agregats_data = sim$agregats)
 })
 
 output$Seigneurs_Agregats_Filter <- renderPlot({

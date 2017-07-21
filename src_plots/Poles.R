@@ -12,7 +12,7 @@ Poles_Nb <- function(poles_data){
 }
 
 output$Poles_Nb <- renderPlot({
-  Poles_Nb(poles_data = sim_poles)
+  Poles_Nb(poles_data = sim$poles)
 })
 
 output$Poles_Nb_Filter <- renderPlot({
@@ -52,7 +52,7 @@ Poles_Agregats <- function(poles_data){
 }
 
 output$Poles_Agregats <- renderPlot({
-  Poles_Agregats(poles_data = sim_poles)
+  Poles_Agregats(poles_data = sim$poles)
 })
 
 output$Poles_Agregats_Filter <- renderPlot({
@@ -78,7 +78,7 @@ Poles_Compo <- function(poles_data){
 }
 
 output$Poles_Compo <- renderPlot({
-  Poles_Compo(poles_data = sim_poles)
+  Poles_Compo(poles_data = sim$poles)
 })
 
 output$Poles_Compo_Filter <- renderPlot({
@@ -104,7 +104,7 @@ Poles_Attrac <- function(poles_data){
 }
 
 output$Poles_Attrac <- renderPlot({
-  Poles_Attrac(poles_data = sim_poles)
+  Poles_Attrac(poles_data = sim$poles)
 })
 
 output$Poles_Attrac_Filter <- renderPlot({
@@ -140,7 +140,7 @@ Poles_RT <- function(poles_data){
 }
 
 output$Poles_RT <- renderPlot({
-  Poles_RT(poles_data = sim_poles)
+  Poles_RT(poles_data = sim$poles)
 })
 
 output$Poles_RT_Filter <- renderPlot({
