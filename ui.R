@@ -105,6 +105,18 @@ shinyUI(fluidPage(
                                            fluidRow(ratingInput(inputId = "Agregats_Poles_Filter_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
                                   )
                          ),
+                         tabPanel("Paroisses", 
+                                  fluidRow(
+                                    column(10, plotOutput("Agregats_Paroisses")),
+                                    column(2, fluidRow(downloadButton("Agregats_Paroisses_DL", label = "")),
+                                           fluidRow(ratingInput(inputId = "Agregats_Paroisses_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
+                                  ),
+                                  fluidRow(
+                                    column(10,plotOutput("Agregats_Paroisses_Filter")),
+                                    column(2, fluidRow(downloadButton("Agregats_Paroisses_Filter_DL", label = "")),
+                                           fluidRow(ratingInput(inputId = "Agregats_Paroisses_Filter_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
+                                  )
+                         ),
                          tabPanel("Communauté", 
                                   fluidRow(
                                     column(10, plotOutput("Agregats_CA")),
