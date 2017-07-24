@@ -7,7 +7,7 @@ shinyUI(fluidPage(
                              column(6, selectInput("selectedSims",  label = "Experiences",
                                                    choices = c("4_4_A", "4_4_B",
                                                                "4_4_C", "4_4_D"),
-                                                   selected = "4_4_B",
+                                                   selected = "4_4_A",
                                                    multiple = TRUE)),
                              textOutput("dataVolume",inline =  TRUE),
                              fluidRow(column(12,parcoordsOutput("paramParCoords", width = "100%", height = "300px"))),

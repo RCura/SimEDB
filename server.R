@@ -28,7 +28,7 @@ shinyServer(function(session, input, output) {
     
     simNames <- input$selectedSims
     
-    if (length(simNames) == 1 && simNames == c("4_4_B")) {
+    if (length(simNames) == 1 && simNames == c("4_4_A")) {
       sim$seeds <- goodSeeds
       sim$agregats <- sim_agregats %>%  mutate(communaute = as.logical(communaute))
       sim$FP <- sim_FP %>%

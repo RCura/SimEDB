@@ -39,18 +39,18 @@ poles <- tbl(con, "poles")
 results <- tbl(con, "results")
 seigneurs <- tbl(con, "seigneurs")
 
-goodSeeds <- seeds %>% filter(sim_name %in% "4_4_B") %>% collect()
-sim_agregats <- agregats %>% filter(sim_name %in% "4_4_B") %>% collect() %>%
+goodSeeds <- seeds %>% filter(sim_name %in% "4_4_A") %>% collect()
+sim_agregats <- agregats %>% filter(sim_name %in% "4_4_A") %>% collect() %>%
   mutate(communaute = as.logical(communaute))
-sim_FP <- fp %>% filter(sim_name %in% "4_4_B") %>% collect()  %>%
+sim_FP <- fp %>% filter(sim_name %in% "4_4_A") %>% collect()  %>%
   mutate(communaute = as.logical(communaute)) %>%
   mutate(mobile = as.logical(mobile))
 
-sim_parameters <- parameters %>% filter(sim_name %in% "4_4_B")  %>% collect()
-sim_paroisses <- paroisses %>% filter(sim_name %in% "4_4_B") %>% collect()
-sim_poles <- poles %>% filter(sim_name %in% "4_4_B") %>% collect()
-sim_results <- results %>% filter(sim_name %in% "4_4_B") %>% collect()
-sim_seigneurs <- seigneurs %>% filter(sim_name %in% "4_4_B") %>% collect() %>%
+sim_parameters <- parameters %>% filter(sim_name %in% "4_4_A")  %>% collect()
+sim_paroisses <- paroisses %>% filter(sim_name %in% "4_4_A") %>% collect()
+sim_poles <- poles %>% filter(sim_name %in% "4_4_A") %>% collect()
+sim_results <- results %>% filter(sim_name %in% "4_4_A") %>% collect()
+sim_seigneurs <- seigneurs %>% filter(sim_name %in% "4_4_A") %>% collect() %>%
   mutate(initial = as.logical(initial))
 
 #load("data/sim_data_4_4_D.Rdata")
