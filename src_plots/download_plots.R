@@ -66,6 +66,16 @@ output$Agregats_Poles_Filter_DL <- downloadHandler(
   content = function(file){ ggsave(file, plot = Agregats_Poles(filtred$agregats), device = "pdf") }
 )
 
+output$Agregats_Paroisses_DL <- downloadHandler(
+  filename = function(){"Agregats_Paroisses.pdf"},
+  content = function(file){ ggsave(file, plot =  Agregats_Paroisses(agregats_data = sim$agregats, poles_data = sim$poles), device = "pdf") }
+)
+
+output$Agregats_Paroisses_Filter_DL <- downloadHandler(
+  filename = function(){"Agregats_Paroisses_Filter.pdf"},
+  content = function(file){ ggsave(file, plot = Agregats_Paroisses(agregats_data = filtred$agregats, poles_data = filtred$poles), device = "pdf") }
+)
+
 output$Agregats_CA_DL <- downloadHandler(
   filename = function(){"Agregats_CA.pdf"},
   content = function(file){ ggsave(file, plot = Agregats_CA(sim_agregats), device = "pdf") }

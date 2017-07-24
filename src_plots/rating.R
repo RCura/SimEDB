@@ -138,6 +138,28 @@ observeEvent(input$Agregats_Poles_Filter_Rate,{
   }
 )
 
+observeEvent(input$Agregats_Paroisses_Rate,{
+  req(input$Agregats_Paroisses_Rate)
+  thisLine <- sprintf("%s, %s, %s, %s",
+                      isolate(input$userName),
+                      as.character(rlang::expr(input$Agregats_Paroisses_Rate))[3],
+                      input$Agregats_Paroisses_Rate,
+                      paste(as.character(filtredSeeds()), collapse = ";"))
+  write_lines(x = thisLine, path = "data/results_rating.csv", append = TRUE)
+}
+)
+
+observeEvent(input$Agregats_Paroisses_Filter_Rate,{
+  req(input$Agregats_Paroisses_Filter_Rate)
+  thisLine <- sprintf("%s, %s, %s, %s",
+                      isolate(input$userName),
+                      as.character(rlang::expr(input$Agregats_Paroisses_Filter_Rate))[3],
+                      input$Agregats_Paroisses_Filter_Rate,
+                      paste(as.character(filtredSeeds()), collapse = ";"))
+  write_lines(x = thisLine, path = "data/results_rating.csv", append = TRUE)
+}
+)
+
 observeEvent(input$Agregats_CA_Rate,{
   req(input$Agregats_CA_Rate)
   thisLine <- sprintf("%s, %s, %s, %s",

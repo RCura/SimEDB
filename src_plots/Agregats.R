@@ -103,3 +103,39 @@ output$Agregats_RT_Filter <- renderPlot({
   req(filtred$agregats)
   Agregats_RT(agregats_data = filtred$agregats)
 })
+
+
+Agregats_Paroisses <- function(agregats_data, poles_data){
+  nbAgregats <- agregats_data %>%
+    group_by(seed, sim_name, Annee) %>%
+    summarise(NbAgregats = n())
+  
+  agregatsParoisses <- poles_data %>%
+    filter(!is.na(monAgregat)) %>%
+    filter(nbParoisses >= 1) %>%
+    group_by(sim_name, Annee, seed, monAgregat) %>%
+    count() %>%
+    group_by(Annee, seed, sim_name) %>%
+    summarise(NbAgregatsParoisse = sum(n)) %>%
+    right_join(nbAgregats, by = c("seed", "Annee", "sim_name")) %>%
+    mutate(TxAgregatsParoisses = NbAgregatsParoisse / NbAgregats * 100) %>%
+    gather(key = Type, value = Value, NbAgregatsParoisse, TxAgregatsParoisses) %>%
+    mutate(Value = if_else(is.na(Value), 0, Value)) %>%
+    mutate(Type = if_else(Type == "NbAgregatsParoisse", "Nombre", "Taux (en %)"))
+  
+  ggplot(agregatsParoisses, aes(factor(Annee), Value)) +
+    geom_tufteboxplot() +
+    facet_grid(Type~., scales = "free_y") +
+    xlab("Temps") + ylab("Agrégats contenant au moins une paroisse") +
+    ggtitle("Évolution du nombre d'agrégats contenant au moins une paroisse") +
+    labs(subtitle = "Variabilité : Réplications")
+}
+
+output$Agregats_Paroisses <- renderPlot({
+  Agregats_Paroisses(agregats_data = sim$agregats, poles_data = sim$poles)
+})
+
+output$Agregats_Paroisses_Filter <- renderPlot({
+  req(filtred$poles, filtred$agregats)
+  Agregats_Paroisses(agregats_data = filtred$agregats, poles_data = filtred$poles)
+})
