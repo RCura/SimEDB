@@ -1,5 +1,5 @@
 library(tidyverse)
-simName <- "4_4_D"
+simName <- "4_5_A"
 simDataPath <- "data/"
 
 
@@ -18,7 +18,8 @@ goodSeeds <- sim_parameters %>%
   select(seed, sim_name)
 
 sim_parameters <- sim_parameters %>%
-  semi_join(goodSeeds, by = c("seed", "sim_name"))
+  semi_join(goodSeeds, by = c("seed", "sim_name")) %>%
+  mutate(serfs_mobiles = if_else(serfs_mobiles == "true", TRUE, FALSE))
 
 sim_results <- sim_results %>%
   semi_join(goodSeeds, by = c("seed", "sim_name"))
