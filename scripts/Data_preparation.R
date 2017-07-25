@@ -93,6 +93,9 @@ library(RSQLite)
 
 con <- DBI::dbConnect(RSQLite::SQLite(), "data/outputs_TR8_indexSimName.sqlite")
 
+dbListTables(con)
+dbListFields(con, "parameters")
+
 dbWriteTable(conn = con, value = goodSeeds, name = "goodSeeds", append = TRUE, row.names = FALSE)
 dbWriteTable(conn = con, value = sim_agregats, name = "agregats", append = TRUE, row.names = FALSE)
 dbWriteTable(conn = con, value = sim_FP, name = "fp",   append = TRUE, row.names = FALSE)
@@ -121,7 +124,8 @@ dbWriteTable(conn = con, value = sim_seigneurs, name = "seigneurs",   append = T
 # })
 # rm(blob2)
 
-dbGetQuery(con,"CREATE INDEX index_simname ON fp (sim_name)")
+#dbGetQuery(con,"CREATE INDEX index_simname ON fp (sim_name)")
+dbGetQuery(con, "REINDEX index_simname;")
 DBI::dbDisconnect(con)
 
 # 
