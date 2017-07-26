@@ -1,18 +1,17 @@
 library(shiny)
 
 shinyServer(function(session, input, output) {
-  # session$onSessionEnded(function() {
-  #   DBI::dbDisconnect(con)
-  # })
   
-  sim <- reactiveValues(agregats = sim_agregats,
-                        FP =  sim_FP,
-                        parameters = sim_parameters,
-                        paroisses = sim_paroisses,
-                        poles = sim_poles,
-                        results = sim_results,
-                        seigneurs = sim_seigneurs,
-                        seeds = goodSeeds)
+  oldBrushed <- reactiveVal(value = NA)
+  
+  sim <- reactiveValues(agregats = agregats,
+                        FP =  fp,
+                        parameters = parameters,
+                        paroisses = paroisses,
+                        poles = poles,
+                        results = results,
+                        seigneurs = seigneurs,
+                        seeds = seeds)
   
   filtred <- reactiveValues(agregats = NULL,
                             FP = NULL,
@@ -28,39 +27,20 @@ shinyServer(function(session, input, output) {
     
     simNames <- input$selectedSims
     
-    if (length(simNames) == 1 && simNames == c("4_4_A")) {
-      sim$seeds <- goodSeeds
-      sim$agregats <- sim_agregats %>%  mutate(communaute = as.logical(communaute))
-      sim$FP <- sim_FP %>%
-        mutate(communaute = as.logical(communaute)) %>%
-        mutate(mobile = as.logical(mobile))
-      sim$parameters <- sim_parameters
-      sim$paroisses <- sim_paroisses
-      sim$poles <- sim_poles
-      sim$results <- sim_results
-      sim$seigneurs <- sim_seigneurs %>%
-        mutate(initial = as.logical(initial))
-    } else {
-      sim$seeds <- seeds %>% filter(sim_name %in% simNames) %>% collect()
-      sim$agregats <- agregats %>% filter(sim_name %in% simNames) %>% collect() %>%
-        mutate(communaute = as.logical(communaute))
-      sim$FP <- fp %>% filter(sim_name %in% simNames) %>% collect() %>%
-        mutate(communaute = as.logical(communaute)) %>%
-        mutate(mobile = as.logical(mobile))
-      sim$parameters <- parameters %>% filter(sim_name %in% simNames) %>% collect()
-      sim$paroisses <- paroisses %>% filter(sim_name %in% simNames) %>% collect()
-      sim$poles <- poles %>% filter(sim_name %in% simNames) %>% collect()
-      sim$results <- results %>% filter(sim_name %in% simNames) %>% collect()
-      sim$seigneurs <- seigneurs %>% filter(sim_name %in% simNames) %>% collect() %>%
-        mutate(initial = as.logical(initial))
-    }
+    sim$seeds <- seeds %>% filter(sim_name %in% simNames)
+    sim$agregats <- agregats %>% filter(sim_name %in% simNames)
+    sim$FP <- fp %>% filter(sim_name %in% simNames)
+    sim$parameters <- parameters %>% filter(sim_name %in% simNames)
+    sim$paroisses <- paroisses %>% filter(sim_name %in% simNames)
+    sim$poles <- poles %>% filter(sim_name %in% simNames)
+    sim$results <- results %>% filter(sim_name %in% simNames)
+    sim$seigneurs <- seigneurs %>% filter(sim_name %in% simNames)
   })
   
   parameters_data <- reactive({
-    
+    req(sim$parameters)
     tmp_parameters <- sim$parameters %>% collect()
     nonUniqueParams <- tmp_parameters %>%
-      collect() %>%
       gather(key = "Var", value = "Value") %>%
       group_by(Var, Value) %>%
       mutate(Freq = n()) %>%
@@ -69,31 +49,32 @@ shinyServer(function(session, input, output) {
       distinct(Var) %>%
       pull(Var)
     
-    tmp_parameters %>% dplyr::select(!!nonUniqueParams) %>% collect()
+    tmp_parameters %>% dplyr::select(!!nonUniqueParams)
   })
   
   filtredSeeds <- reactive({
-    req(sim$seeds)
+    req(input$paramParCoords_brushed_row_names, sim$seeds)
     tmp_seeds <- sim$seeds %>% collect()
     nbBrushed <- length(input$paramParCoords_brushed_row_names)
     nbTotal <- tmp_seeds %>% nrow()
-    if (nbBrushed > 0 & nbBrushed < nbTotal) {
+    if (nbBrushed > 0 && nbBrushed < nbTotal && oldBrushed() != nbBrushed) {
       tmp_seeds$seed[as.numeric(input$paramParCoords_brushed_row_names)]
     } else {
+      oldBrushed(nbBrushed)
       NULL
     }
   })
   
   observe({
     if (length(filtredSeeds()) > 0) {
-      filtred_seeds <- filtredSeeds()
-      filtred$agregats <- sim$agregats %>% filter(seed %in% filtred_seeds)
-      filtred$FP <- sim$FP %>% filter(seed %in% filtred_seeds)
-      filtred$parameters <- sim$parameters %>% filter(seed %in% filtred_seeds)
-      filtred$paroisses <- sim$paroisses %>% filter(seed %in% filtred_seeds)
-      filtred$poles <- sim$poles %>% filter(seed %in% filtred_seeds)
-      filtred$results <- sim$results %>% filter(seed %in% filtred_seeds)
-      filtred$seigneurs <- sim$seigneurs %>% filter(seed %in% filtred_seeds)
+      filtred$seeds <- filtredSeeds()
+      filtred$agregats <- sim$agregats %>% filter(seed %in% filtred$seeds)
+      filtred$FP <- sim$FP %>% filter(seed %in% filtred$seeds)
+      filtred$parameters <- sim$parameters %>% filter(seed %in% filtred$seeds)
+      filtred$paroisses <- sim$paroisses %>% filter(seed %in% filtred$seeds)
+      filtred$poles <- sim$poles %>% filter(seed %in% filtred$seeds)
+      filtred$results <- sim$results %>% filter(seed %in% filtred$seeds)
+      filtred$seigneurs <- sim$seigneurs %>% filter(seed %in% filtred$seeds)
     } else {
       filtred$agregats <- NULL
       filtred$FP <- NULL
@@ -105,17 +86,8 @@ shinyServer(function(session, input, output) {
     }
   })
   
-  # output$paramParCoords <- renderParcoords({
-  #   parcoords(parameters_data() %>% collect() %>% select(-seed, -matches("sim_name")) %>%
-  #               set_colnames(LETTERS[1:ncol(.)]),
-  #             rownames = FALSE,
-  #             brushMode = "1d",
-  #             reorderable = TRUE,
-  #             autoresize = TRUE)
-  # })
-  
   output$paramParCoords <- renderParcoords({
-    parcoords(parameters_data() %>% collect() %>% select(-seed),
+    parcoords(parameters_data() %>% select(-seed),
               color = list(
                 colorBy = "sim_name",
                 colorScale = htmlwidgets::JS('d3.scale.category10()')
@@ -125,22 +97,6 @@ shinyServer(function(session, input, output) {
               reorderable = TRUE,
               autoresize = TRUE)
   })
-  
-  # output$paramParCoords <- renderParcoords({
-  #   parcoords(parameters_data() %>% select(-seed),
-  #             rownames = FALSE,
-  #             brushMode = "1d",
-  #             reorderable = TRUE,
-  #             autoresize = TRUE)
-  # })
-
-  # output$paramLegend <- renderDataTable({
-  #   thoseParameters <- parameters_data() %>% select(-seed,
-  #                                                   -matches("sim_name"))
-  #   thisDF <- data_frame(Key = LETTERS[1:ncol(thoseParameters)], Value = colnames(thoseParameters))
-  #   thisDF
-  # },options = list(pageLength = 5, lengthChange =  FALSE))
-  # 
   
   output$dataVolume <- renderText({
     blob <- length(input$paramParCoords_brushed_row_names)
@@ -160,15 +116,16 @@ shinyServer(function(session, input, output) {
                   "Augmentation de la charge fiscale des foyers paysans"),
       Objectif = c(200, 50, 10, 200, 300, 3000, 0.2, 3),
       Ordre = 1:8
-    )
+    ) %>%
+      mutate(Var = tolower(Var))
     
     nbSeigneurs <- sim$seigneurs %>%
-      group_by(seed, Annee) %>%
-      summarise(NbSeigneurs = n())
+      group_by(seed, annee) %>%
+      summarise(nbseigneurs = n())
       
     tableau_resultats <- sim$results %>%
-      filter(Annee == 1160) %>%
-      left_join(nbSeigneurs, by = c("seed", "Annee")) %>%
+      filter(annee == 1160) %>%
+      left_join(nbSeigneurs, by = c("seed", "annee")) %>%
       select(-seed) %>%
       collect() %>%
       rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
@@ -211,15 +168,16 @@ shinyServer(function(session, input, output) {
                   "Augmentation de la charge fiscale des foyers paysans"),
       Objectif = c(200, 50, 10, 200, 300, 3000, 0.2, 3),
       Ordre = 1:8
-    )
+    ) %>%
+      mutate(Var = tolower(Var))
 
     nbSeigneurs <- filtred$seigneurs %>%
-      group_by(seed, Annee) %>%
-      summarise(NbSeigneurs = n())
+      group_by(seed, annee) %>%
+      summarise(nbseigneurs = n())
 
     tableau_resultats <- filtred$results %>%
-      filter(Annee == 1160) %>%
-      left_join(nbSeigneurs, by = c("seed", "Annee")) %>%
+      filter(annee == 1160) %>%
+      left_join(nbSeigneurs, by = c("seed", "annee")) %>%
       select(-seed) %>%
       collect() %>%
       rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
@@ -263,13 +221,9 @@ shinyServer(function(session, input, output) {
                 ))
   })
   
-  # output$selectionTable <- renderPrint({
-  #   filtredSeeds()
-  # })
-  
   output$selectionTable <- renderFormattable({
     req(summary_table2())
-  formattable(summary_table2(), table.attr = 'class="table table-striped"',
+    formattable(summary_table2(), table.attr = 'class="table table-striped"',
               list(
                 area(row = 1:5, col = 2:6) ~ round,
                 area(row = 1:5, col = 7) ~ formatter("span", function(x){ round(x, digits = 2) }),
@@ -284,10 +238,10 @@ shinyServer(function(session, input, output) {
   output$simNames <- renderPlot({
     simNames <- sim$parameters %>%
       group_by(sim_name) %>%
-      summarise(N = n()) %>%
+      summarise(n = n()) %>%
       collect()
     
-    simNamesPlot <- ggplot(simNames, aes(x = sim_name, y = N)) +
+    simNamesPlot <- ggplot(simNames, aes(x = sim_name, y = n)) +
       geom_col(fill = "#43a2ca", alpha = .3, colour = "#053144") +
       labs(x = "Expériences", y = "Nombre de simulations",
            title = "Distribution des simulations") +
@@ -296,7 +250,7 @@ shinyServer(function(session, input, output) {
     if ( length( filtred$parameters ) > 1 ) {
       simNamesFiltred <- filtred$parameters %>%
         group_by(sim_name) %>%
-        summarise(N = n()) %>%
+        summarise(n = n()) %>%
         collect()
       
       simNamesPlot <- simNamesPlot +
@@ -316,11 +270,12 @@ shinyServer(function(session, input, output) {
                   "Augmentation de la charge fiscale des foyers paysans"),
       Objectif = c(200, 50, 10, 200, 300, 3000, 0.2, 3),
       Ordre = 1:8
-    )
+    ) %>%
+      mutate(Var = tolower(Var))
     
     resultsData <- sim$results %>%
-      filter(Annee == 1160) %>%
-      select(-sim_name, -Annee) %>%
+      filter(annee == 1160) %>%
+      select(-sim_name, -annee) %>%
       collect() %>%
       gather(key = Variable,
              value = Valeur) %>%
@@ -341,8 +296,8 @@ shinyServer(function(session, input, output) {
     
     if ( length( filtred$results ) > 1 ) {
       resultsFiltredData <- filtred$results %>%
-        filter(Annee == 1160) %>%
-        select(-sim_name, -Annee) %>%
+        filter(annee == 1160) %>%
+        select(-sim_name, -annee) %>%
         collect() %>%
         gather(key = Variable,
                value = Valeur) %>%
@@ -370,7 +325,8 @@ shinyServer(function(session, input, output) {
   
   
   session$onSessionEnded(function() {
-    DBI::dbDisconnect(con)
+    dbDisconnect(conMonetDB, shutdown = TRUE)
+    # MonetDBLite::monetdblite_shutdown()
   })
 
 

@@ -1,15 +1,20 @@
 suppressPackageStartupMessages({
+  # Data wrangling
+  library(tidyverse)
+  library(magrittr)
+  library(stringr)
+  library(forcats)
+  
+  # DataBase
+  library(dbplyr)
+  library(DBI)
+  library(MonetDBLite) # devtools::install_github("hannesmuehleisen/MonetDBLite")
   
   # Interactivity
   library(shiny)
   library(shinythemes)
   library(parcoords) # devtools::install_github("timelyportfolio/parcoords", ref="feature/resize")
   library(ShinyRatingInput) # devtools::install_github("stefanwilhelm/ShinyRatingInput")
-
-  # DataBase
-  library(dbplyr)
-  library(DBI)
-  library(RSQLite)
   
   # Plots
   library(gridExtra)
@@ -18,41 +23,22 @@ suppressPackageStartupMessages({
   # Tables
   library(xtable)
   library(formattable) # devtools::install_github("renkun-ken/formattable")
-  
-  # Data wrangling
-  library(tidyverse)
-  library(magrittr)
-  library(stringr)
-  library(forcats)
-  
-  
 })
 
-con <- DBI::dbConnect(RSQLite::SQLite(), "data/outputs_TR8_indexSimName.sqlite")
+conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "~/outputs_TR8/testMonetDB")
 
-seeds <- tbl(con, "goodSeeds")
-agregats <- tbl(con, "agregats")
-fp <- tbl(con, "fp")
-parameters <- tbl(con, "parameters")
-paroisses <- tbl(con, "paroisses")
-poles <- tbl(con, "poles")
-results <- tbl(con, "results")
-seigneurs <- tbl(con, "seigneurs")
+seeds <- tbl(conMonetDB, "seeds")
+agregats <- tbl(conMonetDB, "agregats")
+fp <- tbl(conMonetDB, "fp")
+parameters <- tbl(conMonetDB, "parameters")
+paroisses <- tbl(conMonetDB, "paroisses")
+poles <- tbl(conMonetDB, "poles")
+results <- tbl(conMonetDB, "results")
+seigneurs <- tbl(conMonetDB, "seigneurs")
 
-goodSeeds <- seeds %>% filter(sim_name %in% "4_4_A") %>% collect()
-sim_agregats <- agregats %>% filter(sim_name %in% "4_4_A") %>% collect() %>%
-  mutate(communaute = as.logical(communaute))
-sim_FP <- fp %>% filter(sim_name %in% "4_4_A") %>% collect()  %>%
-  mutate(communaute = as.logical(communaute)) %>%
-  mutate(mobile = as.logical(mobile))
-
-sim_parameters <- parameters %>% filter(sim_name %in% "4_4_A")  %>% collect()
-sim_paroisses <- paroisses %>% filter(sim_name %in% "4_4_A") %>% collect()
-sim_poles <- poles %>% filter(sim_name %in% "4_4_A") %>% collect()
-sim_results <- results %>% filter(sim_name %in% "4_4_A") %>% collect()
-sim_seigneurs <- seigneurs %>% filter(sim_name %in% "4_4_A") %>% collect() %>%
-  mutate(initial = as.logical(initial))
-
-#load("data/sim_data_4_4_D.Rdata")
-
-
+all_sim_names <- parameters %>%
+  select(sim_name) %>%
+  distinct() %>%
+  arrange(sim_name) %>%
+  collect() %>%
+  pull()

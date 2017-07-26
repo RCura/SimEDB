@@ -1,9 +1,10 @@
 Paroisses_Nb <- function(paroisses_data){
   nombre_paroisses <- paroisses_data %>%
-    group_by(Annee, seed) %>%
-    summarise(nb = n())
+    group_by(annee, seed) %>%
+    summarise(nb = n()) %>%
+    collect()
   
-  ggplot(nombre_paroisses, aes(factor(Annee), nb)) +
+  ggplot(nombre_paroisses, aes(factor(annee), nb)) +
     geom_tufteboxplot() +
     xlab("Temps") + ylab("Nombre de paroisses") +
     ggtitle("Évolution du nombre de paroisses") +
@@ -24,14 +25,15 @@ Paroisses_Compo <- function(paroisses_data){
   fidelesLabels <- c("0", "1-10", "11-30", "31-50", "51-100", ">100")
   
   paroisses_breaks <- paroisses_data %>%
-    filter(Annee %in% c(820, 940, 1040, 1160)) %>%
-    mutate(NbFidelesBreaks = cut(nbFideles, breaks = fidelesBreaks, labels = fidelesLabels)) %>%
-    group_by(seed, Annee, NbFidelesBreaks) %>%
+    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    collect() %>%
+    mutate(NbFidelesBreaks = cut(nbfideles, breaks = fidelesBreaks, labels = fidelesLabels)) %>%
+    group_by(seed, annee, NbFidelesBreaks) %>%
     summarise(NbParoisses = n())
   
   ggplot(paroisses_breaks, aes(factor(NbFidelesBreaks), NbParoisses)) +
     geom_tufteboxplot() +
-    facet_wrap(~Annee, scales = "free") +
+    facet_wrap(~annee, scales = "free") +
     xlab("Nombre de paroissiens") + ylab("Fréquence") +
     ggtitle("Evolution de la composition des paroisses") +
     labs(subtitle = "Variabilité : Réplications")
@@ -50,15 +52,16 @@ Paroisses_Promo <- function(paroisses_data){
   paroisses_promo <- paroisses_data %>%
     filter(mode_promotion != "nil") %>%
     filter(mode_promotion != "initialisation") %>%
-    group_by(seed, Annee, mode_promotion) %>%
-    summarise(N = n()) %>%
+    group_by(seed, annee, mode_promotion) %>%
+    summarise(nb = n()) %>%
+    collect() %>%
     mutate(mode_promotion = case_when(
       mode_promotion == "creation agregat" ~ "Création dans un agrégat",
       mode_promotion == "creation isole" ~ "Création en zone peu dense",
       mode_promotion == "promotion isole" ~ "Promotion en zone peu dense")
     )
   
-  ggplot(paroisses_promo, aes(Annee, N, group = factor(Annee))) +
+  ggplot(paroisses_promo, aes(annee, nb, group = factor(annee))) +
     geom_tufteboxplot() +
     facet_wrap(~ mode_promotion, ncol = 1) +
     xlab("Temps") + ylab("Nombre de nouvelles paroisses\nà chaque pas de temps") +
@@ -81,16 +84,18 @@ Paroisses_Superficie <- function(paroisses_data){
   superficieLabels <- c("<1", "1-5", "6-10", "11-20", "21-50", "51-100", "101-500", ">500")
   
   paroisses_sup_breaks <-  paroisses_data %>%
-    filter(Annee %in% c(820, 940, 1040, 1160)) %>%
-    mutate(NbSuperficiesBreaks = cut(shape.area,
+    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    collect() %>%
+    mutate(NbSuperficiesBreaks = cut(area,
                                      breaks = superficieBreaks,
                                      labels = superficieLabels)) %>%
-    group_by(seed, Annee, NbSuperficiesBreaks) %>%
+    group_by(seed, annee, NbSuperficiesBreaks) %>%
     summarise(NbParoisses = n())
   
   
   ggplot(paroisses_sup_breaks, aes(factor(NbSuperficiesBreaks), NbParoisses)) +
-    geom_tufteboxplot() + facet_wrap(~Annee) +
+    geom_tufteboxplot() +
+    facet_wrap(~annee) +
     xlab("Superficie des paroisses (km²)") + ylab("Fréquence") +
     ggtitle("Évolution de la superficie des paroisses") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +

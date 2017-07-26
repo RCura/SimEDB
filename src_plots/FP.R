@@ -1,21 +1,21 @@
 FP_TypeDeplacements <- function(FP_data)({
   
   nombre_FP_total <- FP_data %>%
-    group_by(seed, sim_name, Annee) %>%
-    summarise(N_total = n())
+    group_by(seed, sim_name, annee) %>%
+    summarise(n_total = n())
   
   
   types_deplacements <- FP_data %>%
     filter(type_deplacement != "nil") %>%
     filter(type_deplacement != "Non mobile") %>%
-    group_by(Annee, seed, sim_name, type_deplacement) %>%
-    summarise(N = n()) %>%
-    left_join(nombre_FP_total, by = c("seed", "Annee", "sim_name")) %>%
-    mutate(Tx = N / (N_total * 1.0)) %>%
-    group_by(Annee, type_deplacement) %>%
+    group_by(annee, seed, sim_name, type_deplacement) %>%
+    summarise(n = n()) %>%
+    left_join(nombre_FP_total, by = c("seed", "annee", "sim_name")) %>%
+    mutate(Tx = (n * 1.0) / (n_total * 1.0)) %>%
+    ungroup() %>%
     collect()
   
-  ggplot(types_deplacements %>% collect(), aes(factor(Annee), Tx, col = type_deplacement)) +
+  ggplot(types_deplacements, aes(factor(annee), Tx, col = type_deplacement)) +
     geom_tufteboxplot(size = 1) +
     geom_line() +
     facet_wrap(~ type_deplacement) +
@@ -40,22 +40,22 @@ output$FP_TypeDeplacements_filter <- renderPlot({
 FP_DeplacementsDetail <- function(FP_data){
   
   nombre_FP_total <- FP_data %>%
-    filter(Annee %in% c(820, 940, 1040, 1160)) %>%
-    group_by(seed, sim_name, Annee) %>%
-    summarise(N_total = n())
+    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    group_by(seed, sim_name, annee) %>%
+    summarise(n_total = n())
   
   details_deplacement <- FP_data %>%
-    filter(Annee %in% c(820, 940, 1040, 1160)) %>%
-    group_by(seed, sim_name, Annee, deplacement_from, deplacement_to) %>%
-    summarise(NbFP = n()) %>%
-    left_join(nombre_FP_total, by = c("seed", "Annee", "sim_name")) %>%
+    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    group_by(seed, sim_name, annee, deplacement_from, deplacement_to) %>%
+    summarise(nb_fp = n()) %>%
+    left_join(nombre_FP_total, by = c("seed", "annee", "sim_name")) %>%
     select(-sim_name) %>%
-    mutate(TxFP = NbFP / N_total * 1.0) %>%
-    group_by(Annee, deplacement_from, deplacement_to) %>%
-    collect() %>%
-    summarise(NbFP = mean(NbFP, na.rm = TRUE),
-              TxFP = mean(TxFP, na.rm = TRUE)) %>%
+    mutate(tx_fp = (nb_fp * 1.0) / (n_total * 1.0)) %>%
+    group_by(annee, deplacement_from, deplacement_to) %>%
+    summarise(nb_fp = mean(nb_fp),
+              tx_fp = mean(tx_fp)) %>%
     ungroup() %>%
+    collect() %>%
     filter(deplacement_from != "nil") %>%
     filter(deplacement_to != "nil") %>%
     mutate(deplacement_from = gsub(x = deplacement_from, pattern = "agregat", replacement = "Origine : Agrégat")) %>%
@@ -65,9 +65,9 @@ FP_DeplacementsDetail <- function(FP_data){
     mutate(deplacement_to = paste0(toupper(substr(deplacement_to, 1, 1)), substr(deplacement_to, 2, nchar(deplacement_to))))
   
   
-  ggplot(details_deplacement, aes(deplacement_to, TxFP, fill = deplacement_to, group = deplacement_to)) + 
+  ggplot(details_deplacement, aes(deplacement_to, tx_fp, fill = deplacement_to, group = deplacement_to)) + 
     geom_col(position = "dodge") +
-    facet_grid(deplacement_from ~ Annee, scales = "free_x") +
+    facet_grid(deplacement_from ~ annee, scales = "free_x") +
     xlab("Temps") + ylab("Part (moyenne) des Foyers Paysans") +
     scale_y_continuous(labels = percent) +
     ggtitle("Détail du type de déplacement des Foyers Paysans") +
@@ -90,7 +90,11 @@ output$FP_DeplacementsDetail_Filter <- renderPlot({
 })
 
 FP_Concentration <- function(results_data){
-  ggplot(results_data %>% collect(), aes(factor(Annee), prop_FP_isoles)) +
+  concentration_data <- results_data %>%
+    select(annee, prop_fp_isoles) %>%
+    collect()
+  
+  ggplot(concentration_data, aes(factor(annee), prop_fp_isoles)) +
     geom_tufteboxplot() +
     ggtitle("Évolution de la part de FP isolés") +
     xlab("Temps") + ylab("Taux de FP isolés") +
@@ -110,22 +114,23 @@ output$FP_Concentration_Filter <- renderPlot({
 
 FP_Satisfaction <- function(FP_data){
   satisfaction_data <- FP_data %>%
-    select(Annee, sMat, sRel, sProt, Satis) %>%
+    select(annee, smat, srel, sprot, satis) %>%
+    collect() %>%
     rename(
-      Globale = Satis,
-      Matérielle = sMat,
-      Protection = sProt,
-      Religieuse = sRel) %>%
-    group_by(Annee) %>%
+      Globale = satis,
+      Matérielle = smat,
+      Protection = sprot,
+      Religieuse = srel) %>%
+    group_by(annee) %>%
     sample_n(size = 4E3, replace = FALSE) %>%
     ungroup() %>%
-    gather(key = Type, value = Satisfaction, -Annee)
+    gather(key = Type, value = Satisfaction, -annee)
   
-  ggplot(satisfaction_data, aes(Annee, Satisfaction, col = Type, fill = Type)) +
-    geom_violin(aes(group = factor(Annee))) +
+  ggplot(satisfaction_data, aes(annee, Satisfaction, col = Type, fill = Type)) +
+    geom_violin(aes(group = factor(annee))) +
     facet_wrap(~ Type) +
     geom_smooth(data = satisfaction_data %>%
-                  group_by(Annee) %>%
+                  group_by(annee) %>%
                   sample_n(size = 100, replace = FALSE) %>%
                   ungroup(),
       alpha = .3, se = FALSE, na.rm = TRUE, method = "gam", formula = y ~ s(x, bs = "cs")) +
