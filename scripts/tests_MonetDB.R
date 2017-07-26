@@ -4,7 +4,7 @@ library(dbplyr)
 library(DBI)
 library(MonetDBLite)
 
-tmpDir <- "data/testMonetDB.db"
+tmpDir <- "~/outputs_TR8/testMonetDB.db"
 my_db_monetdb <- MonetDBLite::src_monetdblite(tmpDir)
 
 # flights <- nycflights13::flights
