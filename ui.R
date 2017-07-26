@@ -9,13 +9,13 @@ shinyUI(fluidPage(
                                                    selected = c("4_4_A", "4_5_A"),
                                                    multiple = TRUE)),
                              textOutput("dataVolumeHaut",inline =  TRUE),
-                             fluidRow(column(12, style = "background-color:#43a2ca;",
+                             fluidRow(column(12, style = "background-color: rgba(67, 162, 202, 0.3);",
                                              parcoordsOutput("paramParCoords", width = "100%", height = "200px"))),
                              # dataTableOutput("paramLegend"),
                              plotOutput("simNames", height = "200px"),
                              plotOutput("resultsPlot", height = "200px"),
                              textOutput("dataVolumeBas",inline =  TRUE),
-                             fluidRow(column(12, style = "background-color:#FF0000;",
+                             fluidRow(column(12, style = "background-color: rgba(25, 0, 0, 0.3);",
                                              parcoordsOutput("paramParCoordsBas", width = "100%", height = "200px")))
   ),
   mainPanel(
