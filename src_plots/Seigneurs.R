@@ -16,12 +16,13 @@ Seigneurs_Nb <- function(seigneurs_data){
 }
 
 output$Seigneurs_Nb <- renderPlot({
-  Seigneurs_Nb(seigneurs_data = sim$seigneurs)
+  req(filtredHaut$seigneurs)
+  Seigneurs_Nb(seigneurs_data = filtredHaut$seigneurs)
 })
 
 output$Seigneurs_Nb_Filter <- renderPlot({
-  req(filtred$seigneurs)
-  Seigneurs_Nb(seigneurs_data = filtred$seigneurs)
+  req(filtredBas$seigneurs)
+  Seigneurs_Nb(seigneurs_data = filtredBas$seigneurs)
 })
 
 Seigneurs_Chateaux <- function(seigneurs_data){
@@ -86,12 +87,13 @@ Seigneurs_Chateaux <- function(seigneurs_data){
 }
 
 output$Seigneurs_Chateaux <- renderPlot({
-  Seigneurs_Chateaux(seigneurs_data = sim$seigneurs)
+  req(filtredHaut$seigneurs)
+  Seigneurs_Chateaux(seigneurs_data = filtredHaut$seigneurs)
 })
 
 output$Seigneurs_Chateaux_Filter <- renderPlot({
-  req(filtred$seigneurs)
-  Seigneurs_Chateaux(seigneurs_data = filtred$seigneurs)
+  req(filtredBas$seigneurs)
+  Seigneurs_Chateaux(seigneurs_data = filtredBas$seigneurs)
 })
 
 Seigneurs_Vassaux <- function(seigneurs_data){
@@ -143,12 +145,13 @@ Seigneurs_Vassaux <- function(seigneurs_data){
 }
 
 output$Seigneurs_Vassaux <- renderPlot({
-  Seigneurs_Vassaux(seigneurs_data = sim$seigneurs)
+  req(filtredHaut$seigneurs)
+  Seigneurs_Vassaux(seigneurs_data = filtredHaut$seigneurs)
 })
 
 output$Seigneurs_Vassaux_Filter <- renderPlot({
-  req(filtred$seigneurs)
-  Seigneurs_Vassaux(seigneurs_data = filtred$seigneurs)
+  req(filtredBas$seigneurs)
+  Seigneurs_Vassaux(seigneurs_data = filtredBas$seigneurs)
 })
 
 Seigneurs_Redevances <- function(seigneurs_data){
@@ -167,12 +170,13 @@ Seigneurs_Redevances <- function(seigneurs_data){
 }
 
 output$Seigneurs_Redevances <- renderPlot({
-  Seigneurs_Redevances(seigneurs_data = sim$seigneurs)
+  req(filtredHaut$seigneurs)
+  Seigneurs_Redevances(seigneurs_data = filtredHaut$seigneurs)
 })
 
 output$Seigneurs_Redevances_Filter <- renderPlot({
-  req(filtred$seigneurs)
-  Seigneurs_Redevances(seigneurs_data = filtred$seigneurs)
+  req(filtredBas$seigneurs)
+  Seigneurs_Redevances(seigneurs_data = filtredBas$seigneurs)
 })
 
 Seigneurs_Redevances_PS <- function(seigneurs_data){
@@ -209,12 +213,13 @@ Seigneurs_Redevances_PS <- function(seigneurs_data){
 }
 
 output$Seigneurs_Redevances_PS <- renderPlot({
-  Seigneurs_Redevances_PS(seigneurs_data = sim$seigneurs)
+  req(filtredHaut$seigneurs)
+  Seigneurs_Redevances_PS(seigneurs_data = filtredHaut$seigneurs)
 })
 
 output$Seigneurs_Redevances_PS_Filter <- renderPlot({
-  req(filtred$seigneurs)
-  Seigneurs_Redevances_PS(seigneurs_data = filtred$seigneurs)
+  req(filtredBas$seigneurs)
+  Seigneurs_Redevances_PS(seigneurs_data = filtredBas$seigneurs)
 })
 
 Seigneurs_Puissance <- function(seigneurs_data){
@@ -237,12 +242,13 @@ Seigneurs_Puissance <- function(seigneurs_data){
 }
 
 output$Seigneurs_Puissance <- renderPlot({
-  Seigneurs_Puissance(seigneurs_data = sim$seigneurs)
+  req(filtredHaut$seigneurs)
+  Seigneurs_Puissance(seigneurs_data = filtredHaut$seigneurs)
 })
 
 output$Seigneurs_Puissance_Filter <- renderPlot({
-  req(filtred$seigneurs)
-  Seigneurs_Puissance(seigneurs_data = filtred$seigneurs)
+  req(filtredBas$seigneurs)
+  Seigneurs_Puissance(seigneurs_data = filtredBas$seigneurs)
 })
 
 
@@ -283,12 +289,13 @@ Seigneurs_Agregats <- function(seigneurs_data, agregats_data){
 }
 
 output$Seigneurs_Agregats <- renderPlot({
-  Seigneurs_Agregats(seigneurs_data = sim$seigneurs,
-                     agregats_data = sim$agregats)
+  req(filtredHaut$seigneurs, filtredHaut$agregats)
+  Seigneurs_Agregats(seigneurs_data = filtredHaut$seigneurs,
+                     agregats_data = filtredHaut$agregats)
 })
 
 output$Seigneurs_Agregats_Filter <- renderPlot({
-  req(filtred$seigneurs, filtred$agregats)
-  Seigneurs_Agregats(seigneurs_data = filtred$seigneurs,
-                     agregats_data = filtred$agregats)
+  req(filtredBas$seigneurs, filtredBas$agregats)
+  Seigneurs_Agregats(seigneurs_data = filtredBas$seigneurs,
+                     agregats_data = filtredBas$agregats)
 })

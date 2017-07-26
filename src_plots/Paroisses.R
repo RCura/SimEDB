@@ -12,12 +12,13 @@ Paroisses_Nb <- function(paroisses_data){
 }
 
 output$Paroisses_Nb <- renderPlot({
-  Paroisses_Nb(paroisses_data = sim$paroisses)
+  req(filtredHaut$paroisses)
+  Paroisses_Nb(paroisses_data = filtredHaut$paroisses)
 })
 
 output$Paroisses_Nb_Filter <- renderPlot({
-  req(filtred$paroisses)
-  Paroisses_Nb(paroisses_data = filtred$paroisses)
+  req(filtredBas$paroisses)
+  Paroisses_Nb(paroisses_data = filtredBas$paroisses)
 })
 
 Paroisses_Compo <- function(paroisses_data){
@@ -40,12 +41,13 @@ Paroisses_Compo <- function(paroisses_data){
 }
 
 output$Paroisses_Compo <- renderPlot({
-  Paroisses_Compo(paroisses_data = sim$paroisses)
+  req(filtredHaut$paroisses)
+  Paroisses_Compo(paroisses_data = filtredHaut$paroisses)
 })
 
 output$Paroisses_Compo_Filter <- renderPlot({
-  req(filtred$paroisses)
-  Paroisses_Compo(paroisses_data = filtred$paroisses)
+  req(filtredBas$paroisses)
+  Paroisses_Compo(paroisses_data = filtredBas$paroisses)
 })
 
 Paroisses_Promo <- function(paroisses_data){
@@ -70,12 +72,13 @@ Paroisses_Promo <- function(paroisses_data){
 }
 
 output$Paroisses_Promo <- renderPlot({
-  Paroisses_Promo(paroisses_data = sim$paroisses)
+  req(filtredHaut$paroisses)
+  Paroisses_Promo(paroisses_data = filtredHaut$paroisses)
 })
 
 output$Paroisses_Promo_Filter <- renderPlot({
-  req(filtred$paroisses)
-  Paroisses_Promo(paroisses_data = filtred$paroisses)
+  req(filtredBas$paroisses)
+  Paroisses_Promo(paroisses_data = filtredBas$paroisses)
 })
 
 Paroisses_Superficie <- function(paroisses_data){
@@ -103,10 +106,11 @@ Paroisses_Superficie <- function(paroisses_data){
 }
 
 output$Paroisses_Superficie <- renderPlot({
-  Paroisses_Superficie(paroisses_data = sim$paroisses)
+  req(filtredHaut$paroisses)
+  Paroisses_Superficie(paroisses_data = filtredHaut$paroisses)
 })
 
 output$Paroisses_Superficie_Filter <- renderPlot({
-  req(filtred$paroisses)
-  Paroisses_Superficie(paroisses_data = filtred$paroisses)
+  req(filtredBas$paroisses)
+  Paroisses_Superficie(paroisses_data = filtredBas$paroisses)
 })

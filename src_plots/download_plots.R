@@ -2,172 +2,172 @@
 ########## FP ##########
 ########################
 
-output$FP_TypeDeplacements_DL <- downloadHandler(
-  filename = function(){"FP_TypeDeplacements.pdf"},
-  content = function(file){ ggsave(file, plot = FP_TypeDeplacements(sim$FP), device = "pdf") }
+output$FP_TypeDeplacements_Haut_DL <- downloadHandler(
+  filename = function(){"FP_TypeDeplacements_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = FP_TypeDeplacements(filtredHaut$FP), device = "pdf") }
 )
 
-output$FP_TypeDeplacements_Filter_DL <- downloadHandler(
-  filename = function(){"FP_TypeDeplacements_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = FP_TypeDeplacements(filtred$FP), device = "pdf") }
+output$FP_TypeDeplacements_Bas_DL <- downloadHandler(
+  filename = function(){"FP_TypeDeplacements_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = FP_TypeDeplacements(filtredBas$FP), device = "pdf") }
 )
 
-output$FP_DeplacementsDetail_DL <- downloadHandler(
-  filename = function(){"FP_DeplacementsDetail.pdf"},
-  content = function(file){ ggsave(file, plot = FP_DeplacementsDetail(sim$FP), device = "pdf") }
+output$FP_DeplacementsDetail_Haut_DL <- downloadHandler(
+  filename = function(){"FP_DeplacementsDetail_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = FP_DeplacementsDetail(filtredHaut$FP), device = "pdf") }
 )
 
-output$FP_DeplacementsDetail_Filter_DL <- downloadHandler(
-  filename = function(){"FP_DeplacementsDetail_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = FP_DeplacementsDetail(filtred$FP), device = "pdf") }
+output$FP_DeplacementsDetail_Bas_DL <- downloadHandler(
+  filename = function(){"FP_DeplacementsDetail_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = FP_DeplacementsDetail(filtredBas$FP), device = "pdf") }
 )
 
-output$FP_Concentration_DL <- downloadHandler(
-  filename = function(){"FP_Concentration.pdf"},
-  content = function(file){ ggsave(file, plot = FP_Concentration(sim$results), device = "pdf") }
+output$FP_Concentration_Haut_DL <- downloadHandler(
+  filename = function(){"FP_Concentration_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = FP_Concentration(filtredHaut$results), device = "pdf") }
 )
 
-output$FP_Concentration_Filter_DL <- downloadHandler(
-  filename = function(){"FP_Concentration_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = FP_Concentration(filtred$results), device = "pdf") }
+output$FP_Concentration_Bas_DL <- downloadHandler(
+  filename = function(){"FP_Concentration_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = FP_Concentration(filtredBas$results), device = "pdf") }
 )
 
-output$FP_Satisfaction_DL <- downloadHandler(
-  filename = function(){"FP_Satisfaction.pdf"},
-  content = function(file){ ggsave(file, plot = FP_Satisfaction(sim$FP), device = "pdf") }
+output$FP_Satisfaction_Haut_DL <- downloadHandler(
+  filename = function(){"FP_Satisfaction_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = FP_Satisfaction(filtredHaut$FP), device = "pdf") }
 )
 
-output$FP_Satisfaction_Filter_DL <- downloadHandler(
-  filename = function(){"FP_Satisfaction_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = FP_Satisfaction(filtred$FP), device = "pdf") }
+output$FP_Satisfaction_Bas_DL <- downloadHandler(
+  filename = function(){"FP_Satisfaction_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = FP_Satisfaction(filtredBas$FP), device = "pdf") }
 )
 
 ########################
 ####### Agrégats #######
 ########################
 
-output$Agregats_Nb_DL <- downloadHandler(
-  filename = function(){"Agregats_Nb.pdf"},
-  content = function(file){ ggsave(file, plot = Agregats_Nb(sim$agregats), device = "pdf") }
+output$Agregats_Nb_Haut_DL <- downloadHandler(
+  filename = function(){"Agregats_Nb_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Agregats_Nb(filtredHaut$agregats), device = "pdf") }
 )
 
-output$Agregats_Nb_Filter_DL <- downloadHandler(
-  filename = function(){"Agregats_Nb_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Agregats_Nb(filtred$agregats), device = "pdf") }
+output$Agregats_Nb_Bas_DL <- downloadHandler(
+  filename = function(){"Agregats_Nb_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Agregats_Nb(filtredBas$agregats), device = "pdf") }
 )
 
-output$Agregats_Poles_DL <- downloadHandler(
-  filename = function(){"Agregats_Poles.pdf"},
-  content = function(file){ ggsave(file, plot = Agregats_Poles(sim$agregats), device = "pdf") }
+output$Agregats_Poles_Haut_DL <- downloadHandler(
+  filename = function(){"Agregats_Poles_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Agregats_Poles(filtredHaut$agregats), device = "pdf") }
 )
 
-output$Agregats_Poles_Filter_DL <- downloadHandler(
-  filename = function(){"Agregats_Poles_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Agregats_Poles(filtred$agregats), device = "pdf") }
+output$Agregats_Poles_Bas_DL <- downloadHandler(
+  filename = function(){"Agregats_Poles_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Agregats_Poles(filtredBas$agregats), device = "pdf") }
 )
 
-output$Agregats_Paroisses_DL <- downloadHandler(
-  filename = function(){"Agregats_Paroisses.pdf"},
-  content = function(file){ ggsave(file, plot =  Agregats_Paroisses(agregats_data = sim$agregats, poles_data = sim$poles), device = "pdf") }
+output$Agregats_Paroisses_Haut_DL <- downloadHandler(
+  filename = function(){"Agregats_Paroisses_Haut.pdf"},
+  content = function(file){ ggsave(file, plot =  Agregats_Paroisses(agregats_data = filtredHaut$agregats, poles_data = filtredHaut$poles), device = "pdf") }
 )
 
-output$Agregats_Paroisses_Filter_DL <- downloadHandler(
-  filename = function(){"Agregats_Paroisses_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Agregats_Paroisses(agregats_data = filtred$agregats, poles_data = filtred$poles), device = "pdf") }
+output$Agregats_Paroisses_Bas_DL <- downloadHandler(
+  filename = function(){"Agregats_Paroisses_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Agregats_Paroisses(agregats_data = filtredBas$agregats, poles_data = filtredBas$poles), device = "pdf") }
 )
 
-output$Agregats_CA_DL <- downloadHandler(
-  filename = function(){"Agregats_CA.pdf"},
-  content = function(file){ ggsave(file, plot = Agregats_CA(sim$agregats), device = "pdf") }
+output$Agregats_CA_Haut_DL <- downloadHandler(
+  filename = function(){"Agregats_CA_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Agregats_CA(filtredHaut$agregats), device = "pdf") }
 )
 
-output$Agregats_CA_Filter_DL <- downloadHandler(
-  filename = function(){"Agregats_CA_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Agregats_CA(filtred$agregats), device = "pdf") }
+output$Agregats_CA_Bas_DL <- downloadHandler(
+  filename = function(){"Agregats_CA_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Agregats_CA(filtredBas$agregats), device = "pdf") }
 )
 
-output$Agregats_RT_DL <- downloadHandler(
-  filename = function(){"Agregats_RT.pdf"},
-  content = function(file){ ggsave(file, plot = Agregats_RT(sim$agregats), device = "pdf") }
+output$Agregats_RT_Haut_DL <- downloadHandler(
+  filename = function(){"Agregats_RT_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Agregats_RT(filtredHaut$agregats), device = "pdf") }
 )
 
-output$Agregats_RT_Filter_DL <- downloadHandler(
-  filename = function(){"Agregats_RT_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Agregats_RT(filtred$agregats), device = "pdf") }
+output$Agregats_RT_Bas_DL <- downloadHandler(
+  filename = function(){"Agregats_RT_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Agregats_RT(filtredBas$agregats), device = "pdf") }
 )
 
 #######################
 ###### Seigneurs ######
 #######################
 
-output$Seigneurs_Nb_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Nb.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Nb(sim$seigneurs), device = "pdf") }
+output$Seigneurs_Nb_Haut_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Nb_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Nb(filtredHaut$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Nb_Filter_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Nb_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Nb(filtred$seigneurs), device = "pdf") }
+output$Seigneurs_Nb_Bas_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Nb_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Nb(filtredBas$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Chateaux_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Chateaux.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Chateaux(sim$seigneurs), device = "pdf") }
+output$Seigneurs_Chateaux_Haut_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Chateaux_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Chateaux(filtredHaut$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Chateaux_Filter_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Chateaux_DL.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Chateaux(filtred$seigneurs), device = "pdf") }
+output$Seigneurs_Chateaux_Bas_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Chateaux_Haut_DL_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Chateaux(filtredBas$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Vassaux_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Vassaux.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Vassaux(sim$seigneurs), device = "pdf") }
+output$Seigneurs_Vassaux_Haut_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Vassaux_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Vassaux(filtredHaut$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Vassaux_Filter_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Vassaux_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Vassaux(filtred$seigneurs), device = "pdf") }
+output$Seigneurs_Vassaux_Bas_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Vassaux_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Vassaux(filtredBas$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Redevances_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Redevances.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Redevances(sim$seigneurs), device = "pdf") }
+output$Seigneurs_Redevances_Haut_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Redevances_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Redevances(filtredHaut$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Redevances_Filter_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Redevances_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Redevances(filtred$seigneurs), device = "pdf") }
+output$Seigneurs_Redevances_Bas_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Redevances_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Redevances(filtredBas$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Redevances_PS_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Redevances_PS.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Redevances_PS(sim$seigneurs), device = "pdf") }
+output$Seigneurs_Redevances_PS_Haut_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Redevances_PS_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Redevances_PS(filtredHaut$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Redevances_PS_Filter_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Redevances_PS_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Redevances_PS(filtred$seigneurs), device = "pdf") }
+output$Seigneurs_Redevances_PS_Bas_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Redevances_PS_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Redevances_PS(filtredBas$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Puissance_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Puissance.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Puissance(sim$seigneurs), device = "pdf") }
+output$Seigneurs_Puissance_Haut_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Puissance_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Puissance(filtredHaut$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Puissance_Filter_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Puissance_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Puissance(filtred$seigneurs), device = "pdf") }
+output$Seigneurs_Puissance_Bas_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Puissance_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Puissance(filtredBas$seigneurs), device = "pdf") }
 )
 
-output$Seigneurs_Agregats_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Agregats.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Agregats(sim$seigneurs, sim$agregats), device = "pdf") }
+output$Seigneurs_Agregats_Haut_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Agregats_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Agregats(filtredHaut$seigneurs, filtredHaut$agregats), device = "pdf") }
 )
 
-output$Seigneurs_Agregats_Filter_DL <- downloadHandler(
-  filename = function(){"Seigneurs_Agregats_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Seigneurs_Agregats(filtred$seigneurs, filtred$agregats), device = "pdf") }
+output$Seigneurs_Agregats_Bas_DL <- downloadHandler(
+  filename = function(){"Seigneurs_Agregats_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Seigneurs_Agregats(filtredBas$seigneurs, filtredBas$agregats), device = "pdf") }
 )
 
 
@@ -175,96 +175,96 @@ output$Seigneurs_Agregats_Filter_DL <- downloadHandler(
 ###### Poles ######
 ###################
 
-output$Poles_Nb_DL <- downloadHandler(
-  filename = function(){"Poles_Nb.pdf"},
-  content = function(file){ ggsave(file, plot = Poles_Nb(sim$poles), device = "pdf") }
+output$Poles_Nb_Haut_DL <- downloadHandler(
+  filename = function(){"Poles_Nb_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Poles_Nb(filtredHaut$poles), device = "pdf") }
 )
 
-output$Poles_Nb_Filter_DL <- downloadHandler(
-  filename = function(){"Poles_Nb_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Poles_Nb(filtred$poles), device = "pdf") }
+output$Poles_Nb_Bas_DL <- downloadHandler(
+  filename = function(){"Poles_Nb_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Poles_Nb(filtredBas$poles), device = "pdf") }
 )
 
-output$Poles_Agregats_DL <- downloadHandler(
-  filename = function(){"Poles_Agregats.pdf"},
-  content = function(file){ ggsave(file, plot = Poles_Agregats(sim$poles), device = "pdf") }
+output$Poles_Agregats_Haut_DL <- downloadHandler(
+  filename = function(){"Poles_Agregats_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Poles_Agregats(filtredHaut$poles), device = "pdf") }
 )
 
-output$Poles_Agregats_Filter_DL <- downloadHandler(
-  filename = function(){"Poles_Agregats_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Poles_Agregats(filtred$poles), device = "pdf") }
+output$Poles_Agregats_Bas_DL <- downloadHandler(
+  filename = function(){"Poles_Agregats_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Poles_Agregats(filtredBas$poles), device = "pdf") }
 )
 
-output$Poles_Compo_DL <- downloadHandler(
-  filename = function(){"Poles_Compo.pdf"},
-  content = function(file){ ggsave(file, plot = Poles_Compo(sim$poles), device = "pdf") }
+output$Poles_Compo_Haut_DL <- downloadHandler(
+  filename = function(){"Poles_Compo_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Poles_Compo(filtredHaut$poles), device = "pdf") }
 )
 
-output$Poles_Compo_Filter_DL <- downloadHandler(
-  filename = function(){"Poles_Compo_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Poles_Compo(filtred$poles), device = "pdf") }
+output$Poles_Compo_Bas_DL <- downloadHandler(
+  filename = function(){"Poles_Compo_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Poles_Compo(filtredBas$poles), device = "pdf") }
 )
 
-output$Poles_Attrac_DL <- downloadHandler(
-  filename = function(){"Poles_Attrac.pdf"},
-  content = function(file){ ggsave(file, plot = Poles_Attrac(sim$poles), device = "pdf") }
+output$Poles_Attrac_Haut_DL <- downloadHandler(
+  filename = function(){"Poles_Attrac_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Poles_Attrac(filtredHaut$poles), device = "pdf") }
 )
 
-output$Poles_Attrac_Filter_DL <- downloadHandler(
-  filename = function(){"Poles_Attrac_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Poles_Attrac(filtred$poles), device = "pdf") }
+output$Poles_Attrac_Bas_DL <- downloadHandler(
+  filename = function(){"Poles_Attrac_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Poles_Attrac(filtredBas$poles), device = "pdf") }
 )
 
-output$Poles_RT_DL <- downloadHandler(
-  filename = function(){"Poles_RT.pdf"},
-  content = function(file){ ggsave(file, plot = Poles_RT(sim$poles), device = "pdf") }
+output$Poles_RT_Haut_DL <- downloadHandler(
+  filename = function(){"Poles_RT_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Poles_RT(filtredHaut$poles), device = "pdf") }
 )
 
-output$Poles_RT_Filter_DL <- downloadHandler(
-  filename = function(){"Poles_RT_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Poles_RT(filtred$poles), device = "pdf") }
+output$Poles_RT_Bas_DL <- downloadHandler(
+  filename = function(){"Poles_RT_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Poles_RT(filtredBas$poles), device = "pdf") }
 )
 
 #######################
 ###### Paroisses ######
 #######################
 
-output$Paroisses_Nb_DL <- downloadHandler(
-  filename = function(){"Paroisses_Nb.pdf"},
-  content = function(file){ ggsave(file, plot = Paroisses_Nb(sim$paroisses), device = "pdf") }
+output$Paroisses_Nb_Haut_DL <- downloadHandler(
+  filename = function(){"Paroisses_Nb_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Paroisses_Nb(filtredHaut$paroisses), device = "pdf") }
 )
 
-output$Paroisses_Nb_Filter_DL <- downloadHandler(
-  filename = function(){"Paroisses_Nb_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Paroisses_Nb(filtred$paroisses), device = "pdf") }
+output$Paroisses_Nb_Bas_DL <- downloadHandler(
+  filename = function(){"Paroisses_Nb_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Paroisses_Nb(filtredBas$paroisses), device = "pdf") }
 )
 
-output$Paroisses_Compo_DL <- downloadHandler(
-  filename = function(){"Paroisses_Compo.pdf"},
-  content = function(file){ ggsave(file, plot = Paroisses_Compo(sim$paroisses), device = "pdf") }
+output$Paroisses_Compo_Haut_DL <- downloadHandler(
+  filename = function(){"Paroisses_Compo_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Paroisses_Compo(filtredHaut$paroisses), device = "pdf") }
 )
 
-output$Paroisses_Compo_Filter_DL <- downloadHandler(
-  filename = function(){"Paroisses_Compo_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Paroisses_Compo(filtred$paroisses), device = "pdf") }
+output$Paroisses_Compo_Bas_DL <- downloadHandler(
+  filename = function(){"Paroisses_Compo_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Paroisses_Compo(filtredBas$paroisses), device = "pdf") }
 )
 
-output$Paroisses_Promo_DL <- downloadHandler(
-  filename = function(){"Paroisses_Promo.pdf"},
-  content = function(file){ ggsave(file, plot = Paroisses_Promo(sim$paroisses), device = "pdf") }
+output$Paroisses_Promo_Haut_DL <- downloadHandler(
+  filename = function(){"Paroisses_Promo_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Paroisses_Promo(filtredHaut$paroisses), device = "pdf") }
 )
 
-output$Paroisses_Promo_Filter_DL <- downloadHandler(
-  filename = function(){"Paroisses_Promo_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Paroisses_Promo(filtred$paroisses), device = "pdf") }
+output$Paroisses_Promo_Bas_DL <- downloadHandler(
+  filename = function(){"Paroisses_Promo_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Paroisses_Promo(filtredBas$paroisses), device = "pdf") }
 )
 
-output$Paroisses_Superficie_DL <- downloadHandler(
-  filename = function(){"Paroisses_Superficie.pdf"},
-  content = function(file){ ggsave(file, plot = Paroisses_Superficie(sim$paroisses), device = "pdf") }
+output$Paroisses_Superficie_Haut_DL <- downloadHandler(
+  filename = function(){"Paroisses_Superficie_Haut.pdf"},
+  content = function(file){ ggsave(file, plot = Paroisses_Superficie(filtredHaut$paroisses), device = "pdf") }
 )
 
-output$Paroisses_Superficie_Filter_DL <- downloadHandler(
-  filename = function(){"Paroisses_Superficie_Filter.pdf"},
-  content = function(file){ ggsave(file, plot = Paroisses_Superficie(filtred$paroisses), device = "pdf") }
+output$Paroisses_Superficie_Bas_DL <- downloadHandler(
+  filename = function(){"Paroisses_Superficie_Bas.pdf"},
+  content = function(file){ ggsave(file, plot = Paroisses_Superficie(filtredBas$paroisses), device = "pdf") }
 )

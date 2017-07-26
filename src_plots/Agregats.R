@@ -12,12 +12,13 @@ Agregats_Nb <- function(agregats_data){
 }
 
 output$Agregats_Nb <- renderPlot({
-  Agregats_Nb(sim$agregats)
+  req(filtredHaut$agregats)
+  Agregats_Nb(filtredHaut$agregats)
 })
 
 output$Agregats_Nb_Filter <- renderPlot({
-  req(filtred$agregats)
-  Agregats_Nb(filtred$agregats)
+  req(filtredBas$agregats)
+  Agregats_Nb(filtredBas$agregats)
 })
 
 Agregats_Poles <- function(agregats_data){
@@ -52,12 +53,13 @@ Agregats_Poles <- function(agregats_data){
 }
 
 output$Agregats_Poles <- renderPlot({
-  Agregats_Poles(agregats_data = sim$agregats)
+  req(filtredHaut$agregats)
+  Agregats_Poles(agregats_data = filtredHaut$agregats)
 })
 
 output$Agregats_Poles_Filter <- renderPlot({
-  req(filtred$agregats)
-  Agregats_Poles(agregats_data = filtred$agregats)
+  req(filtredBas$agregats)
+  Agregats_Poles(agregats_data = filtredBas$agregats)
 })
 
 Agregats_CA <- function(agregats_data){
@@ -75,12 +77,13 @@ Agregats_CA <- function(agregats_data){
 }
 
 output$Agregats_CA <- renderPlot({
-  Agregats_CA(agregats_data = sim$agregats)
+  req(filtredHaut$agregats)
+  Agregats_CA(agregats_data = filtredHaut$agregats)
 })
 
 output$Agregats_CA_Filter <- renderPlot({
-  req(filtred$agregats)
-  Agregats_CA(agregats_data = filtred$agregats)
+  req(filtredBas$agregats)
+  Agregats_CA(agregats_data = filtredBas$agregats)
 })
 
 Agregats_RT <- function(agregats_data){
@@ -109,12 +112,13 @@ Agregats_RT <- function(agregats_data){
 }
 
 output$Agregats_RT <- renderPlot({
-  Agregats_RT(agregats_data = sim$agregats)
+  req(filtredHaut$agregats)
+  Agregats_RT(agregats_data = filtredHaut$agregats)
 })
 
 output$Agregats_RT_Filter <- renderPlot({
-  req(filtred$agregats)
-  Agregats_RT(agregats_data = filtred$agregats)
+  req(filtredBas$agregats)
+  Agregats_RT(agregats_data = filtredBas$agregats)
 })
 
 
@@ -146,10 +150,11 @@ Agregats_Paroisses <- function(agregats_data, poles_data){
 }
 
 output$Agregats_Paroisses <- renderPlot({
-  Agregats_Paroisses(agregats_data = sim$agregats, poles_data = sim$poles)
+  req(filtredHaut$agregats,  filtredHaut$poles)
+  Agregats_Paroisses(agregats_data = filtredHaut$agregats, poles_data = filtredHaut$poles)
 })
 
 output$Agregats_Paroisses_Filter <- renderPlot({
-  req(filtred$poles, filtred$agregats)
-  Agregats_Paroisses(agregats_data = filtred$agregats, poles_data = filtred$poles)
+  req(filtredBas$poles, filtredBas$agregats)
+  Agregats_Paroisses(agregats_data = filtredBas$agregats, poles_data = filtredBas$poles)
 })

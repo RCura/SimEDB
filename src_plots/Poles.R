@@ -12,12 +12,13 @@ Poles_Nb <- function(poles_data){
 }
 
 output$Poles_Nb <- renderPlot({
-  Poles_Nb(poles_data = sim$poles)
+  req(filtredHaut$poles)
+  Poles_Nb(poles_data = filtredHaut$poles)
 })
 
 output$Poles_Nb_Filter <- renderPlot({
-  req(filtred$poles)
-  Poles_Nb(poles_data = filtred$poles)
+  req(filtredBas$poles)
+  Poles_Nb(poles_data = filtredBas$poles)
 })
 
 Poles_Agregats <- function(poles_data){
@@ -52,12 +53,13 @@ Poles_Agregats <- function(poles_data){
 }
 
 output$Poles_Agregats <- renderPlot({
-  Poles_Agregats(poles_data = sim$poles)
+  req(filtredHaut$poles)
+  Poles_Agregats(poles_data = filtredHaut$poles)
 })
 
 output$Poles_Agregats_Filter <- renderPlot({
-  req(filtred$poles)
-  Poles_Agregats(poles_data = filtred$poles)
+  req(filtredBas$poles)
+  Poles_Agregats(poles_data = filtredBas$poles)
 })
 
 Poles_Compo <- function(poles_data){
@@ -78,12 +80,13 @@ Poles_Compo <- function(poles_data){
 }
 
 output$Poles_Compo <- renderPlot({
-  Poles_Compo(poles_data = sim$poles)
+  req(filtredHaut$poles)
+  Poles_Compo(poles_data = filtredHaut$poles)
 })
 
 output$Poles_Compo_Filter <- renderPlot({
-  req(filtred$poles)
-  Poles_Compo(poles_data = filtred$poles)
+  req(filtredBas$poles)
+  Poles_Compo(poles_data = filtredBas$poles)
 })
 
 Poles_Attrac <- function(poles_data){
@@ -104,12 +107,13 @@ Poles_Attrac <- function(poles_data){
 }
 
 output$Poles_Attrac <- renderPlot({
-  Poles_Attrac(poles_data = sim$poles)
+  req(filtredHaut$poles)
+  Poles_Attrac(poles_data = filtredHaut$poles)
 })
 
 output$Poles_Attrac_Filter <- renderPlot({
-  req(filtred$poles)
-  Poles_Attrac(poles_data = filtred$poles)
+  req(filtredBas$poles)
+  Poles_Attrac(poles_data = filtredBas$poles)
 })
 
 Poles_RT <- function(poles_data){
@@ -140,10 +144,11 @@ Poles_RT <- function(poles_data){
 }
 
 output$Poles_RT <- renderPlot({
-  Poles_RT(poles_data = sim$poles)
+  req(filtredHaut$poles)
+  Poles_RT(poles_data = filtredHaut$poles)
 })
 
 output$Poles_RT_Filter <- renderPlot({
-  req(filtred$poles)
-  Poles_RT(poles_data = filtred$poles)
+  req(filtredBas$poles)
+  Poles_RT(poles_data = filtredBas$poles)
 })

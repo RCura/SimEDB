@@ -29,12 +29,13 @@ FP_TypeDeplacements <- function(FP_data)({
 })
 
 output$FP_TypeDeplacements <- renderPlot({
-  FP_TypeDeplacements(sim$FP)
+  req(filtredHaut$FP)
+  FP_TypeDeplacements(filtredHaut$FP)
 })
 
 output$FP_TypeDeplacements_filter <- renderPlot({
-  req(filtred$FP)
-  FP_TypeDeplacements(filtred$FP)
+  req(filtredBas$FP)
+  FP_TypeDeplacements(filtredBas$FP)
 })
 
 FP_DeplacementsDetail <- function(FP_data){
@@ -81,12 +82,13 @@ FP_DeplacementsDetail <- function(FP_data){
 }
 
 output$FP_DeplacementsDetail <- renderPlot({
-  FP_DeplacementsDetail(FP_data = sim$FP)
+  req(filtredHaut$FP)
+  FP_DeplacementsDetail(FP_data = filtredHaut$FP)
 })
 
 output$FP_DeplacementsDetail_Filter <- renderPlot({
-  req(filtred$FP)
-  FP_DeplacementsDetail(FP_data = filtred$FP)
+  req(filtredBas$FP)
+  FP_DeplacementsDetail(FP_data = filtredBas$FP)
 })
 
 FP_Concentration <- function(results_data){
@@ -103,12 +105,13 @@ FP_Concentration <- function(results_data){
 }
 
 output$FP_Concentration <- renderPlot({
-  FP_Concentration(sim$results)
+  req(filtredHaut$results)
+  FP_Concentration(filtredHaut$results)
 })
 
 output$FP_Concentration_Filter <- renderPlot({
-  req(filtred$results)
-  FP_Concentration(filtred$results)
+  req(filtredBas$results)
+  FP_Concentration(filtredBas$results)
 })
 
 
@@ -141,10 +144,11 @@ FP_Satisfaction <- function(FP_data){
 }
 
 output$FP_Satisfaction <- renderPlot({
-  FP_Satisfaction(FP_data = sim$FP)
+  req(filtredHaut$FP)
+  FP_Satisfaction(FP_data = filtredHaut$FP)
 })
 
 output$FP_Satisfaction_Filter <- renderPlot({
-  req(filtred$FP)
-  FP_Satisfaction(FP_data = filtred$FP)
+  req(filtredBas$FP)
+  FP_Satisfaction(FP_data = filtredBas$FP)
 })

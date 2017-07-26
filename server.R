@@ -2,7 +2,8 @@ library(shiny)
 
 shinyServer(function(session, input, output) {
   
-  oldBrushed <- reactiveVal(value = NA)
+  oldBrushedHaut <- reactiveVal(value = NA)
+  oldBrushedBas <- reactiveVal(value = NA)
   
   sim <- reactiveValues(agregats = agregats,
                         FP =  fp,
@@ -13,13 +14,22 @@ shinyServer(function(session, input, output) {
                         seigneurs = seigneurs,
                         seeds = seeds)
   
-  filtred <- reactiveValues(agregats = NULL,
-                            FP = NULL,
-                            parameters = NULL,
-                            paroisses = NULL,
-                            poles = NULL,
-                            results = NULL,
-                            seigneurs = NULL
+  filtredHaut <- reactiveValues(agregats = NULL,
+                                FP = NULL,
+                                parameters = NULL,
+                                paroisses = NULL,
+                                poles = NULL,
+                                results = NULL,
+                                seigneurs = NULL
+  )
+  
+  filtredBas <- reactiveValues(agregats = NULL,
+                               FP = NULL,
+                               parameters = NULL,
+                               paroisses = NULL,
+                               poles = NULL,
+                               results = NULL,
+                               seigneurs = NULL
   )
   
   observe({
@@ -52,37 +62,71 @@ shinyServer(function(session, input, output) {
     tmp_parameters %>% dplyr::select(!!nonUniqueParams)
   })
   
-  filtredSeeds <- reactive({
+  filtredSeedsHaut <- reactive({
     req(input$paramParCoords_brushed_row_names, sim$seeds)
     tmp_seeds <- sim$seeds %>% collect()
     nbBrushed <- length(input$paramParCoords_brushed_row_names)
     nbTotal <- tmp_seeds %>% nrow()
-    if (nbBrushed > 0 && nbBrushed < nbTotal && oldBrushed() != nbBrushed) {
+    if (nbBrushed > 0 && nbBrushed < nbTotal && oldBrushedHaut() != nbBrushed) {
       tmp_seeds$seed[as.numeric(input$paramParCoords_brushed_row_names)]
     } else {
-      oldBrushed(nbBrushed)
+      oldBrushedHaut(nbBrushed)
+      NULL
+    }
+  })
+  
+  filtredSeedsBas <- reactive({
+    req(input$paramParCoordsBas_brushed_row_names, sim$seeds)
+    tmp_seeds <- sim$seeds %>% collect()
+    nbBrushed <- length(input$paramParCoordsBas_brushed_row_names)
+    nbTotal <- tmp_seeds %>% nrow()
+    if (nbBrushed > 0 && nbBrushed < nbTotal && oldBrushedBas() != nbBrushed) {
+      tmp_seeds$seed[as.numeric(input$paramParCoordsBas_brushed_row_names)]
+    } else {
+      oldBrushedBas(nbBrushed)
       NULL
     }
   })
   
   observe({
-    if (length(filtredSeeds()) > 0) {
-      brushedSeeds <- tibble(seed = filtredSeeds())
-      filtred$agregats <- sim$agregats %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtred$FP <- sim$FP %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtred$parameters <- sim$parameters %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtred$paroisses <- sim$paroisses %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtred$poles <- sim$poles %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtred$results <- sim$results %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtred$seigneurs <- sim$seigneurs %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+    if (length(filtredSeedsHaut()) > 0) {
+      brushedSeeds <- tibble(seed = filtredSeedsHaut())
+      filtredHaut$agregats <- sim$agregats %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredHaut$FP <- sim$FP %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredHaut$parameters <- sim$parameters %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredHaut$paroisses <- sim$paroisses %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredHaut$poles <- sim$poles %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredHaut$results <- sim$results %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredHaut$seigneurs <- sim$seigneurs %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
     } else {
-      filtred$agregats <- NULL
-      filtred$FP <- NULL
-      filtred$parameters <- NULL
-      filtred$paroisses <- NULL
-      filtred$poles <- NULL
-      filtred$results <- NULL
-      filtred$seigneurs <- NULL
+      filtredHaut$agregats <- sim$agregats
+      filtredHaut$FP <- sim$FP
+      filtredHaut$parameters <- sim$parameters
+      filtredHaut$paroisses <- sim$paroisses
+      filtredHaut$poles <- sim$poles
+      filtredHaut$results <- sim$results
+      filtredHaut$seigneurs <- sim$seigneurs
+    }
+  })
+  
+  observe({
+    if (length(filtredSeedsBas()) > 0) {
+      brushedSeeds <- tibble(seed = filtredSeedsBas())
+      filtredBas$agregats <- sim$agregats %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredBas$FP <- sim$FP %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredBas$parameters <- sim$parameters %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredBas$paroisses <- sim$paroisses %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredBas$poles <- sim$poles %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredBas$results <- sim$results %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtredBas$seigneurs <- sim$seigneurs %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+    } else {
+      filtredBas$agregats <- NULL
+      filtredBas$FP <- NULL
+      filtredBas$parameters <- NULL
+      filtredBas$paroisses <- NULL
+      filtredBas$poles <- NULL
+      filtredBas$results <- NULL
+      filtredBas$seigneurs <- NULL
     }
   })
   
@@ -98,8 +142,27 @@ shinyServer(function(session, input, output) {
               autoresize = TRUE)
   })
   
-  output$dataVolume <- renderText({
+  output$paramParCoordsBas <- renderParcoords({
+    parcoords(parameters_data() %>% select(-seed),
+              color = list(
+                colorBy = "sim_name",
+                colorScale = htmlwidgets::JS('d3.scale.category10()')
+              ),
+              rownames = FALSE,
+              brushMode = "1d",
+              reorderable = TRUE,
+              autoresize = TRUE)
+  })
+  
+  output$dataVolumeHaut <- renderText({
     blob <- length(input$paramParCoords_brushed_row_names)
+    sprintf("%s simulations sélectionnées sur un total de %s",
+            blob,
+            sim$parameters %>% count() %>% collect() %>% pull())
+  })
+  
+  output$dataVolumeBas <- renderText({
+    blob <- length(input$paramParCoordsBas_brushed_row_names)
     sprintf("%s simulations sélectionnées sur un total de %s",
             blob,
             sim$parameters %>% count() %>% collect() %>% pull())
@@ -107,6 +170,7 @@ shinyServer(function(session, input, output) {
   
   
   summary_table <- reactive({
+    req(filtredHaut$results)
     
     Objectifs <- data_frame(
       Var = c("NbAgregats", "nbChateaux", "nbGdChateaux", "NbSeigneurs","nbEglisesParoissiales", "distance_eglises_paroissiales", "prop_FP_isoles", "RatioChargeFiscale"),
@@ -119,11 +183,11 @@ shinyServer(function(session, input, output) {
     ) %>%
       mutate(Var = tolower(Var))
     
-    nbSeigneurs <- sim$seigneurs %>%
+    nbSeigneurs <- filtredHaut$seigneurs %>%
       group_by(seed, annee) %>%
       summarise(nbseigneurs = n())
-      
-    tableau_resultats <- sim$results %>%
+    
+    tableau_resultats <- filtredHaut$results %>%
       filter(annee == 1160) %>%
       left_join(nbSeigneurs, by = c("seed", "annee")) %>%
       select(-seed) %>%
@@ -153,13 +217,13 @@ shinyServer(function(session, input, output) {
              `1er quartile` = Q1,
              `3ème quartile` = Q3,
              `Écart-type` = StDev)
-      
+    
     return(tableau_resultats)
   })
   
   
   summary_table2 <- reactive({
-    req(filtred$results)
+    req(filtredBas$results)
     Objectifs <- data_frame(
       Var = c("NbAgregats", "nbChateaux", "nbGdChateaux", "NbSeigneurs","nbEglisesParoissiales", "distance_eglises_paroissiales", "prop_FP_isoles", "RatioChargeFiscale"),
       RealVar = c("Agrégats", "Châteaux",  "Gros châteaux", "Seigneurs",
@@ -170,12 +234,12 @@ shinyServer(function(session, input, output) {
       Ordre = 1:8
     ) %>%
       mutate(Var = tolower(Var))
-
-    nbSeigneurs <- filtred$seigneurs %>%
+    
+    nbSeigneurs <- filtredBas$seigneurs %>%
       group_by(seed, annee) %>%
       summarise(nbseigneurs = n())
-
-    tableau_resultats <- filtred$results %>%
+    
+    tableau_resultats <- filtredBas$results %>%
       filter(annee == 1160) %>%
       left_join(nbSeigneurs, by = c("seed", "annee")) %>%
       select(-seed) %>%
@@ -205,10 +269,11 @@ shinyServer(function(session, input, output) {
              `1er quartile` = Q1,
              `3ème quartile` = Q3,
              `Écart-type` = StDev)
-
+    
   })
   
   output$targetsTable <- renderFormattable({
+    req(summary_table())
     formattable(summary_table(), table.attr = 'class="table table-striped"',
                 list(
                   area(row = 1:5, col = 2:6) ~ round,
@@ -224,15 +289,15 @@ shinyServer(function(session, input, output) {
   output$selectionTable <- renderFormattable({
     req(summary_table2())
     formattable(summary_table2(), table.attr = 'class="table table-striped"',
-              list(
-                area(row = 1:5, col = 2:6) ~ round,
-                area(row = 1:5, col = 7) ~ formatter("span", function(x){ round(x, digits = 2) }),
-                area(row = 6, col = 2:7) ~ formatter("span",  function(x){paste(round(x), "m")}),
-                area(row = 7, col = 2:6) ~ formatter("span",  function(x){paste(round(x * 100), "%")}),
-                area(row = 7, col = 7) ~ formatter("span",  function(x){paste(round(x * 100, digits = 1), "%")}),
-                area(row = 8, col = 2:6) ~ formatter("span", function(x){ paste("x", round(x)) }),
-                area(row = 8, col = 7) ~ formatter("span", function(x){ paste("x", round(x, digits = 2)) })
-              ))
+                list(
+                  area(row = 1:5, col = 2:6) ~ round,
+                  area(row = 1:5, col = 7) ~ formatter("span", function(x){ round(x, digits = 2) }),
+                  area(row = 6, col = 2:7) ~ formatter("span",  function(x){paste(round(x), "m")}),
+                  area(row = 7, col = 2:6) ~ formatter("span",  function(x){paste(round(x * 100), "%")}),
+                  area(row = 7, col = 7) ~ formatter("span",  function(x){paste(round(x * 100, digits = 1), "%")}),
+                  area(row = 8, col = 2:6) ~ formatter("span", function(x){ paste("x", round(x)) }),
+                  area(row = 8, col = 7) ~ formatter("span", function(x){ paste("x", round(x, digits = 2)) })
+                ))
   })
   
   output$simNames <- renderPlot({
@@ -242,13 +307,24 @@ shinyServer(function(session, input, output) {
       collect()
     
     simNamesPlot <- ggplot(simNames, aes(x = sim_name, y = n)) +
-      geom_col(fill = "#43a2ca", alpha = .3, colour = "#053144") +
+      geom_col(fill = NA, alpha = 1, colour = "black", linetype = "dotted") +
       labs(x = "Expériences", y = "Nombre de simulations",
            title = "Distribution des simulations") +
       theme_minimal()
     
-    if ( length( filtred$parameters ) > 1 ) {
-      simNamesFiltred <- filtred$parameters %>%
+    if ( length( filtredHaut$parameters ) > 1 ) {
+      simNamesFiltred <- filtredHaut$parameters %>%
+        group_by(sim_name) %>%
+        summarise(n = n()) %>%
+        collect()
+      
+      simNamesPlot <- simNamesPlot +
+        geom_col(data = simNamesFiltred,
+                 fill = "#43a2ca", alpha = 0.3, colour = "#053144")
+    }
+    
+    if ( length( filtredBas$parameters ) > 1 ) {
+      simNamesFiltred <- filtredBas$parameters %>%
         group_by(sim_name) %>%
         summarise(n = n()) %>%
         collect()
@@ -286,7 +362,7 @@ shinyServer(function(session, input, output) {
       mutate(VarCut = factor(VarCut, levels = unique(VarCut)))
     
     resultPlot <- ggplot(resultsData %>% filter(Variable != "seed"), aes(VarCut, Valeur)) +
-      geom_violin(scale = "area",  na.rm = TRUE, fill = "#43a2ca", alpha = .3, colour = "#053144") +
+      geom_violin(scale = "area",  na.rm = TRUE, fill = NA , colour = "black", alpha = 0.3, linetype = "dotted") +
       facet_wrap(~ VarCut, scales = "free", nrow = 1) +
       theme_minimal() +
       theme(strip.background = element_blank(),
@@ -294,8 +370,26 @@ shinyServer(function(session, input, output) {
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       labs(x = "Indicateurs", y = "Valeur", title = "Distribution des indicateurs de sortie")
     
-    if ( length( filtred$results ) > 1 ) {
-      resultsFiltredData <- filtred$results %>%
+    if ( length( filtredHaut$results ) > 1 ) {
+      resultsFiltredData <- filtredHaut$results %>%
+        filter(annee == 1160) %>%
+        select(-sim_name, -annee) %>%
+        collect() %>%
+        gather(key = Variable,
+               value = Valeur) %>%
+        left_join(Objectifs, by = c("Variable" = "Var")) %>%
+        filter(!is.na(RealVar)) %>%
+        mutate(VarCut = str_wrap(RealVar, width = 20)) %>%
+        arrange(Ordre) %>%
+        mutate(VarCut = factor(VarCut, levels = unique(VarCut)))
+      
+      resultPlot <- resultPlot +
+        geom_violin(data = resultsFiltredData,
+                    scale = "area",  na.rm = TRUE, fill = "#43a2ca", alpha = .3, colour = "#053144")
+    }
+    
+    if ( length( filtredBas$results ) > 1 ) {
+      resultsFiltredData <- filtredBas$results %>%
         filter(annee == 1160) %>%
         select(-sim_name, -annee) %>%
         collect() %>%
@@ -311,6 +405,7 @@ shinyServer(function(session, input, output) {
         geom_violin(data = resultsFiltredData,
                     scale = "area",  na.rm = TRUE, fill = "red", alpha = .3, colour = "#67000d")
     }
+    
     resultPlot
     
   })
@@ -328,6 +423,6 @@ shinyServer(function(session, input, output) {
     dbDisconnect(conMonetDB, shutdown = TRUE)
     # MonetDBLite::monetdblite_shutdown()
   })
-
-
+  
+  
 })
