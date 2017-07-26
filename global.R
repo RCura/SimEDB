@@ -25,7 +25,7 @@ suppressPackageStartupMessages({
   library(formattable) # devtools::install_github("renkun-ken/formattable")
 })
 
-conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "data/testMonetDB")
+conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "data/db_Transition8")
 
 seeds <- tbl(conMonetDB, "seeds")
 agregats <- tbl(conMonetDB, "agregats")

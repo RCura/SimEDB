@@ -1,4 +1,7 @@
-conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "~/outputs_TR8/testMonetDB")
+library(DBI)
+library(MonetDBLite)
+
+conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "data/db_Transition8")
 
 seeds <- tbl(conMonetDB, "seeds")
 agregats <- tbl(conMonetDB, "agregats")
