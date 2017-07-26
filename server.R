@@ -67,14 +67,14 @@ shinyServer(function(session, input, output) {
   
   observe({
     if (length(filtredSeeds()) > 0) {
-      filtred$seeds <- filtredSeeds()
-      filtred$agregats <- sim$agregats %>% filter(seed %in% filtred$seeds)
-      filtred$FP <- sim$FP %>% filter(seed %in% filtred$seeds)
-      filtred$parameters <- sim$parameters %>% filter(seed %in% filtred$seeds)
-      filtred$paroisses <- sim$paroisses %>% filter(seed %in% filtred$seeds)
-      filtred$poles <- sim$poles %>% filter(seed %in% filtred$seeds)
-      filtred$results <- sim$results %>% filter(seed %in% filtred$seeds)
-      filtred$seigneurs <- sim$seigneurs %>% filter(seed %in% filtred$seeds)
+      brushedSeeds <- tibble(seed = filtredSeeds())
+      filtred$agregats <- sim$agregats %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtred$FP <- sim$FP %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtred$parameters <- sim$parameters %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtred$paroisses <- sim$paroisses %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtred$poles <- sim$poles %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtred$results <- sim$results %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      filtred$seigneurs <- sim$seigneurs %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
     } else {
       filtred$agregats <- NULL
       filtred$FP <- NULL
