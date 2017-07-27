@@ -32,10 +32,20 @@ shinyServer(function(session, input, output) {
                                seigneurs = NULL
   )
   
+  selected_experiments <- reactive({
+    if (is.null(input$selectedSims)){
+      NULL
+    } else {
+      input$selectedSims
+    }
+  })
+  
+  selected_experiments_debounced <- selected_experiments %>% debounce(500)
+  
   observe({
-    req(input$selectedSims)
+    req(selected_experiments_debounced())
     
-    simNames <- input$selectedSims
+    simNames <- selected_experiments_debounced()
     
     sim$seeds <- seeds %>% filter(sim_name %in% simNames)
     sim$agregats <- agregats %>% filter(sim_name %in% simNames)
