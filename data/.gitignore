@@ -1,0 +1,5 @@
+*
+*/
+!.gitignore
+JIAP_data.Rdata
+sim_data.Rdata
