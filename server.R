@@ -2,6 +2,38 @@ library(shiny)
 
 shinyServer(function(session, input, output) {
   
+  # resetConnections <- reactiveVal(NA)
+  # 
+  # observeEvent(input$resetServer, {
+  #   dbDisconnect(conMonetDB, shutdown = TRUE)
+  #   MonetDBLite::monetdblite_shutdown()
+  #   resetConnections(TRUE)
+  # })
+  # 
+  # observe({
+  #   req(resetConnections())
+  #   conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "data/db_Transition8")
+  #   
+  #   seeds <- tbl(conMonetDB, "seeds")
+  #   agregats <- tbl(conMonetDB, "agregats")
+  #   fp <- tbl(conMonetDB, "fp")
+  #   parameters <- tbl(conMonetDB, "parameters")
+  #   paroisses <- tbl(conMonetDB, "paroisses")
+  #   poles <- tbl(conMonetDB, "poles")
+  #   results <- tbl(conMonetDB, "results")
+  #   seigneurs <- tbl(conMonetDB, "seigneurs")
+  #   
+  #   all_sim_names <- parameters %>%
+  #     select(sim_name) %>%
+  #     distinct() %>%
+  #     arrange(sim_name) %>%
+  #     collect() %>%
+  #     pull()
+  #   resetConnections(NA)
+  # })
+  
+  
+  
   oldBrushedHaut <- reactiveVal(value = NA)
   oldBrushedBas <- reactiveVal(value = NA)
   

@@ -1,7 +1,16 @@
 library(shiny)
 
 shinyUI(fluidPage(
-  titlePanel("SimVADB"),
+  column(11, h2("SimVADB")),
+  #column(1, bookmarkButton(label = "Sauvegarder l'état", icon = icon("save", lib = "glyphicon"))),
+  column(1, actionLink(
+    "resetServer",
+    label = "",
+    icon(
+      name = "refresh",
+      class = "fa-3x",
+      lib = "font-awesome"
+    ))),
   sidebarLayout(sidebarPanel(width = 4,fluid = TRUE,
                              column(6,textInput("userName", "Votre nom",  value = "Robin")),
                              column(6, selectInput("selectedSims",  label = "Experiences",
