@@ -12,13 +12,14 @@ FP_data <- tbl(src = conMonetDB, "fp") %>% filter(sim_name == '4_4_A')
 
 FP_data %>% show_query()
 
-system.time({
-nbFP <- FP_data %>%
-  group_by(seed, annee, sim_name) %>%
-  summarise(nbtotal = n())
 
 FP_satis_data <- FP_data %>%
-  select(seed, sim_name, annee, satis, smat, srel, sprot)
+    select(seed, sim_name, annee, satis, smat, srel, sprot)
+  
+nbFP <- FP_satis_data %>%
+  select(seed, sim_name, annee) %>%
+  group_by(seed, annee, sim_name) %>%
+  summarise(nbtotal = n())
 
 globale <- FP_satis_data %>%
   mutate(satisint = as.integer(satis * 10L)) %>%
@@ -44,27 +45,25 @@ religieuse <- FP_satis_data %>%
   summarise(nb = n(), type = "religieuse", satisfaction = srelint / 10) %>%
   select(seed, sim_name, annee, nb, type, satisfaction)
   
-satis_all <- globale %>%
+satisfaction_plotdata <- globale %>%
   union_all(materielle) %>%
   union_all(protection) %>%
   union_all(religieuse) %>%
   ungroup() %>%
   left_join(nbFP, by = c("seed", "sim_name", "annee")) %>%
   ungroup() %>%
-  mutate(txFP = (nb * 1.0) / (nbtotal * 1.0)) %>%
+  mutate(tx_fp = (nb * 1.0) / (nbtotal * 1.0)) %>%
   group_by(annee, type, satisfaction) %>%
-  summarise(txFP = mean(txFP))
-
-plot_data <- satis_all %>%
+  summarise(tx_fp = mean(tx_fp)) %>%
   ungroup() %>%
   collect() %>%
   mutate(type = if_else(type == "globale", "Globale", type)) %>%
   mutate(type = if_else(type == "materielle", "Matérielle", type)) %>%
   mutate(type = if_else(type == "protection", "Protection", type)) %>%
   mutate(type = if_else(type == "religieuse", "Religieuse", type))
-})
 
-ggplot(plot_data, aes(factor(annee), txFP, fill = factor(satisfaction), group = factor(satisfaction))) +
+
+ggplot(satisfaction_plotdata, aes(factor(annee), tx_fp, fill = factor(satisfaction), group = factor(satisfaction))) +
   geom_col() +
   facet_grid(type~.) +
   scale_fill_brewer(name = "Satisfaction", type = "div", palette = "RdYlBu", direction = 1) +

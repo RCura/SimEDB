@@ -2,6 +2,38 @@ library(shiny)
 
 shinyServer(function(session, input, output) {
   
+  # resetConnections <- reactiveVal(NA)
+  # 
+  # observeEvent(input$resetServer, {
+  #   dbDisconnect(conMonetDB, shutdown = TRUE)
+  #   MonetDBLite::monetdblite_shutdown()
+  #   resetConnections(TRUE)
+  # })
+  # 
+  # observe({
+  #   req(resetConnections())
+  #   conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "data/db_Transition8")
+  #   
+  #   seeds <- tbl(conMonetDB, "seeds")
+  #   agregats <- tbl(conMonetDB, "agregats")
+  #   fp <- tbl(conMonetDB, "fp")
+  #   parameters <- tbl(conMonetDB, "parameters")
+  #   paroisses <- tbl(conMonetDB, "paroisses")
+  #   poles <- tbl(conMonetDB, "poles")
+  #   results <- tbl(conMonetDB, "results")
+  #   seigneurs <- tbl(conMonetDB, "seigneurs")
+  #   
+  #   all_sim_names <- parameters %>%
+  #     select(sim_name) %>%
+  #     distinct() %>%
+  #     arrange(sim_name) %>%
+  #     collect() %>%
+  #     pull()
+  #   resetConnections(NA)
+  # })
+  
+  
+  
   oldBrushedHaut <- reactiveVal(value = NA)
   oldBrushedBas <- reactiveVal(value = NA)
   
@@ -32,10 +64,20 @@ shinyServer(function(session, input, output) {
                                seigneurs = NULL
   )
   
+  selected_experiments <- reactive({
+    if (is.null(input$selectedSims)){
+      NULL
+    } else {
+      input$selectedSims
+    }
+  })
+  
+  selected_experiments_debounced <- selected_experiments %>% debounce(500)
+  
   observe({
-    req(input$selectedSims)
+    req(selected_experiments_debounced())
     
-    simNames <- input$selectedSims
+    simNames <- selected_experiments_debounced()
     
     sim$seeds <- seeds %>% filter(sim_name %in% simNames)
     sim$agregats <- agregats %>% filter(sim_name %in% simNames)

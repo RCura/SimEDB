@@ -114,33 +114,98 @@ output$FP_Concentration_Filter <- renderPlot({
   FP_Concentration(filtredBas$results)
 })
 
+# 
+# FP_Satisfaction <- function(FP_data){
+#   satisfaction_data <- FP_data %>%
+#     select(annee, smat, srel, sprot, satis) %>%
+#     collect() %>%
+#     rename(
+#       Globale = satis,
+#       Matérielle = smat,
+#       Protection = sprot,
+#       Religieuse = srel) %>%
+#     group_by(annee) %>%
+#     sample_n(size = 4E3, replace = FALSE) %>%
+#     ungroup() %>%
+#     gather(key = Type, value = Satisfaction, -annee)
+#   
+#   ggplot(satisfaction_data, aes(annee, Satisfaction, col = Type, fill = Type)) +
+#     geom_violin(aes(group = factor(annee))) +
+#     facet_wrap(~ Type) +
+#     geom_smooth(data = satisfaction_data %>%
+#                   group_by(annee) %>%
+#                   sample_n(size = 100, replace = FALSE) %>%
+#                   ungroup(),
+#       alpha = .3, se = FALSE, na.rm = TRUE, method = "gam", formula = y ~ s(x, bs = "cs")) +
+#     theme(legend.position = "none") +
+#     ggtitle("Évolution de la satisfaction des FP\n(Échantillon de 4000 FP / an)") +
+#     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+#     labs(subtitle = "Variabilité : Foyers Paysans et Réplications")
+# }
 
 FP_Satisfaction <- function(FP_data){
-  satisfaction_data <- FP_data %>%
-    select(annee, smat, srel, sprot, satis) %>%
-    collect() %>%
-    rename(
-      Globale = satis,
-      Matérielle = smat,
-      Protection = sprot,
-      Religieuse = srel) %>%
-    group_by(annee) %>%
-    sample_n(size = 4E3, replace = FALSE) %>%
-    ungroup() %>%
-    gather(key = Type, value = Satisfaction, -annee)
   
-  ggplot(satisfaction_data, aes(annee, Satisfaction, col = Type, fill = Type)) +
-    geom_violin(aes(group = factor(annee))) +
-    facet_wrap(~ Type) +
-    geom_smooth(data = satisfaction_data %>%
-                  group_by(annee) %>%
-                  sample_n(size = 100, replace = FALSE) %>%
-                  ungroup(),
-      alpha = .3, se = FALSE, na.rm = TRUE, method = "gam", formula = y ~ s(x, bs = "cs")) +
-    theme(legend.position = "none") +
-    ggtitle("Évolution de la satisfaction des FP\n(Échantillon de 4000 FP / an)") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(subtitle = "Variabilité : Foyers Paysans et Réplications")
+  FP_satis_data <- FP_data %>%
+    select(seed, sim_name, annee, satis, smat, srel, sprot)
+  
+  nbFP <- FP_satis_data %>%
+    select(seed, sim_name, annee) %>%
+    group_by(seed, annee, sim_name) %>%
+    summarise(nbtotal = n())
+  
+  globale <- FP_satis_data %>%
+    mutate(satisint = as.integer(satis * 10L)) %>%
+    group_by(seed, sim_name, annee, satisint) %>%
+    summarise(nb = n(), type = "globale", satisfaction = satisint / 10) %>%
+    select(seed, sim_name, annee, nb, type, satisfaction)
+  
+  materielle <- FP_satis_data %>%
+    mutate(smatint = as.integer(smat * 10L)) %>%
+    group_by(seed, sim_name, annee, smatint) %>%
+    summarise(nb = n(), type = "materielle", satisfaction = smatint / 10) %>%
+    select(seed, sim_name, annee, nb, type, satisfaction)
+  
+  protection <- FP_satis_data %>%
+    mutate(sprotint = as.integer(sprot * 10L)) %>%
+    group_by(seed, sim_name, annee, sprotint) %>%
+    summarise(nb = n(), type = "protection", satisfaction = sprotint / 10) %>%
+    select(seed, sim_name, annee, nb, type, satisfaction)
+  
+  religieuse <- FP_satis_data %>%
+    mutate(srelint = as.integer(srel * 10L)) %>%
+    group_by(seed, sim_name, annee, srelint) %>%
+    summarise(nb = n(), type = "religieuse", satisfaction = srelint / 10) %>%
+    select(seed, sim_name, annee, nb, type, satisfaction)
+  
+  satisfaction_plotdata <- globale %>%
+    union_all(materielle) %>%
+    union_all(protection) %>%
+    union_all(religieuse) %>%
+    ungroup() %>%
+    left_join(nbFP, by = c("seed", "sim_name", "annee")) %>%
+    ungroup() %>%
+    mutate(tx_fp = (nb * 1.0) / (nbtotal * 1.0)) %>%
+    group_by(annee, type, satisfaction) %>%
+    summarise(tx_fp = mean(tx_fp)) %>%
+    ungroup() %>%
+    collect() %>%
+    mutate(type = if_else(type == "globale", "Globale", type)) %>%
+    mutate(type = if_else(type == "materielle", "Matérielle", type)) %>%
+    mutate(type = if_else(type == "protection", "Protection", type)) %>%
+    mutate(type = if_else(type == "religieuse", "Religieuse", type))
+  
+  
+  ggplot(satisfaction_plotdata, aes(factor(annee), tx_fp, fill = factor(satisfaction), group = factor(satisfaction))) +
+    geom_col() +
+    facet_grid(type~.) +
+    scale_fill_brewer(name = "Satisfaction", type = "div", palette = "RdYlBu", direction = 1) +
+    scale_y_continuous(labels = percent) +
+    ggtitle("Évolution de la satisfaction des foyers paysans") +
+    xlab("Temps") + ylab("Distribution de la satisfaction des foyers paysans") +
+    labs(subtitle = "Variabilité : Moyenne des réplications") +
+    theme(legend.position = "bottom") +
+    guides(fill = guide_legend(title.position = "top", nrow = 1, title.hjust = 0.5,
+                               label.position = "bottom", label.hjust = 0.5))
 }
 
 output$FP_Satisfaction <- renderPlot({

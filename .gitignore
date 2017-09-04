@@ -3,8 +3,7 @@
 .RData
 .Ruserdata
 *.html
-*.Rdata
-
+.Rdata
 *.sqlite
 
 *.zip
