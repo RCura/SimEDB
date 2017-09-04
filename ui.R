@@ -1,7 +1,8 @@
 library(shiny)
 
-shinyUI(fluidPage(
-  titlePanel("SimVADB"),
+shinyUI(navbarPage(
+  "SimEDB",
+  tabPanel(title = "Simulation Exploration",
   sidebarLayout(sidebarPanel(width = 4,fluid = TRUE,
                              column(6,textInput("userName", "Votre nom",  value = "Robin")),
                              column(6, selectInput("selectedSims",  label = "Experiences",
@@ -374,6 +375,11 @@ shinyUI(fluidPage(
                 )
     )
   )
+  )
+  ),
+  tabPanel(title = "Sensitivity Analysis",
+           column(width = 6, div(dataTableOutput("sensitivity_summary"), style = "font-size:75%")),
+           column(width =  6, div(id = "sensitivity_plots"))
   )
 )
 )

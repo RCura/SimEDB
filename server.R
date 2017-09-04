@@ -417,6 +417,7 @@ shinyServer(function(session, input, output) {
   source("src_plots/Paroisses.R", local = TRUE, encoding = 'utf8')
   source("src_plots/download_plots.R", local = TRUE, encoding = 'utf8')
   source("src_plots/rating.R", local = TRUE, encoding = "utf8")
+  source("src_plots/sensitivity.R", local = TRUE, encoding = "utf8")
   
   
   session$onSessionEnded(function() {
