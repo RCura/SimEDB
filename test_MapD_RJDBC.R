@@ -26,18 +26,20 @@ suppressPackageStartupMessages({
   library(DT)
 })
 
+library(RJDBC)
+drv <- JDBC("com.mapd.jdbc.MapDDriver",
+            "/home/robin/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
+            identifier.quote="'")
+conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "HyperInteractive")
 
-
-conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "~/Dropbox/3_Data/outputs_TR8_full/db_Transition8")
-
-seeds <- tbl(conMonetDB, "seeds")
-agregats <- tbl(conMonetDB, "agregats")
-fp <- tbl(conMonetDB, "fp")
-parameters <- tbl(conMonetDB, "parameters")
-paroisses <- tbl(conMonetDB, "paroisses")
-poles <- tbl(conMonetDB, "poles")
-results <- tbl(conMonetDB, "results")
-seigneurs <- tbl(conMonetDB, "seigneurs")
+seeds <- tbl(conMapD, "seeds")
+agregats <- tbl(conMapD, "agregats")
+fp <- tbl(conMapD, "fp")
+parameters <- tbl(conMapD, "parameters")
+paroisses <- tbl(conMapD, "paroisses")
+poles <- tbl(conMapD, "poles")
+results <- tbl(conMapD, "results")
+seigneurs <- tbl(conMapD, "seigneurs")
 
 ##############################################################
 ##############################################################
