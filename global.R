@@ -8,7 +8,7 @@ suppressPackageStartupMessages({
   # DataBase
   library(dbplyr)
   library(DBI)
-  library(MonetDBLite) # devtools::install_github("hannesmuehleisen/MonetDBLite")
+  library(RJDBC)
   
   # Interactivity
   library(shiny)
@@ -26,16 +26,20 @@ suppressPackageStartupMessages({
   library(DT)
 })
 
-conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "data/db_Transition8")
+drv <- JDBC("com.mapd.jdbc.MapDDriver",
+            "/home/robin/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
+            identifier.quote="'")
+conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "HyperInteractive")
 
-seeds <- tbl(conMonetDB, "seeds")
-agregats <- tbl(conMonetDB, "agregats")
-fp <- tbl(conMonetDB, "fp")
-parameters <- tbl(conMonetDB, "parameters")
-paroisses <- tbl(conMonetDB, "paroisses")
-poles <- tbl(conMonetDB, "poles")
-results <- tbl(conMonetDB, "results")
-seigneurs <- tbl(conMonetDB, "seigneurs")
+seeds <- tbl(conMapD, "seeds")
+agregats <- tbl(conMapD, "agregats")
+fp <- tbl(conMapD, "fp")
+parameters <- tbl(conMapD, "parameters")
+paroisses <- tbl(conMapD, "paroisses")
+poles <- tbl(conMapD, "poles")
+results <- tbl(conMapD, "results")
+seigneurs <- tbl(conMapD, "seigneurs")
+
 
 # write_csv(fp %>% collect(), "~/all_outputs_TR8/fp.csv")
 # write_csv(seeds %>% collect(), "~/all_outputs_TR8/seeds.csv")
