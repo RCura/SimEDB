@@ -1,6 +1,6 @@
 Seigneurs_Nb <- function(seigneurs_data){
   nbSeigneurs <- seigneurs_data %>%
-    filter(type != "Grand Seigneur") %>%
+    filter(!(type %in% "Grand Seigneur")) %>%
     group_by(seed, annee, type) %>%
     summarise(n = n()) %>%
     collect()
@@ -193,7 +193,7 @@ Seigneurs_Redevances_PS <- function(seigneurs_data){
   
   redevances_PS <- seigneurs_data %>%
     filter(annee == 1160) %>%
-    filter(type != "Grand Seigneur") %>%
+    filter(!(type %in% "Grand Seigneur")) %>%
     select(seed, annee, type, nbfpassujettis) %>%
     collect() %>%
     mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain"))) %>%

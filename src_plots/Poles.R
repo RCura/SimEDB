@@ -27,13 +27,13 @@ Poles_Agregats <- function(poles_data){
     summarise(nb_poles = n())
   
   tempVar <- poles_data %>%
-    filter(monagregat != "<NA>") %>%
+    filter(!is.na(monagregat)) %>%
     group_by(seed,annee) %>%
     summarise(nb_pole_ag = n())
   
   PolesAgregats <- PolesTous %>%
     left_join(tempVar, by=c("seed", "annee")) %>%
-    mutate(tx_ag = (nb_pole_ag * 1.0) / (nb_poles * 1.0)) %>%
+    mutate(tx_ag = (nb_pole_ag + 1E-12) / (nb_poles + 1E-12)) %>%
     collect()
   
   tousPoles <- ggplot(data = PolesAgregats, aes(factor(annee), nb_pole_ag)) + 
@@ -49,7 +49,7 @@ Poles_Agregats <- function(poles_data){
   
   grid.arrange(tousPoles, polesAgregats, bottom = 'Temps',
                top = "Évolution de la localisation des pôles
-               Variabilité : Réplications")
+             Variabilité : Réplications")
 }
 
 output$Poles_Agregats <- renderPlot({
@@ -119,10 +119,10 @@ output$Poles_Attrac_Filter <- renderPlot({
 Poles_RT <- function(poles_data){
   rtPoles_data <- poles_data %>%
     filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    collect() %>%
     group_by(seed, annee) %>%
     mutate(rank = min_rank(-nbattracteurs)) %>%
     group_by(annee, rank) %>%
-    collect() %>%
     summarise(Moyenne = mean(nbattracteurs),
               Q1 = quantile(nbattracteurs, probs = 0.25),
               Q3 = quantile(nbattracteurs, probs = 0.75)) %>%

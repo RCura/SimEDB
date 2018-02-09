@@ -51,9 +51,9 @@ output$Paroisses_Compo_Filter <- renderPlot({
 })
 
 Paroisses_Promo <- function(paroisses_data){
+  
   paroisses_promo <- paroisses_data %>%
-    filter(mode_promotion != "nil") %>%
-    filter(mode_promotion != "initialisation") %>%
+    filter(!(mode_promotion %in% c("nil", "initialisation"))) %>%
     group_by(seed, annee, mode_promotion) %>%
     summarise(nb = n()) %>%
     collect() %>%

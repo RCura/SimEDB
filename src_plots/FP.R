@@ -1,17 +1,17 @@
 FP_TypeDeplacements <- function(FP_data)({
   
+  
   nombre_FP_total <- FP_data %>%
     group_by(seed, sim_name, annee) %>%
     summarise(n_total = n())
   
   
   types_deplacements <- FP_data %>%
-    filter(type_deplacement != "nil") %>%
-    filter(type_deplacement != "Non mobile") %>%
+    filter(!(type_deplacement %in% c("nil", "Non mobile"))) %>%
     group_by(annee, seed, sim_name, type_deplacement) %>%
     summarise(n = n()) %>%
     left_join(nombre_FP_total, by = c("seed", "annee", "sim_name")) %>%
-    mutate(Tx = (n * 1.0) / (n_total * 1.0)) %>%
+    mutate(Tx = (n + 1E-12) / (n_total + 1E-12)) %>%
     ungroup() %>%
     collect()
   
@@ -40,6 +40,7 @@ output$FP_TypeDeplacements_filter <- renderPlot({
 
 FP_DeplacementsDetail <- function(FP_data){
   
+  
   nombre_FP_total <- FP_data %>%
     filter(annee %in% c(820, 940, 1040, 1160)) %>%
     group_by(seed, sim_name, annee) %>%
@@ -51,10 +52,10 @@ FP_DeplacementsDetail <- function(FP_data){
     summarise(nb_fp = n()) %>%
     left_join(nombre_FP_total, by = c("seed", "annee", "sim_name")) %>%
     select(-sim_name) %>%
-    mutate(tx_fp = (nb_fp * 1.0) / (n_total * 1.0)) %>%
+    mutate(tx_fp = (nb_fp + 1E-12) / (n_total + 1E-12)) %>%
     group_by(annee, deplacement_from, deplacement_to) %>%
-    summarise(nb_fp = mean(nb_fp),
-              tx_fp = mean(tx_fp)) %>%
+    summarise(nb_fp = mean(nb_fp + 1E-12),
+              tx_fp = mean(tx_fp + 1E-12)) %>%
     ungroup() %>%
     collect() %>%
     filter(deplacement_from != "nil") %>%
@@ -151,31 +152,45 @@ FP_Satisfaction <- function(FP_data){
   nbFP <- FP_satis_data %>%
     select(seed, sim_name, annee) %>%
     group_by(seed, annee, sim_name) %>%
-    summarise(nbtotal = n())
+    summarise(nbtotal = n()) %>%
+    collect()
   
   globale <- FP_satis_data %>%
-    mutate(satisint = as.integer(satis * 10L)) %>%
+    mutate(satisint = as.integer(satis * 10)) %>%
     group_by(seed, sim_name, annee, satisint) %>%
-    summarise(nb = n(), type = "globale", satisfaction = satisint / 10) %>%
-    select(seed, sim_name, annee, nb, type, satisfaction)
+    summarise(nb = n(), type = "Globale", satisfaction = satisint) %>%
+    ungroup() %>%
+    collect() %>%
+    select(seed, sim_name, annee, nb, type, satisfaction) %>%
+    mutate(satisfaction = satisfaction / 10)
+  
   
   materielle <- FP_satis_data %>%
-    mutate(smatint = as.integer(smat * 10L)) %>%
+    mutate(smatint = as.integer(smat * 10)) %>%
     group_by(seed, sim_name, annee, smatint) %>%
-    summarise(nb = n(), type = "materielle", satisfaction = smatint / 10) %>%
-    select(seed, sim_name, annee, nb, type, satisfaction)
+    summarise(nb = n(), type = "Matérielle", satisfaction = smatint) %>%
+    ungroup() %>%
+    collect() %>%
+    select(seed, sim_name, annee, nb, type, satisfaction) %>%
+    mutate(satisfaction = satisfaction / 10)
   
   protection <- FP_satis_data %>%
-    mutate(sprotint = as.integer(sprot * 10L)) %>%
+    mutate(sprotint = as.integer(sprot * 10)) %>%
     group_by(seed, sim_name, annee, sprotint) %>%
-    summarise(nb = n(), type = "protection", satisfaction = sprotint / 10) %>%
-    select(seed, sim_name, annee, nb, type, satisfaction)
+    summarise(nb = n(), type = "Protection", satisfaction = sprotint) %>%
+    ungroup() %>%
+    collect() %>%
+    select(seed, sim_name, annee, nb, type, satisfaction) %>%
+    mutate(satisfaction = satisfaction / 10)
   
   religieuse <- FP_satis_data %>%
-    mutate(srelint = as.integer(srel * 10L)) %>%
+    mutate(srelint = as.integer(srel * 10)) %>%
     group_by(seed, sim_name, annee, srelint) %>%
-    summarise(nb = n(), type = "religieuse", satisfaction = srelint / 10) %>%
-    select(seed, sim_name, annee, nb, type, satisfaction)
+    summarise(nb = n(), type = "Religieuse", satisfaction = srelint) %>%
+    ungroup() %>%
+    collect() %>%
+    select(seed, sim_name, annee, nb, type, satisfaction) %>%
+    mutate(satisfaction = satisfaction / 10)
   
   satisfaction_plotdata <- globale %>%
     union_all(materielle) %>%
@@ -184,19 +199,14 @@ FP_Satisfaction <- function(FP_data){
     ungroup() %>%
     left_join(nbFP, by = c("seed", "sim_name", "annee")) %>%
     ungroup() %>%
-    mutate(tx_fp = (nb * 1.0) / (nbtotal * 1.0)) %>%
+    mutate(tx_fp = (nb + 1E-12) / (nbtotal + 1E-12)) %>%
     group_by(annee, type, satisfaction) %>%
     summarise(tx_fp = mean(tx_fp)) %>%
     ungroup() %>%
-    collect() %>%
-    mutate(type = if_else(type == "globale", "Globale", type)) %>%
-    mutate(type = if_else(type == "materielle", "Matérielle", type)) %>%
-    mutate(type = if_else(type == "protection", "Protection", type)) %>%
-    mutate(type = if_else(type == "religieuse", "Religieuse", type))
+    collect()
   
-  
-  ggplot(satisfaction_plotdata, aes(factor(annee), tx_fp, fill = factor(satisfaction), group = factor(satisfaction))) +
-    geom_col() +
+  ggplot(satisfaction_plotdata) +
+    geom_col(aes(factor(annee), tx_fp, fill = factor(satisfaction), group = factor(satisfaction))) +
     facet_grid(type~.) +
     scale_fill_brewer(name = "Satisfaction", type = "div", palette = "RdYlBu", direction = 1) +
     scale_y_continuous(labels = percent) +

@@ -22,25 +22,20 @@ output$Agregats_Nb_Filter <- renderPlot({
 })
 
 Agregats_Poles <- function(agregats_data){
-  sansPoles <- agregats_data %>%
-    filter(is.na(monpole)) %>%
-    mutate(pole = FALSE)
-  
-  avecPoles <- agregats_data %>%
-    filter(!is.na(monpole)) %>%
-    mutate(pole = TRUE)
   
   nbAgregats <- agregats_data %>%
     group_by(seed, sim_name, annee) %>%
     summarise(nb_agregats = n())
   
-  txAgregatsPoles <- sansPoles %>%
-    union_all(avecPoles) %>%
-    group_by(seed,annee, pole) %>%
-    summarise(n = n()) %>%
-    left_join(nbAgregats, by = c("seed", "annee")) %>%
-    filter(pole == TRUE) %>%
-    mutate(tx_agregat_pole = (n * 1.0) / (nb_agregats * 1.0)) %>%
+  avecPoles <- agregats_data %>%
+    filter(!is.na(monpole)) %>%
+    mutate(pole = TRUE) %>%
+    group_by(seed, annee) %>%
+    summarise(nb_poles = n())
+  
+  txAgregatsPoles <- nbAgregats %>%
+    left_join(avecPoles, by = c("seed", "annee")) %>%
+    mutate(tx_agregat_pole = (nb_poles + 1E-12) / (nb_agregats + 1E-12)) %>%
     collect()
   
   
@@ -63,8 +58,9 @@ output$Agregats_Poles_Filter <- renderPlot({
 })
 
 Agregats_CA <- function(agregats_data){
+  
   nombre_agregats <- agregats_data %>%
-    filter(communaute) %>%
+    filter(communaute == 1) %>%
     group_by(annee, seed) %>%
     summarise(nb = n()) %>%
     collect()
@@ -87,11 +83,12 @@ output$Agregats_CA_Filter <- renderPlot({
 })
 
 Agregats_RT <- function(agregats_data){
+  
   rtAgregats <- agregats_data %>%
     filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    collect() %>%
     group_by(seed, annee) %>%
     mutate(rank = min_rank(-nbfp)) %>%
-    collect() %>%
     group_by(annee, rank) %>%
     summarise(Moyenne = mean(nbfp, na.rm = TRUE),
               Q1 = quantile(nbfp, probs = 0.25),
@@ -125,18 +122,25 @@ output$Agregats_RT_Filter <- renderPlot({
 Agregats_Paroisses <- function(agregats_data, poles_data){
   nbAgregats <- agregats_data %>%
     group_by(seed, sim_name, annee) %>%
-    summarise(nb_agregats = n())
+    summarise(nb_agregats = n()) %>%
+    ungroup()%>%
+    collect()
   
-  agregatsParoisses <- poles_data %>%
+  agregatsData <- poles_data %>%
     filter(!is.na(monagregat)) %>%
     filter(nbparoisses >= 1) %>%
     group_by(sim_name, annee, seed, monagregat) %>%
     summarise(n = n()) %>%
+    ungroup() %>%
     group_by(annee, seed, sim_name) %>%
     summarise(nb_agregats_paroisse = sum(n)) %>%
-    right_join(nbAgregats, by = c("seed", "annee", "sim_name")) %>%
-    mutate(tx_agregats_paroisses = (nb_agregats_paroisse * 1.0) / (nb_agregats * 1.0) * 100) %>%
-    collect() %>%
+    ungroup() %>%
+    collect()
+  
+  
+  agregatsParoisses <- nbAgregats %>%
+    left_join(agregatsData, by =c("seed", "annee", "sim_name")) %>%
+    mutate(tx_agregats_paroisses = (nb_agregats_paroisse + 1E-12) / (nb_agregats + 1E-12) * 100) %>%
     gather(key = Type, value = Value, nb_agregats_paroisse, tx_agregats_paroisses) %>%
     mutate(Value = if_else(is.na(Value), 0, Value)) %>%
     mutate(Type = if_else(Type == "nb_agregats_paroisse", "Nombre", "Taux (en %)"))
