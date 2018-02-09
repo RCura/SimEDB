@@ -37,6 +37,15 @@ poles <- tbl(conMonetDB, "poles")
 results <- tbl(conMonetDB, "results")
 seigneurs <- tbl(conMonetDB, "seigneurs")
 
+# write_csv(fp %>% collect(), "~/all_outputs_TR8/fp.csv")
+# write_csv(seeds %>% collect(), "~/all_outputs_TR8/seeds.csv")
+# write_csv(agregats %>% collect(), "~/all_outputs_TR8/agregats.csv")
+# write_csv(parameters %>% collect(), "~/all_outputs_TR8/parameters.csv")
+# write_csv(paroisses %>% collect(), "~/all_outputs_TR8/paroisses.csv")
+# write_csv(poles %>% collect(), "~/all_outputs_TR8/poles.csv")
+# write_csv(results %>% collect(), "~/all_outputs_TR8/results.csv")
+# write_csv(seigneurs %>% collect(), "~/all_outputs_TR8/seigneurs.csv")
+
 all_sim_names <- parameters %>%
   select(sim_name) %>%
   distinct() %>%
