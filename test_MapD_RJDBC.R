@@ -8,7 +8,7 @@ suppressPackageStartupMessages({
   # DataBase
   library(dbplyr)
   library(DBI)
-  library(MonetDBLite) # devtools::install_github("hannesmuehleisen/MonetDBLite")
+  library(RJDBC) # devtools::install_github("hannesmuehleisen/MonetDBLite")
   
   # Interactivity
   library(shiny)
@@ -26,11 +26,10 @@ suppressPackageStartupMessages({
   library(DT)
 })
 
-library(RJDBC)
 drv <- JDBC("com.mapd.jdbc.MapDDriver",
-            "/home/robin/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
+            "/opt/mapd/bin/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
             identifier.quote="'")
-conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "HyperInteractive")
+conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "mapd")
 
 seeds <- tbl(conMapD, "seeds")
 agregats <- tbl(conMapD, "agregats")
@@ -149,59 +148,68 @@ ggplot(concentration_data, aes(factor(annee), prop_fp_isoles)) +
 ##############################################################
 
 FP_satis_data <- FP_data %>%
-  select(seed, sim_name, annee, satis, smat, srel, sprot)
+  select(annee, satis, smat, srel, sprot)
 
 nbFP <- FP_satis_data %>%
-  select(seed, sim_name, annee) %>%
-  group_by(seed, annee, sim_name) %>%
+  select(annee) %>%
+  group_by(annee) %>%
   summarise(nbtotal = n()) %>%
   collect()
 
 globale <- FP_satis_data %>%
-  mutate(satisint = as.integer(satis * 10)) %>%
-  group_by(seed, sim_name, annee, satisint) %>%
-  summarise(nb = n(), type = "Globale", satisfaction = satisint) %>%
+  group_by(annee, satis) %>%
+  summarise(nb = n(), satisfaction = as.integer(satis * 10)) %>%
+  group_by(annee, satisfaction) %>%
+  summarise(nb = sum(nb)) %>%
   ungroup() %>%
   collect() %>%
-  select(seed, sim_name, annee, nb, type, satisfaction) %>%
+  mutate(type = "Globale") %>%
+  select(annee, nb, type, satisfaction) %>%
   mutate(satisfaction = satisfaction / 10)
 
-
 materielle <- FP_satis_data %>%
-  mutate(smatint = as.integer(smat * 10)) %>%
-  group_by(seed, sim_name, annee, smatint) %>%
-  summarise(nb = n(), type = "Matérielle", satisfaction = smatint) %>%
+  group_by(annee, smat) %>%
+  summarise(nb = n(), satisfaction = as.integer(smat * 10)) %>%
+  group_by(annee, satisfaction) %>%
+  summarise(nb = sum(nb)) %>%
   ungroup() %>%
   collect() %>%
-  select(seed, sim_name, annee, nb, type, satisfaction) %>%
+  mutate(type = "Matérielle") %>%
+  select(annee, nb, type, satisfaction) %>%
   mutate(satisfaction = satisfaction / 10)
 
 protection <- FP_satis_data %>%
-  mutate(sprotint = as.integer(sprot * 10)) %>%
-  group_by(seed, sim_name, annee, sprotint) %>%
-  summarise(nb = n(), type = "Protection", satisfaction = sprotint) %>%
+  group_by(annee, sprot) %>%
+  summarise(nb = n(), satisfaction = as.integer(sprot * 10)) %>%
+  group_by(annee, satisfaction) %>%
+  summarise(nb = sum(nb)) %>%
   ungroup() %>%
   collect() %>%
-  select(seed, sim_name, annee, nb, type, satisfaction) %>%
+  mutate(type = "Protection") %>%
+  select(annee, nb, type, satisfaction) %>%
   mutate(satisfaction = satisfaction / 10)
 
 religieuse <- FP_satis_data %>%
-  mutate(srelint = as.integer(srel * 10)) %>%
-  group_by(seed, sim_name, annee, srelint) %>%
-  summarise(nb = n(), type = "Religieuse", satisfaction = srelint) %>%
+  group_by(annee, srel) %>%
+  summarise(nb = n(), satisfaction = as.integer(srel * 10)) %>%
+  group_by(annee, satisfaction) %>%
+  summarise(nb = sum(nb)) %>%
   ungroup() %>%
   collect() %>%
-  select(seed, sim_name, annee, nb, type, satisfaction) %>%
+  mutate(type = "Religieuse") %>%
+  select(annee, nb, type, satisfaction) %>%
   mutate(satisfaction = satisfaction / 10)
+
+
 
 satisfaction_plotdata <- globale %>%
   union_all(materielle) %>%
   union_all(protection) %>%
   union_all(religieuse) %>%
   ungroup() %>%
-  left_join(nbFP, by = c("seed", "sim_name", "annee")) %>%
+  left_join(nbFP, by = c("annee")) %>%
   ungroup() %>%
-  mutate(tx_fp = (nb + 1E-12) / (nbtotal + 1E-12)) %>%
+  mutate(tx_fp = (nb) / (nbtotal)) %>%
   group_by(annee, type, satisfaction) %>%
   summarise(tx_fp = mean(tx_fp)) %>%
   ungroup() %>%
