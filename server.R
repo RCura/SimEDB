@@ -470,8 +470,10 @@ shinyServer(function(session, input, output) {
   
   
   session$onSessionEnded(function() {
-    dbDisconnect(conMapD)
+  #   dbDisconnect(conMapD)
+  MonetDBLite::monetdblite_shutdown()
   })
+  
 
   
 })
