@@ -9,7 +9,7 @@ suppressPackageStartupMessages({
   library(dbplyr)
   library(DBI)
   library(MonetDBLite)
-  library(RJDBC)
+  #library(RJDBC)
   
   # Interactivity
   library(shiny)
