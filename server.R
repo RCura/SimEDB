@@ -9,22 +9,13 @@ shinyServer(function(session, input, output) {
                         paroisses = paroisses, poles = poles, results = results,
                         seigneurs = seigneurs, seeds = seeds)
   
-  filtredHaut <- reactiveValues(agregats = NULL,
-                                FP = NULL,
-                                parameters = NULL,
-                                paroisses = NULL,
-                                poles = NULL,
-                                results = NULL,
-                                seigneurs = NULL
-  )
+  filtredHaut <- reactiveValues(agregats = NULL, FP = NULL, parameters = NULL,
+                                paroisses = NULL, poles = NULL,
+                                results = NULL, seigneurs = NULL)
   
-  filtredBas <- reactiveValues(agregats = NULL,
-                               FP = NULL,
-                               parameters = NULL,
-                               paroisses = NULL,
-                               poles = NULL,
-                               results = NULL,
-                               seigneurs = NULL
+  filtredBas <- reactiveValues(agregats = NULL, FP = NULL, parameters = NULL,
+                               paroisses = NULL, poles = NULL,
+                               results = NULL, seigneurs = NULL
   )
   
   selected_experiments <- reactive({
@@ -94,45 +85,34 @@ shinyServer(function(session, input, output) {
   })
   
   observe({
+    
     if (length(filtredSeedsHaut()) > 0) {
       brushedSeeds <- tibble(seed = filtredSeedsHaut())
-      filtredHaut$agregats <- sim$agregats %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredHaut$agregats <- sim$agregats %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredHaut$FP <- sim$FP %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredHaut$parameters <- sim$parameters %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredHaut$paroisses <- sim$paroisses %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredHaut$poles <- sim$poles %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredHaut$results <- sim$results %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredHaut$seigneurs <- sim$seigneurs %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      
+      for (df in names(filtredBas)){
+        filtredHaut[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      }
+      
     } else {
-      filtredHaut$agregats <- sim$agregats
-      filtredHaut$FP <- sim$FP
-      filtredHaut$parameters <- sim$parameters
-      filtredHaut$paroisses <- sim$paroisses
-      filtredHaut$poles <- sim$poles
-      filtredHaut$results <- sim$results
-      filtredHaut$seigneurs <- sim$seigneurs
+      for (df in names(filtredBas)){
+        filtredHaut[[df]] <- NULL
+      }
     }
   })
   
   observe({
+
     if (length(filtredSeedsBas()) > 0) {
       brushedSeeds <- tibble(seed = filtredSeedsBas())
-      filtredBas$agregats <- sim$agregats %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredBas$FP <- sim$FP %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredBas$parameters <- sim$parameters %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredBas$paroisses <- sim$paroisses %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredBas$poles <- sim$poles %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredBas$results <- sim$results %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-      filtredBas$seigneurs <- sim$seigneurs %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      
+      for (df in names(filtredBas)){
+        filtredBas[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+      }
+      
     } else {
-      filtredBas$agregats <- NULL
-      filtredBas$FP <- NULL
-      filtredBas$parameters <- NULL
-      filtredBas$paroisses <- NULL
-      filtredBas$poles <- NULL
-      filtredBas$results <- NULL
-      filtredBas$seigneurs <- NULL
+      for (df in names(filtredBas)){
+        filtredBas[[df]] <- NULL
+      }
     }
   })
   
