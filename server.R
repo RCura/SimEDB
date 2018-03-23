@@ -2,49 +2,12 @@ library(shiny)
 
 shinyServer(function(session, input, output) {
   
-  # resetConnections <- reactiveVal(NA)
-  # 
-  # observeEvent(input$resetServer, {
-  #   dbDisconnect(conMonetDB, shutdown = TRUE)
-  #   MonetDBLite::monetdblite_shutdown()
-  #   resetConnections(TRUE)
-  # })
-  # 
-  # observe({
-  #   req(resetConnections())
-  #   conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "data/db_Transition8")
-  #   
-  #   seeds <- tbl(conMonetDB, "seeds")
-  #   agregats <- tbl(conMonetDB, "agregats")
-  #   fp <- tbl(conMonetDB, "fp")
-  #   parameters <- tbl(conMonetDB, "parameters")
-  #   paroisses <- tbl(conMonetDB, "paroisses")
-  #   poles <- tbl(conMonetDB, "poles")
-  #   results <- tbl(conMonetDB, "results")
-  #   seigneurs <- tbl(conMonetDB, "seigneurs")
-  #   
-  #   all_sim_names <- parameters %>%
-  #     select(sim_name) %>%
-  #     distinct() %>%
-  #     arrange(sim_name) %>%
-  #     collect() %>%
-  #     pull()
-  #   resetConnections(NA)
-  # })
-  
-  
-  
   oldBrushedHaut <- reactiveVal(value = NA)
   oldBrushedBas <- reactiveVal(value = NA)
   
-  sim <- reactiveValues(agregats = agregats,
-                        FP =  fp,
-                        parameters = parameters,
-                        paroisses = paroisses,
-                        poles = poles,
-                        results = results,
-                        seigneurs = seigneurs,
-                        seeds = seeds)
+  sim <- reactiveValues(agregats = agregats, FP =  fp, parameters = parameters,
+                        paroisses = paroisses, poles = poles, results = results,
+                        seigneurs = seigneurs, seeds = seeds)
   
   filtredHaut <- reactiveValues(agregats = NULL,
                                 FP = NULL,
@@ -332,133 +295,7 @@ shinyServer(function(session, input, output) {
                 ))
   })
   
-  output$selectionTable <- renderFormattable({
-    req(summary_table2())
-    formattable(summary_table2(), table.attr = 'class="table table-striped"',
-                list(
-                  area(row = 1:5, col = 2:6) ~ round,
-                  area(row = 1:5, col = 7) ~ formatter("span", function(x){ round(x, digits = 2) }),
-                  area(row = 6, col = 2:7) ~ formatter("span",  function(x){paste(round(x), "m")}),
-                  area(row = 7, col = 2:6) ~ formatter("span",  function(x){paste(round(x * 100), "%")}),
-                  area(row = 7, col = 7) ~ formatter("span",  function(x){paste(round(x * 100, digits = 1), "%")}),
-                  area(row = 8, col = 2:6) ~ formatter("span", function(x){ paste("x", round(x)) }),
-                  area(row = 8, col = 7) ~ formatter("span", function(x){ paste("x", round(x, digits = 2)) })
-                ))
-  })
-  
-  output$simNames <- renderPlot({
-    simNames <- sim$parameters %>%
-      group_by(sim_name) %>%
-      summarise(n = n()) %>%
-      collect()
-    
-    simNamesPlot <- ggplot(simNames, aes(x = sim_name, y = n)) +
-      geom_col(fill = NA, alpha = 1, colour = "black", linetype = "dotted") +
-      labs(x = "Expériences", y = "Nombre de simulations",
-           title = "Distribution des simulations") +
-      theme_minimal()
-    
-    if ( length( filtredHaut$parameters ) > 1 ) {
-      simNamesFiltred <- filtredHaut$parameters %>%
-        group_by(sim_name) %>%
-        summarise(n = n()) %>%
-        collect()
-      
-      simNamesPlot <- simNamesPlot +
-        geom_col(data = simNamesFiltred,
-                 fill = "#43a2ca", alpha = 0.3, colour = "#053144")
-    }
-    
-    if ( length( filtredBas$parameters ) > 1 ) {
-      simNamesFiltred <- filtredBas$parameters %>%
-        group_by(sim_name) %>%
-        summarise(n = n()) %>%
-        collect()
-      
-      simNamesPlot <- simNamesPlot +
-        geom_col(data = simNamesFiltred,
-                 fill = "red", alpha = 0.3, colour = "#67000d")
-    }
-    simNamesPlot
-  })
-  
-  output$resultsPlot <- renderPlot({
-    
-    Objectifs <- data_frame(
-      Var = c("NbAgregats", "nbChateaux", "nbGdChateaux", "NbSeigneurs","nbEglisesParoissiales", "distance_eglises_paroissiales", "prop_FP_isoles", "RatioChargeFiscale"),
-      RealVar = c("Agrégats", "Châteaux",  "Gros châteaux", "Seigneurs",
-                  "Églises paroissiales", "Distance moyenne entre églises",  
-                  "Part de foyers paysans isolés",
-                  "Augmentation de la charge fiscale des foyers paysans"),
-      Objectif = c(200, 50, 10, 200, 300, 3000, 0.2, 3),
-      Ordre = 1:8
-    ) %>%
-      mutate(Var = tolower(Var))
-    
-    resultsData <- sim$results %>%
-      filter(annee == 1160) %>%
-      select(-sim_name, -annee) %>%
-      collect() %>%
-      gather(key = Variable,
-             value = Valeur) %>%
-      left_join(Objectifs, by = c("Variable" = "Var")) %>%
-      filter(!is.na(RealVar)) %>%
-      mutate(VarCut = str_wrap(RealVar, width = 20)) %>%
-      arrange(Ordre) %>%
-      mutate(VarCut = factor(VarCut, levels = unique(VarCut))) %>%
-      mutate(Valeur = as.numeric(Valeur))
-    
-    resultPlot <- ggplot(resultsData %>% filter(Variable != "seed"), aes(VarCut, Valeur)) +
-      geom_violin(scale = "area",  na.rm = TRUE, fill = NA , colour = "black", alpha = 0.3, linetype = "dotted") +
-      facet_wrap(~ VarCut, scales = "free", nrow = 1) +
-      theme_minimal() +
-      theme(strip.background = element_blank(),
-            strip.text = element_blank()) +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-      labs(x = "Indicateurs", y = "Valeur", title = "Distribution des indicateurs de sortie")
-    
-    if ( length( filtredHaut$results ) > 1 ) {
-      resultsFiltredData <- filtredHaut$results %>%
-        filter(annee == 1160) %>%
-        select(-sim_name, -annee) %>%
-        collect() %>%
-        gather(key = Variable,
-               value = Valeur) %>%
-        left_join(Objectifs, by = c("Variable" = "Var")) %>%
-        filter(!is.na(RealVar)) %>%
-        mutate(VarCut = str_wrap(RealVar, width = 20)) %>%
-        arrange(Ordre) %>%
-        mutate(VarCut = factor(VarCut, levels = unique(VarCut))) %>%
-        mutate(Valeur = as.numeric(Valeur))
-      
-      resultPlot <- resultPlot +
-        geom_violin(data = resultsFiltredData,
-                    scale = "area",  na.rm = TRUE, fill = "#43a2ca", alpha = .3, colour = "#053144")
-    }
-    
-    if ( length( filtredBas$results ) > 1 ) {
-      resultsFiltredData <- filtredBas$results %>%
-        filter(annee == 1160) %>%
-        select(-sim_name, -annee) %>%
-        collect() %>%
-        gather(key = Variable,
-               value = Valeur) %>%
-        left_join(Objectifs, by = c("Variable" = "Var")) %>%
-        filter(!is.na(RealVar)) %>%
-        mutate(VarCut = str_wrap(RealVar, width = 20)) %>%
-        arrange(Ordre) %>%
-        mutate(VarCut = factor(VarCut, levels = unique(VarCut))) %>%
-        mutate(Valeur = as.numeric(Valeur))
-      
-      resultPlot <- resultPlot +
-        geom_violin(data = resultsFiltredData,
-                    scale = "area",  na.rm = TRUE, fill = "red", alpha = .3, colour = "#67000d")
-    }
-    
-    resultPlot
-    
-  })
-  
+  source("src_plots/global_plots.R", local = TRUE, encoding = "utf8")
   source("src_plots/FP.R", local = TRUE, encoding = 'utf8')
   source("src_plots/Agregats.R", local = TRUE, encoding = 'utf8')
   source("src_plots/Seigneurs.R", local = TRUE, encoding = 'utf8')
