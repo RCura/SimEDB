@@ -89,13 +89,13 @@ shinyServer(function(session, input, output) {
     if (length(filtredSeedsHaut()) > 0) {
       brushedSeeds <- tibble(seed = filtredSeedsHaut())
       
-      for (df in names(filtredBas)){
+      for (df in names(filtredHaut)){
         filtredHaut[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
       }
       
     } else {
-      for (df in names(filtredBas)){
-        filtredHaut[[df]] <- NULL
+      for (df in names(filtredHaut)){
+        filtredHaut[[df]] <- sim[[df]]
       }
     }
   })
