@@ -11,7 +11,7 @@ shinyUI(navbarPage(
                                                    multiple = TRUE)),
                              textOutput("dataVolumeHaut",inline =  TRUE),
                              fluidRow(column(12, style = "background-color: rgba(67, 162, 202, 0.3);",
-                                             parcoordsOutput("paramParCoords", width = "100%", height = "200px"))),
+                                             parcoordsOutput("paramParCoordsHaut", width = "100%", height = "200px"))),
                              # dataTableOutput("paramLegend"),
                              plotOutput("simNames", height = "200px"),
                              plotOutput("resultsPlot", height = "200px"),
@@ -27,9 +27,9 @@ shinyUI(navbarPage(
     
     tabsetPanel(id = "detailPlots",type = "pills",
                 tabPanel("Objectifs généraux",
-                         fluidRow(formattableOutput("targetsTable", width = "95%")),
+                         fluidRow(formattableOutput("summaryTable_Haut", width = "95%")),
                          tags$hr(),
-                         fluidRow(formattableOutput("selectionTable", width = "95%"))
+                         fluidRow(formattableOutput("summaryTable_Bas", width = "95%"))
                 ),
                 tabPanel("Foyers Paysans",
                          tabsetPanel(id = "FPPlots", 

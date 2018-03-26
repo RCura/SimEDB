@@ -2,6 +2,8 @@ library(shiny)
 
 shinyServer(function(session, input, output) {
   
+  # ---------------- Declare reactive values -----------------
+  
   oldBrushedHaut <- reactiveVal(value = NA)
   oldBrushedBas <- reactiveVal(value = NA)
   
@@ -17,6 +19,9 @@ shinyServer(function(session, input, output) {
                                paroisses = NULL, poles = NULL,
                                results = NULL, seigneurs = NULL
   )
+  
+  # ---------------- Globally filtered experiments -----------------
+  
   
   selected_experiments <- reactive({
     if (is.null(input$selectedSims)){
@@ -58,13 +63,15 @@ shinyServer(function(session, input, output) {
     tmp_parameters %>% dplyr::select(!!nonUniqueParams)
   })
   
+  # ---------------- Parallel Coordinates Filtering -----------------
+  
   filtredSeedsHaut <- reactive({
-    req(input$paramParCoords_brushed_row_names, sim$seeds)
+    req(input$paramParCoordsHaut_brushed_row_names, sim$seeds)
     tmp_seeds <- sim$seeds %>% collect()
-    nbBrushed <- length(input$paramParCoords_brushed_row_names)
+    nbBrushed <- length(input$paramParCoordsHaut_brushed_row_names)
     nbTotal <- tmp_seeds %>% nrow()
     if (nbBrushed > 0 && nbBrushed < nbTotal && oldBrushedHaut() != nbBrushed) {
-      tmp_seeds$seed[as.numeric(input$paramParCoords_brushed_row_names)]
+      tmp_seeds$seed[as.numeric(input$paramParCoordsHaut_brushed_row_names)]
     } else {
       oldBrushedHaut(nbBrushed)
       NULL
@@ -116,6 +123,7 @@ shinyServer(function(session, input, output) {
     }
   })
   
+  # ---------------- Source all plots -----------------
   
   source("src_plots/global_plots.R", local = TRUE, encoding = "utf8")
   source("src_plots/FP.R", local = TRUE, encoding = 'utf8')
@@ -127,9 +135,11 @@ shinyServer(function(session, input, output) {
   source("src_plots/rating.R", local = TRUE, encoding = "utf8")
   source("src_plots/sensitivity.R", local = TRUE, encoding = "utf8")
   
+  # ---------------- Disconnect onSessionEnded -----------------
   
   session$onSessionEnded(function() {
   #   dbDisconnect(conMapD)
+  dbDisconnect(conMonetDB)  
   MonetDBLite::monetdblite_shutdown()
   })
   
