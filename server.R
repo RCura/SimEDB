@@ -2,6 +2,21 @@ library(shiny)
 
 shinyServer(function(session, input, output) {
   
+  # Connection to DB system (for MapD at least)
+  drv <- JDBC("com.mapd.jdbc.MapDDriver",
+              "/home/robin/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
+              identifier.quote="'")
+  conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "HyperInteractive")
+  seeds <- tbl(conMapD, "seeds")
+  agregats <- tbl(conMapD, "agregats")
+  fp <- tbl(conMapD, "fp")
+  parameters <- tbl(conMapD, "parameters")
+  paroisses <- tbl(conMapD, "paroisses")
+  poles <- tbl(conMapD, "poles")
+  results <- tbl(conMapD, "results")
+  seigneurs <- tbl(conMapD, "seigneurs")
+  
+  
   # ---------------- Declare reactive values -----------------
   
   oldBrushedHaut <- reactiveVal(value = NA)
@@ -97,7 +112,10 @@ shinyServer(function(session, input, output) {
       brushedSeeds <- tibble(seed = filtredSeedsHaut())
       
       for (df in names(filtredHaut)){
-        filtredHaut[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+        # For MonetDB
+        # filtredHaut[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+        # For MapD
+        filtredHaut[[df]] <- sim[[df]] %>% filter(seed %in% brushedSeeds$seed)
       }
       
     } else {
@@ -113,7 +131,10 @@ shinyServer(function(session, input, output) {
       brushedSeeds <- tibble(seed = filtredSeedsBas())
       
       for (df in names(filtredBas)){
-        filtredBas[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+        # For MonetDB
+        # filtredBas[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+        # For MapD
+        filtredBas[[df]] <- sim[[df]] %>% filter(seed %in% brushedSeeds$seed)
       }
       
     } else {
@@ -137,11 +158,11 @@ shinyServer(function(session, input, output) {
   
   # ---------------- Disconnect onSessionEnded -----------------
   
-  session$onSessionEnded(function() {
-  #   dbDisconnect(conMapD)
-  dbDisconnect(conMonetDB)  
-  MonetDBLite::monetdblite_shutdown()
-  })
+  # session$onSessionEnded(function() {
+  # #   dbDisconnect(conMapD)
+  # dbDisconnect(conMonetDB)  
+  # MonetDBLite::monetdblite_shutdown()
+  # })
   
 
   
