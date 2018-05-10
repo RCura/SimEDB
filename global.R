@@ -25,6 +25,8 @@ suppressPackageStartupMessages({
   library(xtable)
   library(formattable) # devtools::install_github("renkun-ken/formattable")
   library(DT)
+  library(shinycssloaders)
+  
 })
 
 # drv <- JDBC("com.mapd.jdbc.MapDDriver",
