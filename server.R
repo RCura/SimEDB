@@ -7,14 +7,14 @@ shinyServer(function(session, input, output) {
               "/home/robin/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
               identifier.quote="'")
   conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "HyperInteractive")
-  seeds <- tbl(conMapD, "seeds")
-  agregats <- tbl(conMapD, "agregats")
-  fp <- tbl(conMapD, "fp")
-  parameters <- tbl(conMapD, "parameters")
-  paroisses <- tbl(conMapD, "paroisses")
-  poles <- tbl(conMapD, "poles")
-  results <- tbl(conMapD, "results")
-  seigneurs <- tbl(conMapD, "seigneurs")
+  seeds <- tbl(conMapD, "seeds_5")
+  agregats <- tbl(conMapD, "agregats_5")
+  fp <- tbl(conMapD, "fp_5")
+  parameters <- tbl(conMapD, "parameters_5")
+  paroisses <- tbl(conMapD, "paroisses_5")
+  poles <- tbl(conMapD, "poles_5")
+  results <- tbl(conMapD, "results_5")
+  seigneurs <- tbl(conMapD, "seigneurs_5")
   
   
   # ---------------- Declare reactive values -----------------

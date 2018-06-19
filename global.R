@@ -67,7 +67,7 @@ drv <- JDBC("com.mapd.jdbc.MapDDriver",
             "/home/robin/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
             identifier.quote="'")
 conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "HyperInteractive")
-parameters <- tbl(conMapD, "parameters")
+parameters <- tbl(conMapD, "parameters_5")
 
 all_sim_names <- parameters %>%
   select(sim_name) %>%
