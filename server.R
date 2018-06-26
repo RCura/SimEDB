@@ -37,6 +37,18 @@ shinyServer(function(session, input, output) {
   
   # ---------------- Globally filtered experiments -----------------
   
+  ############### DEBUG #################
+  # output$selected_seeds_Bas <- renderPrint({
+  #   req(input$paramParCoordsBas_brushed_row_names, sim$seeds)
+  #   tmp_seeds <- sim$seeds %>% collect() %>% arrange(seed)
+  #   dput(tmp_seeds$seed[as.numeric(input$paramParCoordsBas_brushed_row_names)])
+  # })
+  # 
+  # output$selected_seeds_Haut <- renderPrint({
+  #   req(input$paramParCoordsHaut_brushed_row_names, sim$seeds)
+  #   tmp_seeds <- sim$seeds %>% collect() %>% arrange(seed)
+  #   input$paramParCoordsHaut_brushed_row_names
+  # })
   
   selected_experiments <- reactive({
     if (is.null(input$selectedSims)){
@@ -82,7 +94,7 @@ shinyServer(function(session, input, output) {
   
   filtredSeedsHaut <- reactive({
     req(input$paramParCoordsHaut_brushed_row_names, sim$seeds)
-    tmp_seeds <- sim$seeds %>% collect()
+    tmp_seeds <- sim$seeds %>% collect() %>% arrange(seed)
     nbBrushed <- length(input$paramParCoordsHaut_brushed_row_names)
     nbTotal <- tmp_seeds %>% nrow()
     if (nbBrushed > 0 && nbBrushed < nbTotal && oldBrushedHaut() != nbBrushed) {
@@ -95,7 +107,7 @@ shinyServer(function(session, input, output) {
   
   filtredSeedsBas <- reactive({
     req(input$paramParCoordsBas_brushed_row_names, sim$seeds)
-    tmp_seeds <- sim$seeds %>% collect()
+    tmp_seeds <- sim$seeds %>% collect() %>% arrange(seed)
     nbBrushed <- length(input$paramParCoordsBas_brushed_row_names)
     nbTotal <- tmp_seeds %>% nrow()
     if (nbBrushed > 0 && nbBrushed < nbTotal && oldBrushedBas() != nbBrushed) {

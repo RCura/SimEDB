@@ -5,6 +5,7 @@ shinyUI(navbarPage(
   tabPanel(title = "Simulation Exploration",
   sidebarLayout(sidebarPanel(width = 4,fluid = TRUE,
                              column(6,textInput("userName", "Votre nom",  value = "Robin")),
+                             #column(3, bookmarkButton()),
                              column(6, selectInput("selectedSims",  label = "Experiences",
                                                    choices = all_sim_names,
                                                    selected = c("5_0_Test"),
@@ -373,6 +374,15 @@ shinyUI(navbarPage(
                                      )
                          )
                 )
+                # ,
+                # tabPanel("Debug",
+                #          fluidRow(
+                #            verbatimTextOutput("selected_seeds_Haut")
+                #          ),
+                #          fluidRow(
+                #            verbatimTextOutput("selected_seeds_Bas")
+                #          )
+                # )
     )
   )
   )

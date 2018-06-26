@@ -29,6 +29,8 @@ suppressPackageStartupMessages({
   
 })
 
+#enableBookmarking(store = "server")
+
 # drv <- JDBC("com.mapd.jdbc.MapDDriver",
 #             "/home/shiny/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
 #             identifier.quote="'")
