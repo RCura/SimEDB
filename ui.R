@@ -8,7 +8,7 @@ shinyUI(navbarPage(
                              #column(3, bookmarkButton()),
                              column(6, selectInput("selectedSims",  label = "Experiences",
                                                    choices = all_sim_names,
-                                                   selected = c("5_0_Test"),
+                                                   selected = all_sim_names,
                                                    multiple = TRUE)),
                              textOutput("dataVolumeHaut",inline =  TRUE),
                              fluidRow(column(12, style = "background-color: rgba(67, 162, 202, 0.3);",
