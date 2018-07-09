@@ -27,9 +27,9 @@ suppressPackageStartupMessages({
 })
 
 drv <- JDBC("com.mapd.jdbc.MapDDriver",
-            "/opt/mapd/bin/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
+            "/home/robin/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
             identifier.quote="'")
-conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "mapd")
+conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "HyperInteractive")
 
 seeds <- tbl(conMapD, "seeds")
 agregats <- tbl(conMapD, "agregats")

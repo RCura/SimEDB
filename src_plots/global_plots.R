@@ -182,7 +182,7 @@ output$dataVolumeBas <- renderText({
 })
 
 output$paramParCoordsHaut <- renderParcoords({
-  parcoords(parameters_data() %>% select(-seed),
+  parcoords(parameters_data() %>% arrange(seed) %>% select(-seed),
             color = list(
               colorBy = "sim_name",
               colorScale = htmlwidgets::JS('d3.scale.category10()')
@@ -194,7 +194,7 @@ output$paramParCoordsHaut <- renderParcoords({
 })
 
 output$paramParCoordsBas <- renderParcoords({
-  parcoords(parameters_data() %>% select(-seed),
+  parcoords(parameters_data() %>% arrange(seed) %>% select(-seed),
             color = list(
               colorBy = "sim_name",
               colorScale = htmlwidgets::JS('d3.scale.category10()')

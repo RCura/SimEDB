@@ -2,6 +2,21 @@ library(shiny)
 
 shinyServer(function(session, input, output) {
   
+  # Connection to DB system (for MapD at least)
+  drv <- JDBC("com.mapd.jdbc.MapDDriver",
+              "/home/robin/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
+              identifier.quote="'")
+  conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "HyperInteractive")
+  seeds <- tbl(conMapD, "seeds_4_5")
+  agregats <- tbl(conMapD, "agregats_4_5")
+  fp <- tbl(conMapD, "fp_4_5")
+  parameters <- tbl(conMapD, "parameters_4_5")
+  paroisses <- tbl(conMapD, "paroisses_4_5")
+  poles <- tbl(conMapD, "poles_4_5")
+  results <- tbl(conMapD, "results_4_5")
+  seigneurs <- tbl(conMapD, "seigneurs_4_5")
+  
+  
   # ---------------- Declare reactive values -----------------
   
   oldBrushedHaut <- reactiveVal(value = NA)
@@ -22,6 +37,18 @@ shinyServer(function(session, input, output) {
   
   # ---------------- Globally filtered experiments -----------------
   
+  ############### DEBUG #################
+  # output$selected_seeds_Bas <- renderPrint({
+  #   req(input$paramParCoordsBas_brushed_row_names, sim$seeds)
+  #   tmp_seeds <- sim$seeds %>% collect() %>% arrange(seed)
+  #   dput(tmp_seeds$seed[as.numeric(input$paramParCoordsBas_brushed_row_names)])
+  # })
+  # 
+  # output$selected_seeds_Haut <- renderPrint({
+  #   req(input$paramParCoordsHaut_brushed_row_names, sim$seeds)
+  #   tmp_seeds <- sim$seeds %>% collect() %>% arrange(seed)
+  #   input$paramParCoordsHaut_brushed_row_names
+  # })
   
   selected_experiments <- reactive({
     if (is.null(input$selectedSims)){
@@ -67,7 +94,7 @@ shinyServer(function(session, input, output) {
   
   filtredSeedsHaut <- reactive({
     req(input$paramParCoordsHaut_brushed_row_names, sim$seeds)
-    tmp_seeds <- sim$seeds %>% collect()
+    tmp_seeds <- sim$seeds %>% collect() %>% arrange(seed)
     nbBrushed <- length(input$paramParCoordsHaut_brushed_row_names)
     nbTotal <- tmp_seeds %>% nrow()
     if (nbBrushed > 0 && nbBrushed < nbTotal && oldBrushedHaut() != nbBrushed) {
@@ -80,7 +107,7 @@ shinyServer(function(session, input, output) {
   
   filtredSeedsBas <- reactive({
     req(input$paramParCoordsBas_brushed_row_names, sim$seeds)
-    tmp_seeds <- sim$seeds %>% collect()
+    tmp_seeds <- sim$seeds %>% collect() %>% arrange(seed)
     nbBrushed <- length(input$paramParCoordsBas_brushed_row_names)
     nbTotal <- tmp_seeds %>% nrow()
     if (nbBrushed > 0 && nbBrushed < nbTotal && oldBrushedBas() != nbBrushed) {
@@ -97,7 +124,10 @@ shinyServer(function(session, input, output) {
       brushedSeeds <- tibble(seed = filtredSeedsHaut())
       
       for (df in names(filtredHaut)){
-        filtredHaut[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+        # For MonetDB
+        # filtredHaut[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+        # For MapD
+        filtredHaut[[df]] <- sim[[df]] %>% filter(seed %in% brushedSeeds$seed)
       }
       
     } else {
@@ -113,7 +143,10 @@ shinyServer(function(session, input, output) {
       brushedSeeds <- tibble(seed = filtredSeedsBas())
       
       for (df in names(filtredBas)){
-        filtredBas[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+        # For MonetDB
+        # filtredBas[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
+        # For MapD
+        filtredBas[[df]] <- sim[[df]] %>% filter(seed %in% brushedSeeds$seed)
       }
       
     } else {
@@ -137,11 +170,11 @@ shinyServer(function(session, input, output) {
   
   # ---------------- Disconnect onSessionEnded -----------------
   
-  session$onSessionEnded(function() {
-  #   dbDisconnect(conMapD)
-  dbDisconnect(conMonetDB)  
-  MonetDBLite::monetdblite_shutdown()
-  })
+  # session$onSessionEnded(function() {
+  # #   dbDisconnect(conMapD)
+  # dbDisconnect(conMonetDB)  
+  # MonetDBLite::monetdblite_shutdown()
+  # })
   
 
   
