@@ -58,4 +58,27 @@ Agregats_Paroisses <- function(agregats_data, poles_data){
 
 # Graphique "Evolution de la composition des paroisses" : difficulté de lecture due au fait que deux graphiques comportent une modalité "0" et pas les deux autres.
 
+
+paroisses_data <- paroisses %>% filter(sim_name == "5_0")
+Paroisses_Compo <- function(paroisses_data){
+  fidelesBreaks <- c(-1,0,10,30,50,100,1000)
+  fidelesLabels <- c("0", "1-10", "11-30", "31-50", "51-100", ">100")
+  
+  paroisses_breaks <- paroisses_data %>%
+    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    collect() %>%
+    mutate(NbFidelesBreaks = cut(nbfideles, breaks = fidelesBreaks, labels = fidelesLabels)) %>%
+    group_by(seed, annee, NbFidelesBreaks) %>%
+    summarise(NbParoisses = n())
+  
+  ggplot(paroisses_breaks, aes(factor(NbFidelesBreaks), NbParoisses)) +
+    geom_tufteboxplot() +
+    facet_wrap(~annee, scales = "free") +
+    xlab("Nombre de paroissiens") + ylab("Fréquence") +
+    scale_x_discrete(drop = FALSE) +
+    ggtitle("Evolution de la composition des paroisses") +
+    labs(subtitle = "Variabilité : Réplications")
+}
+
+
 # Les graphiques présentant la distribution des indicateurs de sortie sont, à mon avis, inutiles car regarder l'ensemble des 780 simulations n'a aucun sens thématiquement.

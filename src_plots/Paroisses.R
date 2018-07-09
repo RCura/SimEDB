@@ -36,6 +36,7 @@ Paroisses_Compo <- function(paroisses_data){
     geom_tufteboxplot() +
     facet_wrap(~annee, scales = "free") +
     xlab("Nombre de paroissiens") + ylab("Fréquence") +
+    scale_x_discrete(drop = FALSE) +
     ggtitle("Evolution de la composition des paroisses") +
     labs(subtitle = "Variabilité : Réplications")
 }
