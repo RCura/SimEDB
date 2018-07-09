@@ -40,7 +40,7 @@ suppressPackageStartupMessages({
 # results <- tbl(conMapD, "results")
 # seigneurs <- tbl(conMapD, "seigneurs")
 
-conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "data/db_Transition8")
+conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "~/Dropbox/3_Data/outputs_TR8_full/db_Transition8")
 seeds <- tbl(conMonetDB, "seeds")
 agregats <- tbl(conMonetDB, "agregats")
 fp <- tbl(conMonetDB, "fp")
