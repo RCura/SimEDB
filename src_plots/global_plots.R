@@ -182,25 +182,34 @@ output$dataVolumeBas <- renderText({
 })
 
 output$paramParCoordsHaut <- renderParcoords({
-  parcoords(parameters_data() %>% arrange(seed) %>% select(-seed),
+  parcoords(parameters_data() %>%
+              arrange(seed) %>%
+              select(-seed) %>%
+              rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = " "))),
             color = list(
-              colorBy = "sim_name",
+              colorBy = "sim name",
               colorScale = htmlwidgets::JS('d3.scale.category10()')
             ),
             rownames = FALSE,
             brushMode = "1d",
             reorderable = TRUE,
-            autoresize = TRUE)
+            autoresize = TRUE,
+            margin = list(top = 50, bottom = 10, left = 50, right = 10)
+            )
 })
 
 output$paramParCoordsBas <- renderParcoords({
-  parcoords(parameters_data() %>% arrange(seed) %>% select(-seed),
+  parcoords(parameters_data() %>%
+              arrange(seed) %>%
+              select(-seed) %>%
+              rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = " "))),
             color = list(
-              colorBy = "sim_name",
+              colorBy = "sim name",
               colorScale = htmlwidgets::JS('d3.scale.category10()')
             ),
             rownames = FALSE,
             brushMode = "1d",
             reorderable = TRUE,
-            autoresize = TRUE)
+            autoresize = TRUE,
+            margin = list(top = 50, bottom = 10, left = 50, right = 10))
 })

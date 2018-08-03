@@ -14,7 +14,7 @@ suppressPackageStartupMessages({
   # Interactivity
   library(shiny)
   library(shinythemes)
-  library(parcoords) # devtools::install_github("timelyportfolio/parcoords", ref="feature/resize")
+  library(parcoords) # devtools::install_github("RCura/parcoords") # For using the label wrapping
   library(ShinyRatingInput) # devtools::install_github("stefanwilhelm/ShinyRatingInput")
   
   # Plots
