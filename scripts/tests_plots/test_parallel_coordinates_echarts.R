@@ -1,9 +1,7 @@
 library(tidyverse)
 library(echarts4r)
 
-load("data/sim_data_4_4_A-C.Rdata")
-
-  tmp_parameters <- sim_parameters
+  tmp_parameters <- read_csv("~/Dropbox/params_4_5_mapd.csv")
   nonUniqueParams <- tmp_parameters %>%
     gather(key = "Var", value = "Value") %>%
     group_by(Var, Value) %>%
@@ -20,17 +18,8 @@ load("data/sim_data_4_4_A-C.Rdata")
 
 blob %>%
   e_charts() %>%
-  e_parallel(!!nonUniqueParams, 
-             ... = ) %>%
-  e_title("test") %>%
-
-df <- data.frame(
-  price = rnorm(5, 10),
-  amount = rnorm(5, 15),
-  sim_name = blob$sim_name[1:5]
-) %>%
-  arrange(desc(sim_name))
-
-df %>%
-  e_charts() %>%
-  e_parallel(price, amount, sim_name)
+  e_parallel(!!nonUniqueParams, x.index = 1) %>%
+  e_x_axis(index = 1, axisLabel = list()) %>%
+  e_title("test")
+#%>%
+  
