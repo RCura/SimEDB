@@ -1,7 +1,11 @@
 library(processx)
 
 setwd("/home/robin/gama_18git/headless")
+
+modelFile <- "/home/robin/SimFeodal/models/Base5_GUI.gaml"
 experimentPath="/home/robin/SimFeodal/experiments/expe_5_0_T_07-08.xml"
+file.edit(modelFile)
+file.edit(experimentPath)
 
 outputPath="/home/robin/myOutputs/sim"
 
