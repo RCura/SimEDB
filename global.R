@@ -27,6 +27,10 @@ suppressPackageStartupMessages({
   library(DT)
   library(shinycssloaders)
   
+  library(htmlwidgets)
+  library(plotly)
+  library(jsonlite)
+  
 })
 
 #enableBookmarking(store = "server")

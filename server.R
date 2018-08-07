@@ -91,37 +91,45 @@ shinyServer(function(session, input, output) {
   })
   
   # ---------------- Parallel Coordinates Filtering -----------------
+
   
-  filtredSeedsHaut <- reactive({
-    req(input$paramParCoordsHaut_brushed_row_names, sim$seeds)
-    tmp_seeds <- sim$seeds %>% collect() %>% arrange(seed)
-    nbBrushed <- length(input$paramParCoordsHaut_brushed_row_names)
-    nbTotal <- tmp_seeds %>% nrow()
-    if (nbBrushed > 0 && nbBrushed < nbTotal && oldBrushedHaut() != nbBrushed) {
-      tmp_seeds$seed[as.numeric(input$paramParCoordsHaut_brushed_row_names)]
+  filtredSeedsHaut_plotly <- reactive({
+    req(sim$seeds)
+
+    selected_seeds <- parameters_data() %>%
+      mutate(seed = as.numeric(seed)) %>%
+      mutate_if(is.character, funs(char_to_num)) %>%
+      filter(!!!(expression_from_input(input$plotly_brushed_haut))) %>%
+      mutate(seed = as.character(seed)) %>%
+      pull((seed))
+    if (length(selected_seeds) >= 1){
+      selected_seeds
     } else {
-      oldBrushedHaut(nbBrushed)
       NULL
     }
   })
   
-  filtredSeedsBas <- reactive({
-    req(input$paramParCoordsBas_brushed_row_names, sim$seeds)
-    tmp_seeds <- sim$seeds %>% collect() %>% arrange(seed)
-    nbBrushed <- length(input$paramParCoordsBas_brushed_row_names)
-    nbTotal <- tmp_seeds %>% nrow()
-    if (nbBrushed > 0 && nbBrushed < nbTotal && oldBrushedBas() != nbBrushed) {
-      tmp_seeds$seed[as.numeric(input$paramParCoordsBas_brushed_row_names)]
+  filtredSeedsBas_plotly <- reactive({
+    req(sim$seeds)
+    
+    selected_seeds <- parameters_data() %>%
+      mutate(seed = as.numeric(seed)) %>%
+      mutate_if(is.character, funs(char_to_num)) %>%
+      filter(!!!(expression_from_input(input$plotly_brushed_bas))) %>%
+      mutate(seed = as.character(seed)) %>%
+      pull((seed))
+    if (length(selected_seeds) >= 1){
+      selected_seeds
     } else {
-      oldBrushedBas(nbBrushed)
       NULL
     }
   })
+
   
   observe({
     
-    if (length(filtredSeedsHaut()) > 0) {
-      brushedSeeds <- tibble(seed = filtredSeedsHaut())
+    if (length(filtredSeedsHaut_plotly()) > 0) {
+      brushedSeeds <- tibble(seed = filtredSeedsHaut_plotly())
       
       for (df in names(filtredHaut)){
         # For MonetDB
@@ -139,8 +147,8 @@ shinyServer(function(session, input, output) {
   
   observe({
 
-    if (length(filtredSeedsBas()) > 0) {
-      brushedSeeds <- tibble(seed = filtredSeedsBas())
+    if (length(filtredSeedsBas_plotly()) > 0) {
+      brushedSeeds <- tibble(seed = filtredSeedsBas_plotly())
       
       for (df in names(filtredBas)){
         # For MonetDB
@@ -157,7 +165,7 @@ shinyServer(function(session, input, output) {
   })
   
   # ---------------- Source all plots -----------------
-  
+  source("src_plots/plotly_helpers.R", local = TRUE, encoding = "utf8")
   source("src_plots/global_plots.R", local = TRUE, encoding = "utf8")
   source("src_plots/FP.R", local = TRUE, encoding = 'utf8')
   source("src_plots/Agregats.R", local = TRUE, encoding = 'utf8')

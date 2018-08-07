@@ -168,48 +168,77 @@ output$summaryTable_Bas <- renderFormattable({
 
 
 output$dataVolumeHaut <- renderText({
-  blob <- length(input$paramParCoords_brushed_row_names)
+  blob <- filtredHaut$parameters %>% count() %>% collect() %>% pull()
   sprintf("%s simulations sélectionnées sur un total de %s",
           blob,
           sim$parameters %>% count() %>% collect() %>% pull())
 })
 
 output$dataVolumeBas <- renderText({
-  blob <- length(input$paramParCoordsBas_brushed_row_names)
+  blob <- filtredBas$parameters %>% count() %>% collect() %>% pull()
   sprintf("%s simulations sélectionnées sur un total de %s",
           blob,
           sim$parameters %>% count() %>% collect() %>% pull())
 })
 
-output$paramParCoordsHaut <- renderParcoords({
-  parcoords(parameters_data() %>%
-              arrange(seed) %>%
-              select(-seed) %>%
-              rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = " "))),
-            color = list(
-              colorBy = "sim name",
-              colorScale = htmlwidgets::JS('d3.scale.category10()')
-            ),
-            rownames = FALSE,
-            brushMode = "1d",
-            reorderable = TRUE,
-            autoresize = TRUE,
-            margin = list(top = 50, bottom = 10, left = 50, right = 10)
-            )
+
+
+output$paramPC_Haut <- renderPlotly({
+  parcoords_data <- parameters_data() %>%
+    arrange(seed) %>%
+    rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = "_")))
+  
+  parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
+
+  p <-  plot_ly(source = 'parcoords_haut') %>%
+    add_trace(data = parcoords_data,
+              type = 'parcoords',
+              dimensions = parcoords_dims,
+              line = list(color = "blue")
+    )
+
+  onRender(p, "function(el, x) {
+    el.on('plotly_restyle', function(d) {
+      var blob = el.data[0].dimensions.map(function(x){return({label: x.label, constraintrange: x.constraintrange})});
+      Shiny.setInputValue('plotly_brushed_haut', JSON.stringify(blob));
+    });
+  }")
 })
 
-output$paramParCoordsBas <- renderParcoords({
-  parcoords(parameters_data() %>%
-              arrange(seed) %>%
-              select(-seed) %>%
-              rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = " "))),
-            color = list(
-              colorBy = "sim name",
-              colorScale = htmlwidgets::JS('d3.scale.category10()')
-            ),
-            rownames = FALSE,
-            brushMode = "1d",
-            reorderable = TRUE,
-            autoresize = TRUE,
-            margin = list(top = 50, bottom = 10, left = 50, right = 10))
+output$paramPC_Bas <- renderPlotly({
+  parcoords_data <- parameters_data() %>%
+    arrange(seed) %>%
+    rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = "_")))
+  
+  parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
+  
+  p <-  plot_ly(source = 'parcoords_bas') %>%
+    add_trace(data = parcoords_data,
+              type = 'parcoords',
+              dimensions = parcoords_dims,
+              line = list(color = "blue")
+    )
+  
+  onRender(p, "function(el, x) {
+           el.on('plotly_restyle', function(d) {
+           var blob = el.data[0].dimensions.map(function(x){return({label: x.label, constraintrange: x.constraintrange})});
+           Shiny.setInputValue('plotly_brushed_bas', JSON.stringify(blob));
+           });
+}")
 })
+
+# 
+# output$paramParCoordsBas <- renderParcoords({
+#   parcoords(parameters_data() %>%
+#               arrange(seed) %>%
+#               select(-seed) %>%
+#               rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = " "))),
+#             color = list(
+#               colorBy = "sim name",
+#               colorScale = htmlwidgets::JS('d3.scale.category10()')
+#             ),
+#             rownames = FALSE,
+#             brushMode = "1d",
+#             reorderable = TRUE,
+#             autoresize = TRUE,
+#             margin = list(top = 50, bottom = 10, left = 50, right = 10))
