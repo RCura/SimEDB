@@ -242,3 +242,4 @@ output$paramPC_Bas <- renderPlotly({
 #             reorderable = TRUE,
 #             autoresize = TRUE,
 #             margin = list(top = 50, bottom = 10, left = 50, right = 10))
+# })

@@ -3,10 +3,31 @@ library(shiny)
 shinyUI(navbarPage(
   "SimEDB",
   tabPanel(title = "Simulation Exploration",
-  sidebarLayout(sidebarPanel(width = 4,fluid = TRUE,
                              column(6,textInput("userName", "Votre nom",  value = "Robin")),
                              #column(3, bookmarkButton()),
                              column(6, selectInput("selectedSims",  label = "Experiences",
+           tags$head(
+             tags$style(HTML("
+                             .ui-resizable-handle{
+                             background-attachment: scroll;
+                             background-clip: border-box;
+                             background-color:  rgb(220,220,220);
+                             background-image: url('Splitter-32.png');
+                             background-origin: padding-box;
+                             background-position: 50% 50%;
+                             background-repeat: no-repeat;
+                             background-size: auto auto;
+                             cursor: col-resize;
+                             flex-basis: auto;
+                             flex-grow: 0;
+                             flex-shrink: 0;
+                             font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+                             touch-action: none;
+                             }
+                             "))
+             ),
+  sidebarLayout(
+    shinyjqui::jqui_resizable(sidebarPanel(width = 4,fluid = TRUE,
                                                    choices = all_sim_names,
                                                    selected = all_sim_names,
                                                    multiple = TRUE)),
@@ -22,6 +43,7 @@ shinyUI(navbarPage(
                                              plotlyOutput(outputId = "paramPC_Bas", width = "100%", height = "300px")
                                              ))
   ),
+  options = list(handles = "e")),
   mainPanel(
     # column(10,
     #   
