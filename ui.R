@@ -3,9 +3,6 @@ library(shiny)
 shinyUI(navbarPage(
   "SimEDB",
   tabPanel(title = "Simulation Exploration",
-                             column(6,textInput("userName", "Votre nom",  value = "Robin")),
-                             #column(3, bookmarkButton()),
-                             column(6, selectInput("selectedSims",  label = "Experiences",
            tags$head(
              tags$style(HTML("
                              .ui-resizable-handle{
@@ -28,16 +25,21 @@ shinyUI(navbarPage(
              ),
   sidebarLayout(
     shinyjqui::jqui_resizable(sidebarPanel(width = 4,fluid = TRUE,
+                                           fluidRow(textInput("userName", "Utilisateur",  value = "Robin")),
+                             fluidRow(selectInput("selectedSims",  label = "Experiences",
                                                    choices = all_sim_names,
                                                    selected = all_sim_names,
                                                    multiple = TRUE)),
                              textOutput("dataVolumeHaut",inline =  TRUE),
                              fluidRow(column(12, style = "background-color: rgba(67, 162, 202, 0.3);",
-                             # dataTableOutput("paramLegend"),
-                             plotOutput("simNames", height = "200px") %>% withSpinner(type = 7, color = "#C6E3EF"),
-                             plotOutput("resultsPlot", height = "200px") %>% withSpinner(type = 7, color = "#C6E3EF"),
                                              plotlyOutput(outputId = "paramPC_Haut", width = "100%", height = "300px")
                                       )),
+                             # plotOutput("simNames", height = "200px") %>% withSpinner(type = 7, color = "#C6E3EF"),
+                             shiny::checkboxInput(inputId = "show_resultsPlot", value = FALSE, label = "Violin plot ?", width = "50%"),
+                             conditionalPanel(
+                               condition = "input.show_resultsPlot==true",
+                               plotOutput("resultsPlot", height = "200px") %>% withSpinner(type = 7, color = "#C6E3EF")
+                             ),
                              textOutput("dataVolumeBas",inline =  TRUE),
                              fluidRow(column(12, style = "background-color: rgba(25, 0, 0, 0.3);",
                                              plotlyOutput(outputId = "paramPC_Bas", width = "100%", height = "300px")
@@ -45,10 +47,6 @@ shinyUI(navbarPage(
   ),
   options = list(handles = "e")),
   mainPanel(
-    # column(10,
-    #   
-    # ),
-    #column(10,
     
     tabsetPanel(id = "detailPlots",type = "pills",
                 tabPanel("Objectifs généraux",
