@@ -2,70 +2,35 @@ suppressPackageStartupMessages({
   # Data wrangling
   library(tidyverse)
   library(magrittr)
-  library(stringr)
-  library(forcats)
   
   # DataBase
   library(dbplyr)
   library(DBI)
-  #library(MonetDBLite)
   library(RJDBC)
   
   # Interactivity
   library(shiny)
   library(shinythemes)
-  library(parcoords) # devtools::install_github("RCura/parcoords") # For using the label wrapping
+  #library(parcoords) # devtools::install_github("RCura/parcoords") # For using the label wrapping
   library(ShinyRatingInput) # devtools::install_github("stefanwilhelm/ShinyRatingInput")
+  library(shinyjqui) # Resizable on sidebar
   
   # Plots
-  library(gridExtra)
-  library(ggthemes)
+  library(gridExtra) # Plots en 2-3 sous-plots
+  library(ggthemes) # geom_tufteboxplot
   
   # Tables
-  library(xtable)
-  library(formattable) # devtools::install_github("renkun-ken/formattable")
-  library(DT)
-  library(shinycssloaders)
+  #library(xtable)
+  library(formattable) # Main table objectifs
+  library(DT) # Sensitivity table
+  library(shinycssloaders) # CSS loaders on plots
   
-  library(htmlwidgets)
-  library(plotly)
-  library(jsonlite)
+  # Interactive Plots
+  library(plotly) # Parallel coordinates plot
+  library(htmlwidgets) # Custom call to onRender() for parallel coordinates
+  library(jsonlite) # Handling htmlwidgets::onRender answer
   
 })
-
-#enableBookmarking(store = "server")
-
-# drv <- JDBC("com.mapd.jdbc.MapDDriver",
-#             "/home/shiny/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
-#             identifier.quote="'")
-# conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "HyperInteractive")
-# seeds <- tbl(conMapD, "seeds")
-# agregats <- tbl(conMapD, "agregats")
-# fp <- tbl(conMapD, "fp")
-# parameters <- tbl(conMapD, "parameters")
-# paroisses <- tbl(conMapD, "paroisses")
-# poles <- tbl(conMapD, "poles")
-# results <- tbl(conMapD, "results")
-# seigneurs <- tbl(conMapD, "seigneurs")
-
-# conMonetDB <- dbConnect(MonetDBLite::MonetDBLite(), "data/db_Transition8")
-# seeds <- tbl(conMonetDB, "seeds")
-# agregats <- tbl(conMonetDB, "agregats")
-# fp <- tbl(conMonetDB, "fp")
-# parameters <- tbl(conMonetDB, "parameters")
-# paroisses <- tbl(conMonetDB, "paroisses")
-# poles <- tbl(conMonetDB, "poles")
-# results <- tbl(conMonetDB, "results")
-# seigneurs <- tbl(conMonetDB, "seigneurs")
-
-# write_csv(fp %>% collect(), "~/all_outputs_TR8/fp.csv")
-# write_csv(seeds %>% collect(), "~/all_outputs_TR8/seeds.csv")
-# write_csv(agregats %>% collect(), "~/all_outputs_TR8/agregats.csv")
-# write_csv(parameters %>% collect(), "~/all_outputs_TR8/parameters.csv")
-# write_csv(paroisses %>% collect(), "~/all_outputs_TR8/paroisses.csv")
-# write_csv(poles %>% collect(), "~/all_outputs_TR8/poles.csv")
-# write_csv(results %>% collect(), "~/all_outputs_TR8/results.csv")
-# write_csv(seigneurs %>% collect(), "~/all_outputs_TR8/seigneurs.csv")
 
 options( java.parameters = c("-Xss2560k", "-Xmx8g") ) # Needed fix for rJava (JDBC) + ggplot2
 
