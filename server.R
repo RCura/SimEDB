@@ -177,13 +177,10 @@ shinyServer(function(session, input, output) {
   source("src_plots/sensitivity.R", local = TRUE, encoding = "utf8")
   
   # ---------------- Disconnect onSessionEnded -----------------
-  
-  # session$onSessionEnded(function() {
-  # #   dbDisconnect(conMapD)
-  # dbDisconnect(conMonetDB)  
-  # MonetDBLite::monetdblite_shutdown()
-  # })
-  
+  # Cf. https://shiny.rstudio.com/reference/shiny/latest/onStop.html
+  onStop(function(){
+    dbDisconnect(conMapD)}
+  )
 
   
 })
