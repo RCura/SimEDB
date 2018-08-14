@@ -4,14 +4,15 @@ library(dbplyr)
 library(RJDBC)
 
 
-options( java.parameters = c("-Xss2560k", "-Xmx8g") ) # Needed fix for rJava (JDBC) + ggplot2
+
+options( java.parameters = c("-Xss2560k", "-Xmx7g") ) # Needed fix for rJava (JDBC) + ggplot2
 drv <- JDBC("com.mapd.jdbc.MapDDriver",
             "/data/user/c/rcura/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
             identifier.quote="'")
 
 
 system.time({
-  conHumaNum <- dbConnect(drv = drv, "jdbc:mapd:cchum-kvm-simedb-mapd.in2p3.fr:80:mapd", "mapd", "HyperInteractive")
+  conHumaNum <- dbConnect(drv = drv, "jdbc:mapd:mapdi.cura.info:9091:mapd", "mapd", "HyperInteractive")
   sqlQuery <- DBI::dbSendQuery(conn = conHumaNum, "SELECT sim_name, COUNT(*) AS NB FROM fp GROUP BY sim_name")
   print(DBI::dbFetch(sqlQuery))
   dbDisconnect(conHumaNum)

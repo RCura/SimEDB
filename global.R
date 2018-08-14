@@ -11,7 +11,6 @@ suppressPackageStartupMessages({
   # Interactivity
   library(shiny)
   library(shinythemes)
-  #library(parcoords) # devtools::install_github("RCura/parcoords") # For using the label wrapping
   library(ShinyRatingInput) # devtools::install_github("stefanwilhelm/ShinyRatingInput")
   library(shinyjqui) # Resizable on sidebar
   
@@ -19,8 +18,8 @@ suppressPackageStartupMessages({
   library(gridExtra) # Plots en 2-3 sous-plots
   library(ggthemes) # geom_tufteboxplot
   
-  # Tables
-  #library(xtable)
+  # Table
+  library(xtable)
   library(formattable) # Main table objectifs
   library(DT) # Sensitivity table
   library(shinycssloaders) # CSS loaders on plots
@@ -32,13 +31,13 @@ suppressPackageStartupMessages({
   
 })
 
-options( java.parameters = c("-Xss2560k", "-Xmx8g") ) # Needed fix for rJava (JDBC) + ggplot2
+options( java.parameters = c("-Xss2560k", "-Xmx7g") ) # Needed fix for rJava (JDBC) + ggplot2
 
 drv <- JDBC("com.mapd.jdbc.MapDDriver",
-            "/home/robin/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
+            "/data/user/c/rcura/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
             identifier.quote="'")
-conMapD <- dbConnect(drv, "jdbc:mapd:localhost:9091:mapd", "mapd", "HyperInteractive")
-parameters <- tbl(conMapD, "parameters_4_5")
+conMapD <- dbConnect(drv, "jdbc:mapd:mapdi.cura.info:9091:mapd", "mapd", "HyperInteractive")
+parameters <- tbl(conMapD, "parameters")
 
 all_sim_names <- parameters %>%
   select(sim_name) %>%
