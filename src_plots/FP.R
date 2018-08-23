@@ -26,15 +26,21 @@ FP_TypeDeplacements <- function(FP_data){
     labs(subtitle = "Variabilité : Foyers Paysans et Réplications")
 }
 
-output$FP_TypeDeplacements <- renderPlot({
-  req(filtredHaut$FP)
-  FP_TypeDeplacements(filtredHaut$FP)
-})
+callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Haut"),
+           plotFun = reactive(
+             FP_TypeDeplacements(filtredHaut$FP)
+           ),
+           plotName = paste0("FP_TypeDeplacements","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Bas"),
+           plotFun = reactive(
+             FP_TypeDeplacements(filtredBas$FP)
+           ),
+           plotName = paste0("FP_TypeDeplacements","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
 
-output$FP_TypeDeplacements_filter <- renderPlot({
-  req(filtredBas$FP)
-  FP_TypeDeplacements(filtredBas$FP)
-})
 
 FP_DeplacementsDetail <- function(FP_data){
   
@@ -79,15 +85,21 @@ FP_DeplacementsDetail <- function(FP_data){
     labs(subtitle = "Variabilité : Moyenne des réplications")
 }
 
-output$FP_DeplacementsDetail <- renderPlot({
-  req(filtredHaut$FP)
-  FP_DeplacementsDetail(FP_data = filtredHaut$FP)
-})
 
-output$FP_DeplacementsDetail_Filter <- renderPlot({
-  req(filtredBas$FP)
-  FP_DeplacementsDetail(FP_data = filtredBas$FP)
-})
+callModule(plotDownloadRate, paste0("FP_DeplacementsDetail","_Haut"),
+           plotFun = reactive(
+             FP_DeplacementsDetail(filtredHaut$FP)
+           ),
+           plotName = paste0("FP_DeplacementsDetail","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+callModule(plotDownloadRate, paste0("FP_DeplacementsDetail","_Bas"),
+           plotFun = reactive(
+             FP_DeplacementsDetail(filtredBas$FP)
+           ),
+           plotName = paste0("FP_DeplacementsDetail","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
 
 FP_Concentration <- function(results_data){
   concentration_data <- results_data %>%
@@ -102,15 +114,21 @@ FP_Concentration <- function(results_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$FP_Concentration <- renderPlot({
-  req(filtredHaut$results)
-  FP_Concentration(filtredHaut$results)
-})
+callModule(plotDownloadRate, paste0("FP_Concentration","_Haut"),
+           plotFun = reactive(
+             FP_Concentration(filtredHaut$results)
+           ),
+           plotName = paste0("FP_Concentration","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+callModule(plotDownloadRate, paste0("FP_Concentration","_Bas"),
+           plotFun = reactive(
+             FP_Concentration(filtredBas$results)
+           ),
+           plotName = paste0("FP_Concentration","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
 
-output$FP_Concentration_Filter <- renderPlot({
-  req(filtredBas$results)
-  FP_Concentration(filtredBas$results)
-})
 
 FP_Satisfaction <- function(FP_data){
   FP_satis_data <- FP_data %>%
@@ -193,12 +211,17 @@ FP_Satisfaction <- function(FP_data){
                                label.position = "bottom", label.hjust = 0.5))
 }
 
-output$FP_Satisfaction <- renderPlot({
-  req(filtredHaut$FP)
-  FP_Satisfaction(FP_data = filtredHaut$FP)
-})
-
-output$FP_Satisfaction_Filter <- renderPlot({
-  req(filtredBas$FP)
-  FP_Satisfaction(FP_data = filtredBas$FP)
-})
+callModule(plotDownloadRate, paste0("FP_Satisfaction","_Haut"),
+           plotFun = reactive(
+             FP_Satisfaction(filtredHaut$FP)
+           ),
+           plotName = paste0("FP_Satisfaction","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+callModule(plotDownloadRate, paste0("FP_Satisfaction","_Bas"),
+           plotFun = reactive(
+             FP_Satisfaction(filtredBas$FP)
+           ),
+           plotName = paste0("FP_Satisfaction","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())

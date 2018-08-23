@@ -57,342 +57,140 @@ shinyUI(navbarPage(
                 tabPanel("Foyers Paysans",
                          tabsetPanel(id = "FPPlots", 
                                      tabPanel("Déplacements", 
-                                              fluidRow(
-                                                column(10, plotOutput("FP_TypeDeplacements") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2,
-                                                       fluidRow(downloadButton("FP_TypeDeplacements_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "FP_TypeDeplacements_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("FP_TypeDeplacements_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("FP_TypeDeplacements_filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2,
-                                                       fluidRow(downloadButton("FP_TypeDeplacements_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "FP_TypeDeplacements_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("FP_TypeDeplacements_Bas", position = "bas")
                                      ),
                                      tabPanel("Déplacements (détail)", 
-                                              fluidRow(
-                                                column(10, plotOutput("FP_DeplacementsDetail") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("FP_DeplacementsDetail_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "FP_DeplacementsDetail_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("FP_DeplacementsDetail_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("FP_DeplacementsDetail_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("FP_DeplacementsDetail_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "FP_DeplacementsDetail_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("FP_DeplacementsDetail_Bas", position = "bas")
                                      ),
                                      tabPanel("Concentration", 
-                                              fluidRow(
-                                                column(10, plotOutput("FP_Concentration") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("FP_Concentration_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "FP_Concentration_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("FP_Concentration_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("FP_Concentration_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("FP_Concentration_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "FP_Concentration_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("FP_Concentration_Bas", position = "bas")
                                      ),
                                      tabPanel("Satisfaction", 
-                                              fluidRow(
-                                                column(10, plotOutput("FP_Satisfaction") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("FP_Satisfaction_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "FP_Satisfaction_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("FP_Satisfaction_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("FP_Satisfaction_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("FP_Satisfaction_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "FP_Satisfaction_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("FP_Satisfaction_Bas", position = "bas")
                                      )
                          )),
                 tabPanel("Agrégats",
                          tabsetPanel(id = "agregatsPlots",
                                      tabPanel("Nombre", 
-                                              fluidRow(
-                                                column(10, plotOutput("Agregats_Nb") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Agregats_Nb_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Agregats_Nb_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Agregats_Nb_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Agregats_Nb_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Agregats_Nb_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Agregats_Nb_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Agregats_Nb_Bas", position = "bas")
                                      ),
                                      tabPanel("Pôles", 
-                                              fluidRow(
-                                                column(10, plotOutput("Agregats_Poles") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Agregats_Poles_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Agregats_Poles_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Agregats_Poles_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Agregats_Poles_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Agregats_Poles_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Agregats_Poles_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Agregats_Poles_Bas", position = "bas")
                                      ),
                                      tabPanel("Paroisses", 
-                                              fluidRow(
-                                                column(10, plotOutput("Agregats_Paroisses") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Agregats_Paroisses_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Agregats_Paroisses_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Agregats_Paroisses_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Agregats_Paroisses_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Agregats_Paroisses_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Agregats_Paroisses_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Agregats_Paroisses_Bas", position = "bas")
                                      ),
                                      tabPanel("Communauté", 
-                                              fluidRow(
-                                                column(10, plotOutput("Agregats_CA") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Agregats_CA_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Agregats_CA_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Agregats_CA_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Agregats_CA_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Agregats_CA_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Agregats_CA_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Agregats_CA_Bas", position = "bas")
                                      ),
-                                     tabPanel("Hiérarchie", 
-                                              fluidRow(
-                                                column(10, plotOutput("Agregats_RT") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Agregats_RT_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Agregats_RT_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                     tabPanel("Hiérarchie",
+                                              plotDownloadRateUI("Agregats_RT_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Agregats_RT_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Agregats_RT_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Agregats_RT_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Agregats_RT_Bas", position = "bas")
                                      ))),
                 tabPanel("Seigneurs",
                          tabsetPanel(id = "seigneursPlots",
                                      tabPanel("Nombre", 
-                                              fluidRow(
-                                                column(10, plotOutput("Seigneurs_Nb") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Nb_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Nb_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Seigneurs_Nb_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Seigneurs_Nb_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Nb_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Nb_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Seigneurs_Nb_Bas", position = "bas")
                                      ),
                                      tabPanel("Chateaux", 
-                                              fluidRow(
-                                                column(10, plotOutput("Seigneurs_Chateaux") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Chateaux_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Chateaux_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Seigneurs_Chateaux_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Seigneurs_Chateaux_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Chateaux_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Chateaux_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Seigneurs_Chateaux_Bas", position = "bas")
                                      ),
                                      tabPanel("Vassaux", 
-                                              fluidRow(
-                                                column(10, plotOutput("Seigneurs_Vassaux") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Vassaux_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Vassaux_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Seigneurs_Vassaux_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Seigneurs_Vassaux_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Vassaux_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Vassaux_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Seigneurs_Vassaux_Bas", position = "bas")
                                      ),
                                      tabPanel("Redevances (global)",
-                                              fluidRow(
-                                                column(10, plotOutput("Seigneurs_Redevances") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Redevances_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Redevances_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Seigneurs_Redevances_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Seigneurs_Redevances_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Redevances_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Redevances_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Seigneurs_Redevances_Bas", position = "bas")
                                      ),
                                      tabPanel("Redevances (détail)",
-                                              fluidRow(
-                                                column(10, plotOutput("Seigneurs_Redevances_PS") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Redevances_PS_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Redevances_PS_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Seigneurs_Redevances_PS_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Seigneurs_Redevances_PS_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Redevances_PS_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Redevances_PS_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Seigneurs_Redevances_PS_Bas", position = "bas")
                                      ),
                                      tabPanel("Puissance",
-                                              fluidRow(
-                                                column(10, plotOutput("Seigneurs_Puissance") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Puissance_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Puissance_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Seigneurs_Puissance_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Seigneurs_Puissance_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Puissance_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Puissance_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Seigneurs_Puissance_Bas", position = "bas")
                                      ),
                                      tabPanel("Agrégats",
-                                              fluidRow(
-                                                column(10, plotOutput("Seigneurs_Agregats") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Agregats_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Agregats_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Seigneurs_Agregats_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Seigneurs_Agregats_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Seigneurs_Agregats_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Seigneurs_Agregats_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Seigneurs_Agregats_Bas", position = "bas")
                                      )
                          )),
                 tabPanel("Pôles",
                          tabsetPanel(id = "polesPlots", 
                                      tabPanel("Nombre", 
-                                              fluidRow(
-                                                column(10, plotOutput("Poles_Nb") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Poles_Nb_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Poles_Nb_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Poles_Nb_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Poles_Nb_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Poles_Nb_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Poles_Nb_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Poles_Nb_Bas", position = "bas")
                                      ),
                                      tabPanel("Pôles d'agrégats", 
-                                              fluidRow(
-                                                column(10, plotOutput("Poles_Agregats") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Poles_Agregats_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Poles_Agregats_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Poles_Agregats_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Poles_Agregats_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Poles_Agregats_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Poles_Agregats_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Poles_Agregats_Bas", position = "bas")
                                      ),
                                      tabPanel("Attracteurs", 
-                                              fluidRow(
-                                                column(10, plotOutput("Poles_Compo") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Poles_Compo_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Poles_Compo_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Poles_Compo_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Poles_Compo_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Poles_Compo_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Poles_Compo_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Poles_Compo_Bas", position = "bas")
                                      ),
                                      tabPanel("Attractivité", 
-                                              fluidRow(
-                                                column(10, plotOutput("Poles_Attrac") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Poles_Attrac_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Poles_Attrac_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Poles_Attrac_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Poles_Attrac_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Poles_Attrac_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Poles_Attrac_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Poles_Attrac_Bas", position = "bas")
                                      ),
                                      tabPanel("Hiérarchie", 
-                                              fluidRow(
-                                                column(10, plotOutput("Poles_RT") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Poles_RT_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Poles_RT_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Poles_RT_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Poles_RT_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Poles_RT_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Poles_RT_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Poles_RT_Bas", position = "bas")
                                      )
                          )),
                 tabPanel("Paroisses",
                          tabsetPanel(id = "paroissesPlots", 
                                      tabPanel("Nombre", 
-                                              fluidRow(
-                                                column(10, plotOutput("Paroisses_Nb") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Paroisses_Nb_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Paroisses_Nb_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Paroisses_Nb_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Paroisses_Nb_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Paroisses_Nb_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Paroisses_Nb_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Paroisses_Nb_Bas", position = "bas")
                                      ),
                                      tabPanel("Composition (Nb FP/ paroisse)",
-                                              fluidRow(
-                                                column(10, plotOutput("Paroisses_Compo") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Paroisses_Compo_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Paroisses_Compo_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Paroisses_Compo_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Paroisses_Compo_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Paroisses_Compo_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Paroisses_Compo_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Paroisses_Compo_Bas", position = "bas")
                                      ),
                                      tabPanel("Modes de promotion",
-                                              fluidRow(
-                                                column(10, plotOutput("Paroisses_Promo") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Paroisses_Promo_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Paroisses_Promo_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Paroisses_Promo_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Paroisses_Promo_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Paroisses_Promo_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Paroisses_Promo_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Paroisses_Promo_Bas", position = "bas")
                                      ),
                                      tabPanel("Superficie", 
-                                              fluidRow(
-                                                column(10, plotOutput("Paroisses_Superficie") %>% withSpinner(type = 7, color = "#C6E3EF")),
-                                                column(2, fluidRow(downloadButton("Paroisses_Superficie_Haut_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Paroisses_Superficie_Haut_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              ),
+                                              plotDownloadRateUI("Paroisses_Superficie_Haut", position = "haut"),
                                               tags$hr(),
-                                              fluidRow(
-                                                column(10,plotOutput("Paroisses_Superficie_Filter") %>% withSpinner(type = 7, color = "#D69DA7")),
-                                                column(2, fluidRow(downloadButton("Paroisses_Superficie_Bas_DL", label = "")),
-                                                       fluidRow(ratingInput(inputId = "Paroisses_Superficie_Bas_Rate",label = "", dataStart = 0, dataStop = 5, dataStep = 1, dataFractions = 1)))
-                                              )
+                                              plotDownloadRateUI("Paroisses_Superficie_Bas", position = "bas")
                                      )
                          )
                 )

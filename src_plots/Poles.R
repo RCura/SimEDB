@@ -21,6 +21,23 @@ output$Poles_Nb_Filter <- renderPlot({
   Poles_Nb(poles_data = filtredBas$poles)
 })
 
+callModule(plotDownloadRate, paste0("Poles_Nb","_Haut"),
+           plotFun = reactive(
+             Poles_Nb(filtredHaut$poles)
+           ),
+           plotName = paste0("Poles_Nb","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+
+callModule(plotDownloadRate, paste0("Poles_Nb","_Bas"),
+           plotFun = reactive(
+             Poles_Nb(filtredBas$poles)
+           ),
+           plotName = paste0("Poles_Nb","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
+
+
 Poles_Agregats <- function(poles_data){
   PolesTous <- poles_data %>%
     group_by(seed, annee) %>%
@@ -52,15 +69,23 @@ Poles_Agregats <- function(poles_data){
              Variabilité : Réplications")
 }
 
-output$Poles_Agregats <- renderPlot({
-  req(filtredHaut$poles)
-  Poles_Agregats(poles_data = filtredHaut$poles)
-})
+callModule(plotDownloadRate, paste0("Poles_Agregats","_Haut"),
+           plotFun = reactive(
+             Poles_Agregats(filtredHaut$poles)
+           ),
+           plotName = paste0("Poles_Agregats","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Poles_Agregats_Filter <- renderPlot({
-  req(filtredBas$poles)
-  Poles_Agregats(poles_data = filtredBas$poles)
-})
+callModule(plotDownloadRate, paste0("Poles_Agregats","_Bas"),
+           plotFun = reactive(
+             Poles_Agregats(filtredBas$poles)
+           ),
+           plotName = paste0("Poles_Agregats","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
+
+
 
 Poles_Compo <- function(poles_data){
   compoPoles <- poles_data %>%
@@ -79,15 +104,22 @@ Poles_Compo <- function(poles_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$Poles_Compo <- renderPlot({
-  req(filtredHaut$poles)
-  Poles_Compo(poles_data = filtredHaut$poles)
-})
+callModule(plotDownloadRate, paste0("Poles_Compo","_Haut"),
+           plotFun = reactive(
+             Poles_Compo(filtredHaut$poles)
+           ),
+           plotName = paste0("Poles_Compo","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Poles_Compo_Filter <- renderPlot({
-  req(filtredBas$poles)
-  Poles_Compo(poles_data = filtredBas$poles)
-})
+callModule(plotDownloadRate, paste0("Poles_Compo","_Bas"),
+           plotFun = reactive(
+             Poles_Compo(filtredBas$poles)
+           ),
+           plotName = paste0("Poles_Compo","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
+
 
 Poles_Attrac <- function(poles_data){
   attracPoles <- poles_data %>%
@@ -106,15 +138,22 @@ Poles_Attrac <- function(poles_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$Poles_Attrac <- renderPlot({
-  req(filtredHaut$poles)
-  Poles_Attrac(poles_data = filtredHaut$poles)
-})
+callModule(plotDownloadRate, paste0("Poles_Attrac","_Haut"),
+           plotFun = reactive(
+             Poles_Attrac(filtredHaut$poles)
+           ),
+           plotName = paste0("Poles_Attrac","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Poles_Attrac_Filter <- renderPlot({
-  req(filtredBas$poles)
-  Poles_Attrac(poles_data = filtredBas$poles)
-})
+callModule(plotDownloadRate, paste0("Poles_Attrac","_Bas"),
+           plotFun = reactive(
+             Poles_Attrac(filtredBas$poles)
+           ),
+           plotName = paste0("Poles_Attrac","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
+
 
 Poles_RT <- function(poles_data){
   rtPoles_data <- poles_data %>%
@@ -152,3 +191,19 @@ output$Poles_RT_Filter <- renderPlot({
   req(filtredBas$poles)
   Poles_RT(poles_data = filtredBas$poles)
 })
+
+callModule(plotDownloadRate, paste0("Poles_RT","_Haut"),
+           plotFun = reactive(
+             Poles_RT(filtredHaut$poles)
+           ),
+           plotName = paste0("Poles_RT","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+
+callModule(plotDownloadRate, paste0("Poles_RT","_Bas"),
+           plotFun = reactive(
+             Poles_RT(filtredBas$poles)
+           ),
+           plotName = paste0("Poles_RT","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())

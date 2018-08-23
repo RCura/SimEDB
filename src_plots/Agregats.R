@@ -11,15 +11,20 @@ Agregats_Nb <- function(agregats_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$Agregats_Nb <- renderPlot({
-  req(filtredHaut$agregats)
-  Agregats_Nb(filtredHaut$agregats)
-})
-
-output$Agregats_Nb_Filter <- renderPlot({
-  req(filtredBas$agregats)
-  Agregats_Nb(filtredBas$agregats)
-})
+callModule(plotDownloadRate, paste0("Agregats_Nb","_Haut"),
+           plotFun = reactive(
+             Agregats_Nb(filtredHaut$agregats)
+           ),
+           plotName = paste0("Agregats_Nb","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+callModule(plotDownloadRate, paste0("Agregats_Nb","_Bas"),
+           plotFun = reactive(
+             Agregats_Nb(filtredBas$agregats)
+           ),
+           plotName = paste0("Agregats_Nb","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
 
 Agregats_Poles <- function(agregats_data){
   
@@ -47,15 +52,68 @@ Agregats_Poles <- function(agregats_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$Agregats_Poles <- renderPlot({
-  req(filtredHaut$agregats)
-  Agregats_Poles(agregats_data = filtredHaut$agregats)
-})
+callModule(plotDownloadRate, paste0("Agregats_Poles","_Haut"),
+           plotFun = reactive(
+             Agregats_Poles(filtredHaut$agregats)
+           ),
+           plotName = paste0("Agregats_Poles","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+callModule(plotDownloadRate, paste0("Agregats_Poles","_Bas"),
+           plotFun = reactive(
+             Agregats_Poles(filtredBas$agregats)
+           ),
+           plotName = paste0("Agregats_Poles","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
 
-output$Agregats_Poles_Filter <- renderPlot({
-  req(filtredBas$agregats)
-  Agregats_Poles(agregats_data = filtredBas$agregats)
-})
+Agregats_Paroisses <- function(agregats_data, poles_data){
+  nb_agregats <- agregats_data %>%
+    group_by(seed, sim_name, annee) %>%
+    summarise(nb_agregats = n()) %>%
+    ungroup()%>%
+    collect()
+  
+  nb_agregats_paroisses <- agregats %>%
+    select(id_agregat, sim_name, seed, annee, monpole) %>%
+    left_join(poles_data %>%
+                select(sim_name, seed, annee, id_pole, monagregat, nbparoisses),
+              by = c("sim_name", "seed", "annee", "monpole" = "id_pole")) %>%
+    filter(nbparoisses >= 1) %>%
+    group_by(seed, sim_name, annee) %>%
+    summarise(nb_agregats_paroisses = n()) %>%
+    collect()
+  
+  plot_data <-  nb_agregats %>%
+    left_join(nb_agregats_paroisses, by = c("seed", "sim_name", "annee")) %>%
+    mutate(taux_agregats = nb_agregats_paroisses / nb_agregats * 100) %>%
+    select(-nb_agregats) %>%
+    gather(key = Type, value = Value, nb_agregats_paroisses, taux_agregats) %>%
+    mutate(Type = if_else(Type == "nb_agregats_paroisses", "Nombre", "Taux (en %)"))
+  
+  ggplot(plot_data) +
+    aes(factor(annee), Value) +
+    geom_tufteboxplot() +
+    facet_grid(Type~., scales = "free_y") +
+    xlab("Temps") + ylab("Agrégats contenant au moins une paroisse") +
+    ggtitle("Évolution du nombre d'agrégats contenant au moins une paroisse") +
+    labs(subtitle = "Variabilité : Réplications")
+}
+
+callModule(plotDownloadRate, paste0("Agregats_Paroisses","_Haut"),
+           plotFun = reactive(
+             Agregats_Paroisses(agregats_data = filtredHaut$agregats, poles_data = filtredHaut$poles)
+           ),
+           plotName = paste0("Agregats_Paroisses","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+callModule(plotDownloadRate, paste0("Agregats_Paroisses","_Bas"),
+           plotFun = reactive(
+             Agregats_Paroisses(agregats_data = filtredBas$agregats, poles_data = filtredBas$poles)
+           ),
+           plotName = paste0("Agregats_Paroisses","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
 
 Agregats_CA <- function(agregats_data){
   
@@ -81,6 +139,22 @@ output$Agregats_CA_Filter <- renderPlot({
   req(filtredBas$agregats)
   Agregats_CA(agregats_data = filtredBas$agregats)
 })
+
+callModule(plotDownloadRate, paste0("Agregats_CA","_Haut"),
+           plotFun = reactive(
+             Agregats_CA(filtredHaut$agregats)
+           ),
+           plotName = paste0("Agregats_CA","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+
+callModule(plotDownloadRate, paste0("Agregats_CA","_Bas"),
+           plotFun = reactive(
+             Agregats_CA(filtredBas$agregats)
+           ),
+           plotName = paste0("Agregats_CA","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
 
 Agregats_RT <- function(agregats_data){
   
@@ -118,46 +192,18 @@ output$Agregats_RT_Filter <- renderPlot({
   Agregats_RT(agregats_data = filtredBas$agregats)
 })
 
+callModule(plotDownloadRate, paste0("Agregats_RT","_Haut"),
+           plotFun = reactive(
+             Agregats_RT(filtredHaut$agregats)
+           ),
+           plotName = paste0("Agregats_RT","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-Agregats_Paroisses <- function(agregats_data, poles_data){
-  nb_agregats <- agregats_data %>%
-    group_by(seed, sim_name, annee) %>%
-    summarise(nb_agregats = n()) %>%
-    ungroup()%>%
-    collect()
-
-  nb_agregats_paroisses <- agregats %>%
-    select(id_agregat, sim_name, seed, annee, monpole) %>%
-    left_join(poles %>%
-                select(sim_name, seed, annee, id_pole, monagregat, nbparoisses),
-              by = c("sim_name", "seed", "annee", "monpole" = "id_pole")) %>%
-    filter(nbparoisses >= 1) %>%
-    group_by(seed, sim_name, annee) %>%
-    summarise(nb_agregats_paroisses = n()) %>%
-    collect()
-  
-  plot_data <-  nb_agregats %>%
-    left_join(nb_agregats_paroisses, by = c("seed", "sim_name", "annee")) %>%
-    mutate(taux_agregats = nb_agregats_paroisses / nb_agregats * 100) %>%
-    select(-nb_agregats) %>%
-    gather(key = Type, value = Value, nb_agregats_paroisses, taux_agregats) %>%
-    mutate(Type = if_else(Type == "nb_agregats_paroisses", "Nombre", "Taux (en %)"))
-
-  ggplot(plot_data) +
-    aes(annee, Value, group = factor(annee)) +
-    geom_tufteboxplot() +
-    facet_grid(Type~., scales = "free_y") +
-    xlab("Temps") + ylab("Agrégats contenant au moins une paroisse") +
-    ggtitle("Évolution du nombre d'agrégats contenant au moins une paroisse") +
-    labs(subtitle = "Variabilité : Réplications")
-}
-
-output$Agregats_Paroisses <- renderPlot({
-  req(filtredHaut$agregats,  filtredHaut$poles)
-  Agregats_Paroisses(agregats_data = filtredHaut$agregats, poles_data = filtredHaut$poles)
-})
-
-output$Agregats_Paroisses_Filter <- renderPlot({
-  req(filtredBas$poles, filtredBas$agregats)
-  Agregats_Paroisses(agregats_data = filtredBas$agregats, poles_data = filtredBas$poles)
-})
+callModule(plotDownloadRate, paste0("Agregats_RT","_Bas"),
+           plotFun = reactive(
+             Agregats_RT(filtredBas$agregats)
+           ),
+           plotName = paste0("Agregats_RT","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())

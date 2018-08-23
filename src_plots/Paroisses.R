@@ -21,6 +21,23 @@ output$Paroisses_Nb_Filter <- renderPlot({
   Paroisses_Nb(paroisses_data = filtredBas$paroisses)
 })
 
+callModule(plotDownloadRate, paste0("Paroisses_Nb","_Haut"),
+           plotFun = reactive(
+             Paroisses_Nb(filtredHaut$paroisses)
+             ),
+           plotName = paste0("Paroisses_Nb","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+
+callModule(plotDownloadRate, paste0("Paroisses_Nb","_Bas"),
+           plotFun = reactive(
+             Paroisses_Nb(filtredBas$paroisses)
+             ),
+           plotName = paste0("Paroisses_Nb","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
+
+
 Paroisses_Compo <- function(paroisses_data){
   fidelesBreaks <- c(-1,0,10,30,50,100,1000)
   fidelesLabels <- c("0", "1-10", "11-30", "31-50", "51-100", ">100")
@@ -41,15 +58,22 @@ Paroisses_Compo <- function(paroisses_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$Paroisses_Compo <- renderPlot({
-  req(filtredHaut$paroisses)
-  Paroisses_Compo(paroisses_data = filtredHaut$paroisses)
-})
+callModule(plotDownloadRate, paste0("Paroisses_Compo","_Haut"),
+           plotFun = reactive(
+             Paroisses_Compo(filtredHaut$paroisses)
+           ),
+           plotName = paste0("Paroisses_Compo","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Paroisses_Compo_Filter <- renderPlot({
-  req(filtredBas$paroisses)
-  Paroisses_Compo(paroisses_data = filtredBas$paroisses)
-})
+callModule(plotDownloadRate, paste0("Paroisses_Compo","_Bas"),
+           plotFun = reactive(
+             Paroisses_Compo(filtredBas$paroisses)
+           ),
+           plotName = paste0("Paroisses_Compo","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
+
 
 Paroisses_Promo <- function(paroisses_data){
   paroisses_promo <- paroisses_data %>%
@@ -71,15 +95,22 @@ Paroisses_Promo <- function(paroisses_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$Paroisses_Promo <- renderPlot({
-  req(filtredHaut$paroisses)
-  Paroisses_Promo(paroisses_data = filtredHaut$paroisses)
-})
+callModule(plotDownloadRate, paste0("Paroisses_Promo","_Haut"),
+           plotFun = reactive(
+             Paroisses_Promo(filtredHaut$paroisses)
+           ),
+           plotName = paste0("Paroisses_Promo","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Paroisses_Promo_Filter <- renderPlot({
-  req(filtredBas$paroisses)
-  Paroisses_Promo(paroisses_data = filtredBas$paroisses)
-})
+callModule(plotDownloadRate, paste0("Paroisses_Promo","_Bas"),
+           plotFun = reactive(
+             Paroisses_Promo(filtredBas$paroisses)
+           ),
+           plotName = paste0("Paroisses_Promo","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
+
 
 Paroisses_Superficie <- function(paroisses_data){
   superficieBreaks <- c(-1,1, 5, 10, 20,50, 100,500, 1E12)
@@ -105,12 +136,18 @@ Paroisses_Superficie <- function(paroisses_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$Paroisses_Superficie <- renderPlot({
-  req(filtredHaut$paroisses)
-  Paroisses_Superficie(paroisses_data = filtredHaut$paroisses)
-})
+callModule(plotDownloadRate, paste0("Paroisses_Superficie","_Haut"),
+           plotFun = reactive(
+             Paroisses_Superficie(filtredHaut$paroisses)
+           ),
+           plotName = paste0("Paroisses_Superficie","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Paroisses_Superficie_Filter <- renderPlot({
-  req(filtredBas$paroisses)
-  Paroisses_Superficie(paroisses_data = filtredBas$paroisses)
-})
+callModule(plotDownloadRate, paste0("Paroisses_Superficie","_Bas"),
+           plotFun = reactive(
+             Paroisses_Superficie(filtredBas$paroisses)
+           ),
+           plotName = paste0("Paroisses_Superficie","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())

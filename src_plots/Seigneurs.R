@@ -15,15 +15,21 @@ Seigneurs_Nb <- function(seigneurs_data){
          subtitle = "Variabilité : Réplications")
 }
 
-output$Seigneurs_Nb <- renderPlot({
-  req(filtredHaut$seigneurs)
-  Seigneurs_Nb(seigneurs_data = filtredHaut$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Nb","_Haut"),
+           plotFun = reactive(
+             Seigneurs_Nb(filtredHaut$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Nb","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Seigneurs_Nb_Filter <- renderPlot({
-  req(filtredBas$seigneurs)
-  Seigneurs_Nb(seigneurs_data = filtredBas$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Nb","_Bas"),
+           plotFun = reactive(
+             Seigneurs_Nb(filtredBas$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Nb","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
 
 Seigneurs_Chateaux <- function(seigneurs_data){
   breaksGS <- c(-0,1,2,3,4,5,10,25,50,1000)
@@ -86,15 +92,21 @@ Seigneurs_Chateaux <- function(seigneurs_data){
   )
 }
 
-output$Seigneurs_Chateaux <- renderPlot({
-  req(filtredHaut$seigneurs)
-  Seigneurs_Chateaux(seigneurs_data = filtredHaut$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Chateaux","_Haut"),
+           plotFun = reactive(
+             Seigneurs_Chateaux(filtredHaut$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Chateaux","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Seigneurs_Chateaux_Filter <- renderPlot({
-  req(filtredBas$seigneurs)
-  Seigneurs_Chateaux(seigneurs_data = filtredBas$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Chateaux","_Bas"),
+           plotFun = reactive(
+             Seigneurs_Chateaux(filtredBas$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Chateaux","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
 
 Seigneurs_Vassaux <- function(seigneurs_data){
   myBreaks <- c(-1,0,1,2,3,4,5,10,25,50,1000)
@@ -144,15 +156,22 @@ Seigneurs_Vassaux <- function(seigneurs_data){
                Variabilité : Réplications")
 }
 
-output$Seigneurs_Vassaux <- renderPlot({
-  req(filtredHaut$seigneurs)
-  Seigneurs_Vassaux(seigneurs_data = filtredHaut$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Vassaux","_Haut"),
+           plotFun = reactive(
+             Seigneurs_Vassaux(filtredHaut$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Vassaux","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Seigneurs_Vassaux_Filter <- renderPlot({
-  req(filtredBas$seigneurs)
-  Seigneurs_Vassaux(seigneurs_data = filtredBas$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Vassaux","_Bas"),
+           plotFun = reactive(
+             Seigneurs_Vassaux(filtredBas$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Vassaux","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
+
 
 Seigneurs_Redevances <- function(seigneurs_data){
   redevances_seigneurs <- seigneurs_data %>%
@@ -169,15 +188,21 @@ Seigneurs_Redevances <- function(seigneurs_data){
     labs(subtitle = "Variabilité : Seigneurs et réplications")
 }
 
-output$Seigneurs_Redevances <- renderPlot({
-  req(filtredHaut$seigneurs)
-  Seigneurs_Redevances(seigneurs_data = filtredHaut$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Redevances","_Haut"),
+           plotFun = reactive(
+             Seigneurs_Redevances(filtredHaut$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Redevances","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Seigneurs_Redevances_Filter <- renderPlot({
-  req(filtredBas$seigneurs)
-  Seigneurs_Redevances(seigneurs_data = filtredBas$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Redevances","_Bas"),
+           plotFun = reactive(
+             Seigneurs_Redevances(filtredBas$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Redevances","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
 
 Seigneurs_Redevances_PS <- function(seigneurs_data){
   x <- "nbfpassujettis"
@@ -212,15 +237,21 @@ Seigneurs_Redevances_PS <- function(seigneurs_data){
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 }
 
-output$Seigneurs_Redevances_PS <- renderPlot({
-  req(filtredHaut$seigneurs)
-  Seigneurs_Redevances_PS(seigneurs_data = filtredHaut$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Haut"),
+           plotFun = reactive(
+             Seigneurs_Redevances_PS(filtredHaut$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Redevances_PS","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Seigneurs_Redevances_PS_Filter <- renderPlot({
-  req(filtredBas$seigneurs)
-  Seigneurs_Redevances_PS(seigneurs_data = filtredBas$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Bas"),
+           plotFun = reactive(
+             Seigneurs_Redevances_PS(filtredBas$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Redevances_PS","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
 
 Seigneurs_Puissance <- function(seigneurs_data){
   seigneurs_puissance <- seigneurs_data %>%
@@ -241,15 +272,22 @@ Seigneurs_Puissance <- function(seigneurs_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$Seigneurs_Puissance <- renderPlot({
-  req(filtredHaut$seigneurs)
-  Seigneurs_Puissance(seigneurs_data = filtredHaut$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Puissance","_Haut"),
+           plotFun = reactive(
+             Seigneurs_Puissance(filtredHaut$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Puissance","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Seigneurs_Puissance_Filter <- renderPlot({
-  req(filtredBas$seigneurs)
-  Seigneurs_Puissance(seigneurs_data = filtredBas$seigneurs)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Puissance","_Bas"),
+           plotFun = reactive(
+             Seigneurs_Puissance(filtredBas$seigneurs)
+           ),
+           plotName = paste0("Seigneurs_Puissance","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
+
 
 
 Seigneurs_Agregats <- function(seigneurs_data, agregats_data){
@@ -288,14 +326,20 @@ Seigneurs_Agregats <- function(seigneurs_data, agregats_data){
          caption = "N.B : Sont considérés comme dans un agrégat les seigneurs localisés à moins de 200m")
 }
 
-output$Seigneurs_Agregats <- renderPlot({
-  req(filtredHaut$seigneurs, filtredHaut$agregats)
-  Seigneurs_Agregats(seigneurs_data = filtredHaut$seigneurs,
-                     agregats_data = filtredHaut$agregats)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Agregats","_Haut"),
+           plotFun = reactive(
+             Seigneurs_Agregats(seigneurs_data = filtredHaut$seigneurs,
+                                agregats_data = filtredHaut$agregats)
+           ),
+           plotName = paste0("Seigneurs_Agregats","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
 
-output$Seigneurs_Agregats_Filter <- renderPlot({
-  req(filtredBas$seigneurs, filtredBas$agregats)
-  Seigneurs_Agregats(seigneurs_data = filtredBas$seigneurs,
-                     agregats_data = filtredBas$agregats)
-})
+callModule(plotDownloadRate, paste0("Seigneurs_Agregats","_Bas"),
+           plotFun = reactive(
+             Seigneurs_Agregats(seigneurs_data = filtredHaut$seigneurs,
+                                agregats_data = filtredHaut$agregats)
+           ),
+           plotName = paste0("Seigneurs_Agregats","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
