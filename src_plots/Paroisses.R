@@ -52,7 +52,6 @@ output$Paroisses_Compo_Filter <- renderPlot({
 })
 
 Paroisses_Promo <- function(paroisses_data){
-  
   paroisses_promo <- paroisses_data %>%
     filter(!(mode_promotion %in% c("nil", "initialisation"))) %>%
     group_by(seed, annee, mode_promotion) %>%
@@ -64,7 +63,7 @@ Paroisses_Promo <- function(paroisses_data){
       mode_promotion == "promotion isole" ~ "Promotion en zone peu dense")
     )
   
-  ggplot(paroisses_promo, aes(annee, nb, group = factor(annee))) +
+  ggplot(paroisses_promo, aes(factor(annee), nb)) +
     geom_tufteboxplot() +
     facet_wrap(~ mode_promotion, ncol = 1) +
     xlab("Temps") + ylab("Nombre de nouvelles paroisses\nà chaque pas de temps") +

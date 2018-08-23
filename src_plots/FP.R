@@ -1,10 +1,8 @@
-FP_TypeDeplacements <- function(FP_data)({
-  
+FP_TypeDeplacements <- function(FP_data){
   
   nombre_FP_total <- FP_data %>%
     group_by(seed, sim_name, annee) %>%
     summarise(n_total = n())
-  
   
   types_deplacements <- FP_data %>%
     filter(!(type_deplacement %in% c("nil", "Non mobile"))) %>%
@@ -26,7 +24,7 @@ FP_TypeDeplacements <- function(FP_data)({
     xlab("Temps") + ylab("Part des Foyers Paysans") +
     ggtitle("Type de déplacement des Foyers Paysans") +
     labs(subtitle = "Variabilité : Foyers Paysans et Réplications")
-})
+}
 
 output$FP_TypeDeplacements <- renderPlot({
   req(filtredHaut$FP)
@@ -65,7 +63,6 @@ FP_DeplacementsDetail <- function(FP_data){
     mutate(deplacement_to = gsub(x = deplacement_to, pattern = "agregat", replacement = "agrégat")) %>%
     mutate(deplacement_to = gsub(x = deplacement_to, pattern = "pole", replacement = "pôle")) %>%
     mutate(deplacement_to = paste0(toupper(substr(deplacement_to, 1, 1)), substr(deplacement_to, 2, nchar(deplacement_to))))
-  
   
   ggplot(details_deplacement, aes(deplacement_to, tx_fp, fill = deplacement_to, group = deplacement_to)) + 
     geom_col(position = "dodge") +
@@ -114,35 +111,6 @@ output$FP_Concentration_Filter <- renderPlot({
   req(filtredBas$results)
   FP_Concentration(filtredBas$results)
 })
-
-# 
-# FP_Satisfaction <- function(FP_data){
-#   satisfaction_data <- FP_data %>%
-#     select(annee, smat, srel, sprot, satis) %>%
-#     collect() %>%
-#     rename(
-#       Globale = satis,
-#       Matérielle = smat,
-#       Protection = sprot,
-#       Religieuse = srel) %>%
-#     group_by(annee) %>%
-#     sample_n(size = 4E3, replace = FALSE) %>%
-#     ungroup() %>%
-#     gather(key = Type, value = Satisfaction, -annee)
-#   
-#   ggplot(satisfaction_data, aes(annee, Satisfaction, col = Type, fill = Type)) +
-#     geom_violin(aes(group = factor(annee))) +
-#     facet_wrap(~ Type) +
-#     geom_smooth(data = satisfaction_data %>%
-#                   group_by(annee) %>%
-#                   sample_n(size = 100, replace = FALSE) %>%
-#                   ungroup(),
-#       alpha = .3, se = FALSE, na.rm = TRUE, method = "gam", formula = y ~ s(x, bs = "cs")) +
-#     theme(legend.position = "none") +
-#     ggtitle("Évolution de la satisfaction des FP\n(Échantillon de 4000 FP / an)") +
-#     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-#     labs(subtitle = "Variabilité : Foyers Paysans et Réplications")
-# }
 
 FP_Satisfaction <- function(FP_data){
   FP_satis_data <- FP_data %>%
@@ -197,8 +165,6 @@ FP_Satisfaction <- function(FP_data){
     mutate(type = "Religieuse") %>%
     select(annee, nb, type, satisfaction) %>%
     mutate(satisfaction = satisfaction / 10)
-  
-  
   
   satisfaction_plotdata <- globale %>%
     union_all(materielle) %>%

@@ -39,7 +39,7 @@ Agregats_Poles <- function(agregats_data){
     collect()
   
   
-  ggplot(txAgregatsPoles, aes(annee, tx_agregat_pole, group = factor(annee))) +
+  ggplot(txAgregatsPoles, aes(factor(annee), tx_agregat_pole)) +
     geom_tufteboxplot() +
     scale_y_continuous(labels = percent, limits = c(0,1)) +
     xlab("Temps") + ylab("Taux d'agrégats\n contenant un pôle") +

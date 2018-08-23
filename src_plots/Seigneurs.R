@@ -102,9 +102,9 @@ Seigneurs_Vassaux <- function(seigneurs_data){
   
   debiteurs_seigneurs <- seigneurs_data %>%
     filter(annee == 1160) %>%
-    select(seed, annee, type, initial, nbdebiteurs) %>%
+    select(seed, annee, type, init, nbdebiteurs) %>%
     collect() %>%
-    mutate(initial = if_else(initial == 1, "Initialement\nPrésent", "Arrivé\nen cours")) %>%
+    mutate(initial = if_else(init == 1, "Initialement\nPrésent", "Arrivé\nen cours")) %>%
     mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
     mutate(nbDebiteursBreaks =  cut(nbdebiteurs, breaks = myBreaks, labels =  myLabels)) %>%  
     group_by(seed, type, initial, nbDebiteursBreaks) %>%
@@ -139,8 +139,8 @@ Seigneurs_Vassaux <- function(seigneurs_data){
                c(2,2,2,3))
   
   grid.arrange(plotNonCPS, plotInitCPS, plotGS, nrow = 1, layout_matrix = lay,
-                       bottom = "Nombre de Vassaux", left = "Fréquence",
-                       top = "Distribution du nombre de vassaux selon les types de seigneurs
+               bottom = "Nombre de Vassaux", left = "Fréquence",
+               top = "Distribution du nombre de vassaux selon les types de seigneurs
                Variabilité : Réplications")
 }
 
