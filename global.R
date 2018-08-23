@@ -17,6 +17,7 @@ all_sim_names <- parameters %>%
 
 dbDisconnect(conMapD)
 
+source("src_plots/plotDownloadRate_module.R")
 
 
 ########## SENSITIVITY #########

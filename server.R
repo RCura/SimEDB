@@ -162,6 +162,12 @@ shinyServer(function(session, input, output) {
     }
   })
   
+  # Debug module
+  #
+  # callModule(plotDownloadRate, "testModule",
+  #            plotFun = reactive(Agregats_Nb(filtredHaut$agregats)),
+  #            plotName = "Test1")
+  
   # ---------------- Source all plots -----------------
   source("src_plots/plotly_helpers.R", local = TRUE, encoding = "utf8")
   source("src_plots/global_plots.R", local = TRUE, encoding = "utf8")

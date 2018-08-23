@@ -398,12 +398,13 @@ shinyUI(navbarPage(
                 )
                 # ,
                 # tabPanel("Debug",
-                #          fluidRow(
-                #            verbatimTextOutput("selected_seeds_Haut")
-                #          ),
-                #          fluidRow(
-                #            verbatimTextOutput("selected_seeds_Bas")
-                #          )
+                #          # fluidRow(
+                #          #   verbatimTextOutput("selected_seeds_Haut")
+                #          # ),
+                #          # fluidRow(
+                #          #   verbatimTextOutput("selected_seeds_Bas")
+                #          # )
+                #          plotDownloadRateUI("testModule", position = "bas")
                 # )
     )
   )
