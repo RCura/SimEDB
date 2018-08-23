@@ -177,7 +177,8 @@ shinyServer(function(session, input, output) {
   # ---------------- Disconnect onSessionEnded -----------------
   # Cf. https://shiny.rstudio.com/reference/shiny/latest/onStop.html
   onStop(function(){
-    dbDisconnect(conMapD)}
+    dbDisconnect(conMapD)
+    }
   )
 
   
