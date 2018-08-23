@@ -5,9 +5,7 @@
 *.html
 .Rdata
 *.sqlite
-
 *.zip
-
 outputs_TR8/testMonetDB\.db/bat/
-
 outputs_TR8/testMonetDB\.db/
+Rplots.pdf
