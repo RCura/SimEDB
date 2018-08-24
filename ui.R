@@ -47,7 +47,6 @@ shinyUI(navbarPage(
   ),
   options = list(handles = "e")),
   mainPanel(
-    
     tabsetPanel(id = "detailPlots",type = "pills",
                 tabPanel("Objectifs généraux",
                          fluidRow(formattableOutput("summaryTable_Haut", width = "95%")),
@@ -204,8 +203,7 @@ shinyUI(navbarPage(
                 #          # )
                 #          plotDownloadRateUI("testModule", position = "bas")
                 # )
-    )
-  )
+    ))
   )
   ),
   tabPanel(title = "Sensitivity Analysis",

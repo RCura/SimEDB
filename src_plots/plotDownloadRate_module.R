@@ -3,13 +3,15 @@ plotDownloadRateUI <- function(id,  position = 'haut') {
   spinnerColor <- if_else(position == "haut", "#C6E3EF", "#D69DA7")
   tagList(
     fluidRow(
-      column(11,plotOutput(ns('plot')) %>% withSpinner(type = 7, color = spinnerColor)),
+      column(11,plotOutput(ns('plot'), width = "100%") %>% withSpinner(type = 7, color = spinnerColor)),
       column(1, align = "center",style='padding-left:0px;',
              fluidRow(
-               downloadLink(ns("download_pdf"),
-                            label = list(icon(name = "file-pdf-o fa-2x"))),
-               downloadLink(ns("download_png"),
-                            label = list(icon(name = "file-image-o fa-2x")))
+               downloadLink(outputId = ns("download_pdf"),
+                            label = list(icon(name = "file-pdf-o fa-2x")),
+                            title="Télécharger le graphique en PDF"),
+               downloadLink(outputId = ns("download_png"),
+                            label = list(icon(name = "file-image-o fa-2x")),
+                            title="Télécharger le graphique en PNG")
              ),
              fluidRow(
                ratingInput(inputId = ns("rating"), label = "",
@@ -27,7 +29,7 @@ plotDownloadRateUI <- function(id,  position = 'haut') {
 plotDownloadRate <- function(input, output, session, plotFunction, plotName, user, seeds) {
   output$plot <- renderPlot({
     plotFunction()
-  })
+  }, res = 150)
   
   output$download_pdf <- downloadHandler(
     filename = function() {
