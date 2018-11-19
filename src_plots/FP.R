@@ -1,29 +1,35 @@
 FP_TypeDeplacements <- function(FP_data){
-  
-  nombre_FP_total <- FP_data %>%
-    group_by(seed, sim_name, annee) %>%
-    summarise(n_total = n())
-  
-  types_deplacements <- FP_data %>%
-    filter(!(type_deplacement %in% c("nil", "Non mobile"))) %>%
-    group_by(annee, seed, sim_name, type_deplacement) %>%
-    summarise(n = n()) %>%
-    left_join(nombre_FP_total, by = c("seed", "annee", "sim_name")) %>%
-    mutate(Tx = (n + 1E-12) / (n_total + 1E-12)) %>%
-    ungroup() %>%
-    collect()
-  
-  ggplot(types_deplacements, aes(factor(annee), Tx, col = type_deplacement)) +
-    geom_tufteboxplot(size = 1) +
-    geom_line() +
-    facet_wrap(~ type_deplacement) +
-    scale_y_continuous(labels = percent) +
-    scale_color_discrete(guide = FALSE) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(legend.position = "bottom") +
-    xlab("Temps") + ylab("Part des Foyers Paysans") +
-    ggtitle("Type de déplacement des Foyers Paysans") +
-    labs(subtitle = "Variabilité : Foyers Paysans et Réplications")
+  tic("FP_TypeDeplacements")
+    nombre_FP_total <- FP_data %>%
+      group_by(seed, sim_name, annee) %>%
+      summarise(n_total = n())
+    
+    tic("FP_TypeDeplacements query")
+    types_deplacements <- FP_data %>%
+      filter(!(type_deplacement %in% c("nil", "Non mobile"))) %>%
+      group_by(annee, seed, sim_name, type_deplacement) %>%
+      summarise(n = n()) %>%
+      left_join(nombre_FP_total, by = c("seed", "annee", "sim_name")) %>%
+      mutate(Tx = (n + 1E-12) / (n_total + 1E-12)) %>%
+      ungroup() %>%
+      collect()
+    toc()
+    tic("plot")
+   p1 <- ggplot(types_deplacements, aes(factor(annee), Tx, col = type_deplacement)) +
+      geom_tufteboxplot(size = 1) +
+      geom_line() +
+      facet_wrap(~ type_deplacement) +
+      scale_y_continuous(labels = percent) +
+      scale_color_discrete(guide = FALSE) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      theme(legend.position = "bottom") +
+      xlab("Temps") + ylab("Part des Foyers Paysans") +
+      ggtitle("Type de déplacement des Foyers Paysans") +
+      labs(subtitle = "Variabilité : Foyers Paysans et Réplications")
+   toc()
+   toc()
+   p1
+
 }
 
 callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Haut"),
