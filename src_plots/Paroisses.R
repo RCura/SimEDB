@@ -130,8 +130,8 @@ Paroisses_Superficie <- function(paroisses_data){
   ggplot(paroisses_sup_breaks, aes(factor(NbSuperficiesBreaks), NbParoisses)) +
     geom_tufteboxplot() +
     facet_wrap(~annee) +
-    xlab("Superficie des paroisses (km²)") + ylab("Fréquence") +
-    ggtitle("Évolution de la superficie des paroisses") +
+    xlab("Aire d'attraction des églises paroissiales (km²)") + ylab("Fréquence") +
+    ggtitle("Évolution de l'aire d'attraction des églises paroissiales") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     labs(subtitle = "Variabilité : Réplications")
 }
