@@ -29,7 +29,7 @@ plotDownloadRateUI <- function(id,  position = 'haut') {
 plotDownloadRate <- function(input, output, session, plotFunction, plotName, user, seeds) {
   output$plot <- renderPlot({
     plotFunction()
-  }, res = 150)
+  }, res = 100)
   
   output$download_pdf <- downloadHandler(
     filename = function() {

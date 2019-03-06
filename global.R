@@ -6,7 +6,7 @@ drv <- JDBC("com.mapd.jdbc.MapDDriver",
             "/data/user/c/rcura/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
             identifier.quote="'")
 conMapD <- dbConnect(drv, "jdbc:mapd:mapdi.cura.info:9091:mapd", "mapd", "HyperInteractive")
-parameters <- tbl(conMapD, "parameters")
+parameters <- tbl(conMapD, "parameters_6_1")
 
 all_sim_names <- parameters %>%
   select(sim_name) %>%

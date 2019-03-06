@@ -3,7 +3,7 @@
 count_experiments <- function(parameters_data){
   parameters_data %>%
     group_by(sim_name) %>%
-    summarise(n = n()) %>%
+    summarise(n = n_distinct(seed)) %>%
     collect()
 }
 
@@ -33,13 +33,15 @@ output$simNames <- renderPlot({
 # ---------------- ViolinPlots of Sim Results -----------------
 
 Objectifs <- data_frame(
-  Var = c("NbAgregats", "nbChateaux", "nbGdChateaux", "NbSeigneurs","nbEglisesParoissiales", "distance_eglises_paroissiales", "prop_FP_isoles", "RatioChargeFiscale"),
+  Var = c("nb_agregats", "nb_chateaux", "nb_grands_chateaux", "nb_seigneurs",
+          "nb_eglises_paroissiales", "distance_eglises_paroissiales",
+          "prop_fp_isoles", "ratio_charge_fiscale", "nb_fp", "densite_fp"),
   RealVar = c("Agrégats", "Châteaux",  "Gros châteaux", "Seigneurs",
               "Églises paroissiales", "Distance moyenne entre églises",  
-              "Part de foyers paysans isolés",
-              "Augmentation de la charge fiscale des foyers paysans"),
-  Objectif = c(200, 50, 10, 200, 300, 3000, 0.2, 3),
-  Ordre = 1:8
+              "Part de foyers paysans isolés","Augmentation de la charge fiscale des foyers paysans",
+              "Nombre de Foyers Paysans", "Densité de population"),
+  Objectif = c(200, 50, 10, 200, 300, 3000, 0.2, 3, NA, NA),
+  Ordre = 1:10
 ) %>%
   mutate(Var = tolower(Var))
 
@@ -150,7 +152,10 @@ pretty_format_summary_table <- function(df){
                 area(row = 7, col = 2:6) ~ formatter("span",  function(x){paste(round(x * 100), "%")}),
                 area(row = 7, col = 7) ~ formatter("span",  function(x){paste(round(x * 100, digits = 1), "%")}),
                 area(row = 8, col = 2:6) ~ formatter("span", function(x){ paste("x", round(x,digits = 1)) }),
-                area(row = 8, col = 7) ~ formatter("span", function(x){ paste("x", round(x, digits = 2)) })
+                area(row = 8, col = 7) ~ formatter("span", function(x){ paste("x", round(x, digits = 2)) }),
+                area(row = 9:10, col = 2) ~ formatter("span", function(x){ ifelse(is.na(x), yes = "-", "??") }),
+                area(row = 9, col = 3:7) ~ round,
+                area(row = 10, col = 3:7) ~ formatter("span", function(x){ round(x, digits = 2) })
               ))
 }
 

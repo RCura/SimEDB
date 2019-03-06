@@ -5,14 +5,25 @@ shinyServer(function(session, input, output) {
   # Connection to DB system (for MapD at least)
   # drv declared in global
   conMapD <- dbConnect(drv, "jdbc:mapd:mapdi.cura.info:9091:mapd", "mapd", "HyperInteractive")
-  seeds <- tbl(conMapD, "seeds")
-  agregats <- tbl(conMapD, "agregats")
-  fp <- tbl(conMapD, "fp")
-  parameters <- tbl(conMapD, "parameters")
-  paroisses <- tbl(conMapD, "paroisses")
-  poles <- tbl(conMapD, "poles")
-  results <- tbl(conMapD, "results")
-  seigneurs <- tbl(conMapD, "seigneurs")
+  # seeds <- tbl(conMapD, "seeds_5_1")
+  # agregats <- tbl(conMapD, "agregats_5_1")
+  # fp <- tbl(conMapD, "fp_5_1")
+  # parameters <- tbl(conMapD, "parameters_5_1")
+  # paroisses <- tbl(conMapD, "paroisses_5_1")
+  # poles <- tbl(conMapD, "poles_5_1")
+  # results <- tbl(conMapD, "results_5_1")
+  # seigneurs <- tbl(conMapD, "seigneurs_5_1")
+  
+  
+  seeds <- tbl(conMapD, "seeds_6_1")
+  agregats <- tbl(conMapD, "agregats_6_1")
+  fp <- tbl(conMapD, "fp_6_1")
+  parameters <- tbl(conMapD, "parameters_6_1")
+  paroisses <- tbl(conMapD, "paroisses_6_1")
+  poles <- tbl(conMapD, "poles_6_1")
+  results <- tbl(conMapD, "global_6_1")
+  seigneurs <- tbl(conMapD, "seigneurs_6_1")
+  chateaux <- tbl(conMapD, "chateaux_6_1")
   
   
   # ---------------- Declare reactive values -----------------
