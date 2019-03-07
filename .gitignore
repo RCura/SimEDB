@@ -9,3 +9,6 @@
 outputs_TR8/testMonetDB\.db/bat/
 outputs_TR8/testMonetDB\.db/
 Rplots.pdf
+restart.txt
+.Rproj.user.old
+rating.csv
