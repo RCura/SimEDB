@@ -44,7 +44,7 @@ Poles_Agregats <- function(poles_data){
     summarise(nb_poles = n())
   
   tempVar <- poles_data %>%
-    filter(!is.na(monagregat)) %>%
+    filter(monagregat > 0) %>%
     group_by(seed,annee) %>%
     summarise(nb_pole_ag = n())
   
@@ -89,12 +89,12 @@ callModule(plotDownloadRate, paste0("Poles_Agregats","_Bas"),
 
 Poles_Compo <- function(poles_data){
   compoPoles <- poles_data %>%
-    filter(annee %in% c(820, 940, 1040, 1160)) %>%
-    group_by(seed, annee, nbattracteurs) %>%
+    filter(annee %in% c(820, 960, 1060, 1200)) %>%
+    group_by(seed, annee, nb_attracteurs) %>%
     summarise(nb = n()) %>%
     collect()
   
-  ggplot(compoPoles, aes(factor(nbattracteurs), nb)) +
+  ggplot(compoPoles, aes(factor(nb_attracteurs), nb)) +
     geom_tufteboxplot() +
     facet_wrap(~annee, scales = "free", nrow = 1) +
     xlab("Nombre d'attracteurs") +
@@ -123,7 +123,7 @@ callModule(plotDownloadRate, paste0("Poles_Compo","_Bas"),
 
 Poles_Attrac <- function(poles_data){
   attracPoles <- poles_data %>%
-    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    filter(annee %in% c(820, 960, 1060, 1200)) %>%
     group_by(seed, annee, attractivite) %>%
     summarise(nb = n()) %>%
     collect()
@@ -157,14 +157,14 @@ callModule(plotDownloadRate, paste0("Poles_Attrac","_Bas"),
 
 Poles_RT <- function(poles_data){
   rtPoles_data <- poles_data %>%
-    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    filter(annee %in% c(820, 960, 1060, 1200)) %>%
     collect() %>%
     group_by(seed, annee) %>%
-    mutate(rank = min_rank(-nbattracteurs)) %>%
+    mutate(rank = min_rank(-nb_attracteurs)) %>%
     group_by(annee, rank) %>%
-    summarise(Moyenne = mean(nbattracteurs),
-              Q1 = quantile(nbattracteurs, probs = 0.25),
-              Q3 = quantile(nbattracteurs, probs = 0.75)) %>%
+    summarise(Moyenne = mean(nb_attracteurs),
+              Q1 = quantile(nb_attracteurs, probs = 0.25),
+              Q3 = quantile(nb_attracteurs, probs = 0.75)) %>%
     gather(key = `Méthode d'agrégation`, value = Value, Moyenne:Q3) %>%
     ungroup()
   

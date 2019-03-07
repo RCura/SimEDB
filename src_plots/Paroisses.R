@@ -43,9 +43,9 @@ Paroisses_Compo <- function(paroisses_data){
   fidelesLabels <- c("0", "1-10", "11-30", "31-50", "51-100", ">100")
   
   paroisses_breaks <- paroisses_data %>%
-    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    filter(annee %in% c(820, 960, 1060, 1200)) %>%
     collect() %>%
-    mutate(NbFidelesBreaks = cut(nbfideles, breaks = fidelesBreaks, labels = fidelesLabels)) %>%
+    mutate(NbFidelesBreaks = cut(nb_fideles, breaks = fidelesBreaks, labels = fidelesLabels)) %>%
     group_by(seed, annee, NbFidelesBreaks) %>%
     summarise(NbParoisses = n())
   
@@ -118,9 +118,9 @@ Paroisses_Superficie <- function(paroisses_data){
   superficieLabels <- c("<1", "1-5", "6-10", "11-20", "21-50", "51-100", "101-500", ">500")
   
   paroisses_sup_breaks <-  paroisses_data %>%
-    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    filter(annee %in% c(820, 960, 1060, 1200)) %>%
     collect() %>%
-    mutate(NbSuperficiesBreaks = cut(area,
+    mutate(NbSuperficiesBreaks = cut(superficie,
                                      breaks = superficieBreaks,
                                      labels = superficieLabels)) %>%
     group_by(seed, annee, NbSuperficiesBreaks) %>%

@@ -38,9 +38,9 @@ Seigneurs_Chateaux <- function(seigneurs_data){
   # On ne garde que : les GS, les chatelains, et les PS/Chatelains inits
   
   GS <- seigneurs_data %>%
-    filter(annee == 1160, type == "Grand Seigneur") %>%
+    filter(annee == 1200, type == "Grand Seigneur") %>%
     collect() %>%
-    rename(`Propriétés` = nbchateauxproprio, Gardiennage = nbchateauxgardien) %>%
+    rename(`Propriétés` = nb_chateaux_proprio, Gardiennage = nb_chateaux_gardien) %>%
     gather(key = TypePossession, value = NbChateaux, `Propriétés`, Gardiennage) %>%
     xtabs(formula = ~ seed + type + TypePossession + NbChateaux) %>%
     as.data.frame(stringsAsFactors = FALSE) %>%
@@ -55,9 +55,9 @@ Seigneurs_Chateaux <- function(seigneurs_data){
   labelsChat <- c("0", "1", "2", "3", "4", "5+")
   
   Chat <- seigneurs_data %>%
-    filter(annee == 1160, type == "Chatelain") %>%
+    filter(annee == 1200, type == "Petit Seigneur") %>%
     collect() %>%
-    rename(`Propriétés` = nbchateauxproprio, Gardiennage = nbchateauxgardien) %>%
+    rename(`Propriétés` = nb_chateaux_proprio, Gardiennage = nb_chateaux_gardien) %>%
     gather(key = TypePossession, value = NbChateaux, `Propriétés`, Gardiennage) %>%
     xtabs(formula = ~ seed + type + TypePossession + NbChateaux) %>%
     as.data.frame(stringsAsFactors = FALSE) %>%
@@ -113,10 +113,10 @@ Seigneurs_Vassaux <- function(seigneurs_data){
   myLabels <- c("0","1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
   
   debiteurs_seigneurs <- seigneurs_data %>%
-    filter(annee == 1160) %>%
-    select(seed, annee, type, init, nbdebiteurs) %>%
+    filter(annee == 1200) %>%
+    select(seed, annee, type, seigneur_initial, nbdebiteurs) %>%
     collect() %>%
-    mutate(initial = if_else(init == 1, "Initialement\nPrésent", "Arrivé\nen cours")) %>%
+    mutate(initial = if_else(seigneur_initial == "TRUE", "Initialement\nPrésent", "Arrivé\nen cours")) %>%
     mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
     mutate(nbDebiteursBreaks =  cut(nbdebiteurs, breaks = myBreaks, labels =  myLabels)) %>%  
     group_by(seed, type, initial, nbDebiteursBreaks) %>%
@@ -175,12 +175,12 @@ callModule(plotDownloadRate, paste0("Seigneurs_Vassaux","_Bas"),
 
 Seigneurs_Redevances <- function(seigneurs_data){
   redevances_seigneurs <- seigneurs_data %>%
-    filter(annee == 1160) %>%
-    select(seed, annee, type, nbfpassujettis) %>%
+    filter(annee == 1200) %>%
+    select(seed, annee, type, nb_fp_assujettis) %>%
     collect() %>%
     mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur")))
   
-  ggplot(redevances_seigneurs, aes(type, nbfpassujettis)) +
+  ggplot(redevances_seigneurs, aes(type, nb_fp_assujettis)) +
     geom_tufteboxplot() +
     scale_y_log10(breaks = c(10,50,100, 500,1000, 2000)) +
     xlab("Types de seigneurs") + ylab("Nombre de FP assujetis\n(Échelle logarithmique)") +
@@ -205,7 +205,7 @@ callModule(plotDownloadRate, paste0("Seigneurs_Redevances","_Bas"),
            seeds = filtredSeedsBas_plotly())
 
 Seigneurs_Redevances_PS <- function(seigneurs_data){
-  x <- "nbfpassujettis"
+  x <- "nb_fp_assujettis"
   redevancesLevels <- c("0","1-5","6-15","16-30","30-100",">100")
   redevancesBreaks <- rlang::exprs(
     .data[[x]] == 0 ~ "0",
@@ -217,9 +217,9 @@ Seigneurs_Redevances_PS <- function(seigneurs_data){
   )
   
   redevances_PS <- seigneurs_data %>%
-    filter(annee == 1160) %>%
+    filter(annee == 1200) %>%
     filter(!(type %in% "Grand Seigneur")) %>%
-    select(seed, annee, type, nbfpassujettis) %>%
+    select(seed, annee, type, nb_fp_assujettis) %>%
     collect() %>%
     mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain"))) %>%
     mutate(nbFP_cut = case_when(!!!redevancesBreaks)) %>%
@@ -302,14 +302,14 @@ Seigneurs_Agregats <- function(seigneurs_data, agregats_data){
   )
   
   seigneurs_agregats <- seigneurs_data %>%
-    filter(annee ==  1160) %>%
+    filter(annee ==  1200) %>%
     group_by(seed, monagregat) %>%
     summarise(nbAgregats = n()) %>%
     collect() %>%
     mutate(NbAgregats = case_when(!!!nbAgregatsBreaks)) %>%
     mutate(NbAgregats = factor(NbAgregats, levels = nbAgregatsLevels)) %>%
     right_join(agregats_data %>%
-                 filter(annee == 1160) %>%
+                 filter(annee == 1200) %>%
                  select(seed, id_agregat) %>%
                  collect(),
                by = c("seed", "monagregat" = "id_agregat")) %>%

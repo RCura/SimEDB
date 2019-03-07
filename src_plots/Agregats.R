@@ -33,7 +33,7 @@ Agregats_Poles <- function(agregats_data){
     summarise(nb_agregats = n())
   
   avecPoles <- agregats_data %>%
-    filter(!is.na(monpole)) %>%
+    filter(monpole > 0) %>%
     mutate(pole = TRUE) %>%
     group_by(seed, annee) %>%
     summarise(nb_poles = n())
@@ -77,9 +77,9 @@ Agregats_Paroisses <- function(agregats_data, poles_data){
   nb_agregats_paroisses <- agregats %>%
     select(id_agregat, sim_name, seed, annee, monpole) %>%
     left_join(poles_data %>%
-                select(sim_name, seed, annee, id_pole, monagregat, nbparoisses),
+                select(sim_name, seed, annee, id_pole, monagregat, nb_paroisses),
               by = c("sim_name", "seed", "annee", "monpole" = "id_pole")) %>%
-    filter(nbparoisses >= 1) %>%
+    filter(nb_paroisses >= 1) %>%
     group_by(seed, sim_name, annee) %>%
     summarise(nb_agregats_paroisses = n()) %>%
     collect()
@@ -118,7 +118,7 @@ callModule(plotDownloadRate, paste0("Agregats_Paroisses","_Bas"),
 Agregats_CA <- function(agregats_data){
   
   nombre_agregats <- agregats_data %>%
-    filter(communaute == 1) %>%
+    filter(communaute == "TRUE") %>%
     group_by(annee, seed) %>%
     summarise(nb = n()) %>%
     collect()
@@ -159,14 +159,14 @@ callModule(plotDownloadRate, paste0("Agregats_CA","_Bas"),
 Agregats_RT <- function(agregats_data){
   
   rtAgregats <- agregats_data %>%
-    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    filter(annee %in% c(820, 960, 1060, 1200)) %>%
     collect() %>%
     group_by(seed, annee) %>%
-    mutate(rank = min_rank(-nbfp)) %>%
+    mutate(rank = min_rank(-nombre_fp_agregat)) %>%
     group_by(annee, rank) %>%
-    summarise(Moyenne = mean(nbfp, na.rm = TRUE),
-              Q1 = quantile(nbfp, probs = 0.25),
-              Q3 = quantile(nbfp, probs = 0.75)) %>%
+    summarise(Moyenne = mean(nombre_fp_agregat, na.rm = TRUE),
+              Q1 = quantile(nombre_fp_agregat, probs = 0.25),
+              Q3 = quantile(nombre_fp_agregat, probs = 0.75)) %>%
     gather(key = `Méthode d'agrégation`, value = Value, Moyenne:Q3) %>%
     ungroup()
   
@@ -207,3 +207,62 @@ callModule(plotDownloadRate, paste0("Agregats_RT","_Bas"),
            plotName = paste0("Agregats_RT","_Bas"),
            user = input$userName,
            seeds = filtredSeedsBas_plotly())
+
+
+output$Agregats_Distribution_Haut <- renderTable({
+  req(filtredHaut$agregats)
+  nb_fp_breaks <- c(-1,100, 200, 300, 400, 1E12)
+  nb_fp_labels <- c("<100", "101-200", "201-300", "301-400", ">400")
+  agregats_data <- filtredHaut$agregats
+  
+  distrib_agregats <- agregats_data %>%
+    filter(annee == 1200) %>%
+    select(seed, nombre_fp_agregat) %>%
+    collect() %>%
+    mutate(nb_fp_breaks = cut(nombre_fp_agregat, breaks =nb_fp_breaks, labels = nb_fp_labels)) %>%
+    group_by(seed, nb_fp_breaks) %>%
+    summarise(nb_agregats = n()) %>%
+    group_by(seed) %>%
+    mutate(nb_total_agregats = sum(nb_agregats, na.rm = TRUE)) %>%
+    ungroup() %>%
+    mutate(tx_agregats = nb_agregats / nb_total_agregats) %>%
+    select(-nb_total_agregats) %>%
+    group_by(nb_fp_breaks) %>%
+    summarise(NbAgregats_moyen = mean(nb_agregats, na.rm = TRUE),
+              TxAgregats_moyen = mean(tx_agregats, na.rm = TRUE)) %>%
+    rename(Taille_Agregats = nb_fp_breaks ) %>%
+    t() %>%
+    as_tibble(rownames = "Type")
+  
+  colnames(distrib_agregats) <- distrib_agregats[1,]
+  distrib_agregats[-1,]
+})
+
+output$Agregats_Distribution_Bas <- renderTable({
+  req(filtredBas$agregats)
+  nb_fp_breaks <- c(-1,100, 200, 300, 400, 1E12)
+  nb_fp_labels <- c("<100", "101-200", "201-300", "301-400", ">400")
+  agregats_data <- filtredBas$agregats
+  
+  distrib_agregats <- agregats_data %>%
+    filter(annee == 1200) %>%
+    select(seed, nombre_fp_agregat) %>%
+    collect() %>%
+    mutate(nb_fp_breaks = cut(nombre_fp_agregat, breaks =nb_fp_breaks, labels = nb_fp_labels)) %>%
+    group_by(seed, nb_fp_breaks) %>%
+    summarise(nb_agregats = n()) %>%
+    group_by(seed) %>%
+    mutate(nb_total_agregats = sum(nb_agregats, na.rm = TRUE)) %>%
+    ungroup() %>%
+    mutate(tx_agregats = nb_agregats / nb_total_agregats) %>%
+    select(-nb_total_agregats) %>%
+    group_by(nb_fp_breaks) %>%
+    summarise(NbAgregats_moyen = mean(nb_agregats, na.rm = TRUE),
+              TxAgregats_moyen = mean(tx_agregats, na.rm = TRUE)) %>%
+    rename(Taille_Agregats = nb_fp_breaks ) %>%
+    t() %>%
+    as_tibble(rownames = "Type")
+  
+  colnames(distrib_agregats) <- distrib_agregats[1,]
+  distrib_agregats[-1,]
+})

@@ -52,12 +52,12 @@ FP_DeplacementsDetail <- function(FP_data){
   
   
   nombre_FP_total <- FP_data %>%
-    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    filter(annee %in% c(820, 960, 1060, 1200)) %>%
     group_by(seed, sim_name, annee) %>%
     summarise(n_total = n())
   
   details_deplacement <- FP_data %>%
-    filter(annee %in% c(820, 940, 1040, 1160)) %>%
+    filter(annee %in% c(820, 960, 1060, 1200)) %>%
     group_by(seed, sim_name, annee, deplacement_from, deplacement_to) %>%
     summarise(nb_fp = n()) %>%
     left_join(nombre_FP_total, by = c("seed", "annee", "sim_name")) %>%
@@ -138,7 +138,7 @@ callModule(plotDownloadRate, paste0("FP_Concentration","_Bas"),
 
 FP_Satisfaction <- function(FP_data){
   FP_satis_data <- FP_data %>%
-    select(annee, satis, smat, srel, sprot)
+    select(annee, satisfaction, s_materielle, s_religieuse, s_protection)
   
   nbFP <- FP_satis_data %>%
     select(annee) %>%
@@ -147,21 +147,25 @@ FP_Satisfaction <- function(FP_data){
     collect()
   
   globale <- FP_satis_data %>%
-    group_by(annee, satis) %>%
-    summarise(nb = n(), satisfaction = as.integer(satis * 10)) %>%
+    select(annee, satisfaction) %>%
     group_by(annee, satisfaction) %>%
-    summarise(nb = sum(nb)) %>%
+    summarise(nb = n(),
+              satisfaction2 = as.integer(satisfaction * 10)) %>%
+    group_by(annee, satisfaction2) %>%
+    summarise(nb = sum(nb, na.rm =TRUE)) %>%
     ungroup() %>%
     collect() %>%
+    rename(satisfaction = satisfaction2) %>%
     mutate(type = "Globale") %>%
     select(annee, nb, type, satisfaction) %>%
     mutate(satisfaction = satisfaction / 10)
   
   materielle <- FP_satis_data %>%
-    group_by(annee, smat) %>%
-    summarise(nb = n(), satisfaction = as.integer(smat * 10)) %>%
+    select(annee, s_materielle) %>%
+    group_by(annee, s_materielle) %>%
+    summarise(nb = n(), satisfaction = as.integer(s_materielle * 10)) %>%
     group_by(annee, satisfaction) %>%
-    summarise(nb = sum(nb)) %>%
+    summarise(nb = sum(nb, na.rm = TRUE)) %>%
     ungroup() %>%
     collect() %>%
     mutate(type = "Matérielle") %>%
@@ -169,10 +173,11 @@ FP_Satisfaction <- function(FP_data){
     mutate(satisfaction = satisfaction / 10)
   
   protection <- FP_satis_data %>%
-    group_by(annee, sprot) %>%
-    summarise(nb = n(), satisfaction = as.integer(sprot * 10)) %>%
+    select(annee, s_protection) %>%
+    group_by(annee, s_protection) %>%
+    summarise(nb = n(), satisfaction = as.integer(s_protection * 10)) %>%
     group_by(annee, satisfaction) %>%
-    summarise(nb = sum(nb)) %>%
+    summarise(nb = sum(nb, na.rm = TRUE)) %>%
     ungroup() %>%
     collect() %>%
     mutate(type = "Protection") %>%
@@ -180,10 +185,12 @@ FP_Satisfaction <- function(FP_data){
     mutate(satisfaction = satisfaction / 10)
   
   religieuse <- FP_satis_data %>%
-    group_by(annee, srel) %>%
-    summarise(nb = n(), satisfaction = as.integer(srel * 10)) %>%
+    select(annee, s_religieuse) %>%
+    group_by(annee, s_religieuse) %>%
+    mutate(s_religieuse = if_else(s_religieuse > 1.0, 1.0, s_religieuse)) %>%
+    summarise(nb = n(), satisfaction = as.integer(s_religieuse * 10)) %>%
     group_by(annee, satisfaction) %>%
-    summarise(nb = sum(nb)) %>%
+    summarise(nb = sum(nb, na.rm = TRUE)) %>%
     ungroup() %>%
     collect() %>%
     mutate(type = "Religieuse") %>%
@@ -205,9 +212,9 @@ FP_Satisfaction <- function(FP_data){
   
   
   ggplot(satisfaction_plotdata) +
-    geom_col(aes(factor(annee), tx_fp, fill = factor(satisfaction), group = factor(satisfaction))) +
+    geom_col(aes(factor(annee), tx_fp, fill = fct_rev(factor(satisfaction)), group = fct_rev(factor(satisfaction)))) +
     facet_grid(type~.) +
-    scale_fill_brewer(name = "Satisfaction", type = "div", palette = "RdYlBu", direction = 1) +
+    scale_fill_brewer(name = "Satisfaction", type = "div", palette = "RdYlBu", direction = -1) +
     scale_y_continuous(labels = percent) +
     ggtitle("Évolution de la satisfaction des foyers paysans") +
     xlab("Temps") + ylab("Distribution de la satisfaction des foyers paysans") +

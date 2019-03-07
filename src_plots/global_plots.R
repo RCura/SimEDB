@@ -47,7 +47,7 @@ Objectifs <- data_frame(
 
 df_to_resultsPlot <- function(df){
   df %>%
-    filter(annee == 1160) %>%
+    filter(annee == 1200) %>%
     select(-sim_name, -annee) %>%
     collect() %>%
     gather(key = Variable,
@@ -97,15 +97,25 @@ output$resultsPlot <- renderPlot({
 
 summarise_results <- function(reactiveList){
   nbSeigneurs <- reactiveList[["seigneurs"]] %>%
-    group_by(seed, annee) %>%
-    summarise(nbseigneurs = n()) %>%
+    filter(annee == 1200) %>%
+    group_by(seed) %>%
+    summarise(nb_seigneurs = n()) %>%
     collect()
   
-  reactiveList[["results"]] %>%
-    filter(annee == 1160) %>%
+  surface_monde <- reactiveList[["parameters"]] %>%
+    select(seed, taille_cote_monde) %>%
     collect() %>%
-    left_join(nbSeigneurs, by = c("seed", "annee")) %>%
-    select(-seed) %>%
+    mutate(superficie_monde = as.numeric(taille_cote_monde)^2) %>%
+    select(-taille_cote_monde)
+  
+  reactiveList[["results"]] %>%
+    filter(annee == 1200) %>%
+    select(-annee) %>%
+    collect() %>%
+    left_join(nbSeigneurs, by = c("seed")) %>%
+    left_join(surface_monde, by = "seed") %>%
+    mutate(densite_fp = nb_fp / superficie_monde) %>%
+    select(-seed, -superficie_monde) %>%
     rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
     summarise_if(is.numeric,funs(
       Moyenne = mean,
