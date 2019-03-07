@@ -7,26 +7,30 @@ drv <- JDBC("com.mapd.jdbc.MapDDriver",
             identifier.quote="'")
 conMapD <- dbConnect(drv, "jdbc:mapd:mapdi.cura.info:9091:mapd", "mapd", "HyperInteractive")
 
-seeds <- tbl(conMapD, "seeds_5_1")
-agregats <- tbl(conMapD, "agregats_5_1")
-fp <- tbl(conMapD, "fp_5_1")
-parameters <- tbl(conMapD, "parameters_5_1")
-paroisses <- tbl(conMapD, "paroisses_5_1")
-poles <- tbl(conMapD, "poles_5_1")
-results <- tbl(conMapD, "results_5_1")
-seigneurs <- tbl(conMapD, "seigneurs_5_1")
+seeds <- tbl(conMapD, "seeds_6_1")
+agregats <- tbl(conMapD, "agregats_6_1")
+fp <- tbl(conMapD, "fp_6_1")
+parameters <- tbl(conMapD, "parameters_6_1")
+paroisses <- tbl(conMapD, "paroisses_6_1")
+poles <- tbl(conMapD, "poles_6_1")
+results <- tbl(conMapD, "global_6_1")
+seigneurs <- tbl(conMapD, "seigneurs_6_1")
+chateaux <- tbl(conMapD, "chateaux_6_1")
 
 ##############################################################
 ##############################################################
 ##############################################################
 
-FP_data <- fp %>% filter(sim_name %in% c("5_0"))
-results_data <- results %>% filter(sim_name %in% c("5_0"))
-agregats_data <- agregats %>% filter(sim_name %in% c("5_0"))
-poles_data <- poles %>% filter(sim_name %in% c("5_0"))
-paroisses_data <- paroisses %>% filter(sim_name %in% c("5_0"))
-seigneurs_data <- seigneurs %>% filter(sim_name %in% c("5_0"))
-parameters_data <- parameters %>%  filter(sim_name %in% c("5_0"))
+sample_sim_name <- "Exp_6_1_Scenario_Base"
+
+FP_data <- fp %>% filter(sim_name %in% !!sample_sim_name)
+results_data <- results %>% filter(sim_name %in% !!sample_sim_name)
+agregats_data <- agregats %>% filter(sim_name %in% !!sample_sim_name)
+poles_data <- poles %>% filter(sim_name %in% !!sample_sim_name)
+paroisses_data <- paroisses %>% filter(sim_name %in% !!sample_sim_name)
+seigneurs_data <- seigneurs %>% filter(sim_name %in% !!sample_sim_name)
+parameters_data <- parameters %>%  filter(sim_name %in% !!sample_sim_name)
+chateaux_data <- chateaux %>% filter(sim_name %in% !!sample_sim_name)
 
 ##############################################################
 ##############################################################
