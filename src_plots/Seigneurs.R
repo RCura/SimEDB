@@ -1,9 +1,13 @@
 Seigneurs_Nb <- function(seigneurs_data){
   nbSeigneurs <- seigneurs_data %>%
+    select(seed, annee, type, nb_chateaux_proprio, nb_chateaux_gardien) %>%
     filter(!(type %in% "Grand Seigneur")) %>%
-    group_by(seed, annee, type) %>%
+    group_by(seed, annee, nb_chateaux_proprio, nb_chateaux_gardien, type) %>%
     summarise(n = n()) %>%
-    collect()
+    mutate(type = if_else(nb_chateaux_proprio == 0 & nb_chateaux_gardien == 0, "Petit Seigneur", "Chatelain")) %>%
+    collect() %>%
+    group_by(seed, annee, type) %>%
+    summarise(n = sum(n, na.rm = TRUE))
   
   ggplot(nbSeigneurs, aes(factor(annee), col = type, fill = type, y = n)) +
     geom_tufteboxplot() +
