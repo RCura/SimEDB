@@ -142,16 +142,6 @@ Agregats_CA <- function(agregats_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$Agregats_CA <- renderPlot({
-  req(filtredHaut$agregats)
-  Agregats_CA(agregats_data = filtredHaut$agregats)
-})
-
-output$Agregats_CA_Filter <- renderPlot({
-  req(filtredBas$agregats)
-  Agregats_CA(agregats_data = filtredBas$agregats)
-})
-
 callModule(plotDownloadRate, paste0("Agregats_CA","_Haut"),
            plotFun = reactive(
              Agregats_CA(filtredHaut$agregats) +
@@ -197,16 +187,6 @@ Agregats_RT <- function(agregats_data){
     xlab("Rang (log10)") + ylab("Nombre de FP\ncontenus (log10)") +
     labs(subtitle = "Variabilité : Moyenne, Q1 et Q3 des Réplications")
 }
-
-output$Agregats_RT <- renderPlot({
-  req(filtredHaut$agregats)
-  Agregats_RT(agregats_data = filtredHaut$agregats)
-})
-
-output$Agregats_RT_Filter <- renderPlot({
-  req(filtredBas$agregats)
-  Agregats_RT(agregats_data = filtredBas$agregats)
-})
 
 callModule(plotDownloadRate, paste0("Agregats_RT","_Haut"),
            plotFun = reactive(

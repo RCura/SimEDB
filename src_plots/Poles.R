@@ -11,16 +11,6 @@ Poles_Nb <- function(poles_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$Poles_Nb <- renderPlot({
-  req(filtredHaut$poles)
-  Poles_Nb(poles_data = filtredHaut$poles)
-})
-
-output$Poles_Nb_Filter <- renderPlot({
-  req(filtredBas$poles)
-  Poles_Nb(poles_data = filtredBas$poles)
-})
-
 callModule(plotDownloadRate, paste0("Poles_Nb","_Haut"),
            plotFun = reactive(
              Poles_Nb(filtredHaut$poles) +
@@ -197,16 +187,6 @@ Poles_RT <- function(poles_data){
     xlab("Rang (log10)") + ylab("Nombre d'attracteurs (log10)") +
     labs(subtitle = "Variabilité : Moyenne, Q1 et Q3 des Réplications")
 }
-
-output$Poles_RT <- renderPlot({
-  req(filtredHaut$poles)
-  Poles_RT(poles_data = filtredHaut$poles)
-})
-
-output$Poles_RT_Filter <- renderPlot({
-  req(filtredBas$poles)
-  Poles_RT(poles_data = filtredBas$poles)
-})
 
 callModule(plotDownloadRate, paste0("Poles_RT","_Haut"),
            plotFun = reactive(

@@ -11,16 +11,6 @@ Paroisses_Nb <- function(paroisses_data){
     labs(subtitle = "Variabilité : Réplications")
 }
 
-output$Paroisses_Nb <- renderPlot({
-  req(filtredHaut$paroisses)
-  Paroisses_Nb(paroisses_data = filtredHaut$paroisses)
-})
-
-output$Paroisses_Nb_Filter <- renderPlot({
-  req(filtredBas$paroisses)
-  Paroisses_Nb(paroisses_data = filtredBas$paroisses)
-})
-
 callModule(plotDownloadRate, paste0("Paroisses_Nb","_Haut"),
            plotFun = reactive(
              Paroisses_Nb(filtredHaut$paroisses) +
