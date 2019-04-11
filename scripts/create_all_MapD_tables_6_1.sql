@@ -90,7 +90,9 @@ droits_haute_justice_zp_cession TEXT ENCODING DICT(8),
 droits_fonciers_zp TEXT ENCODING DICT(8),
 droits_fonciers_zp_cession TEXT ENCODING DICT(8),
 autres_droits_zp TEXT ENCODING DICT(8),
-autres_droits_zp_cession TEXT ENCODING DICT(8) 
+autres_droits_zp_cession TEXT ENCODING DICT(8),
+ponderation_proba_chateau_gs TEXT ENCODING DICT(8),
+ponderation_proba_chateau_ps TEXT ENCODING DICT(8)
 );
 
 CREATE TABLE global_6_1 (
@@ -121,13 +123,11 @@ SHARED DICTIONARY (sim_name) REFERENCES seeds(sim_name),
 annee SMALLINT,
 id_seigneur INTEGER,
 type TEXT ENCODING DICT(8),
-seigneur_initial TEXT ENCODING DICT(8),
+date_apparition TEXT ENCODING DICT(8),
 puissance FLOAT,
 nb_chateaux_proprio SMALLINT,
 nb_chateaux_gardien SMALLINT,
 nb_fp_assujettis SMALLINT,
-nbvassaux SMALLINT,
-nbdebiteurs SMALLINT,
 monagregat INTEGER,
 geom TEXT ENCODING DICT
 );

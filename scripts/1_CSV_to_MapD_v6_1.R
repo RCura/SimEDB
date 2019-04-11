@@ -11,7 +11,7 @@ library(ssh)
 outputs_path <- "/data/user/c/rcura/"
 setwd(outputs_path)
 
-prefixe_files <- "Exp_6_1_Scenario"
+prefixe_files <- "Exp_6_2_Scenario_SeuilParoisseAgregat"
 suffixe_tables <- "_6_1"
 nb_replications_to_keep <- 20
 
