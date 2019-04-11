@@ -23,7 +23,9 @@ output$Poles_Nb_Filter <- renderPlot({
 
 callModule(plotDownloadRate, paste0("Poles_Nb","_Haut"),
            plotFun = reactive(
-             Poles_Nb(filtredHaut$poles)
+             Poles_Nb(filtredHaut$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Poles_Nb","_Haut"),
            user = input$userName,
@@ -31,7 +33,9 @@ callModule(plotDownloadRate, paste0("Poles_Nb","_Haut"),
 
 callModule(plotDownloadRate, paste0("Poles_Nb","_Bas"),
            plotFun = reactive(
-             Poles_Nb(filtredBas$poles)
+             Poles_Nb(filtredBas$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Poles_Nb","_Bas"),
            user = input$userName,
@@ -71,7 +75,9 @@ Poles_Agregats <- function(poles_data){
 
 callModule(plotDownloadRate, paste0("Poles_Agregats","_Haut"),
            plotFun = reactive(
-             Poles_Agregats(filtredHaut$poles)
+             Poles_Agregats(filtredHaut$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Poles_Agregats","_Haut"),
            user = input$userName,
@@ -79,7 +85,9 @@ callModule(plotDownloadRate, paste0("Poles_Agregats","_Haut"),
 
 callModule(plotDownloadRate, paste0("Poles_Agregats","_Bas"),
            plotFun = reactive(
-             Poles_Agregats(filtredBas$poles)
+             Poles_Agregats(filtredBas$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Poles_Agregats","_Bas"),
            user = input$userName,
@@ -106,7 +114,9 @@ Poles_Compo <- function(poles_data){
 
 callModule(plotDownloadRate, paste0("Poles_Compo","_Haut"),
            plotFun = reactive(
-             Poles_Compo(filtredHaut$poles)
+             Poles_Compo(filtredHaut$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Poles_Compo","_Haut"),
            user = input$userName,
@@ -114,7 +124,9 @@ callModule(plotDownloadRate, paste0("Poles_Compo","_Haut"),
 
 callModule(plotDownloadRate, paste0("Poles_Compo","_Bas"),
            plotFun = reactive(
-             Poles_Compo(filtredBas$poles)
+             Poles_Compo(filtredBas$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Poles_Compo","_Bas"),
            user = input$userName,
@@ -140,7 +152,9 @@ Poles_Attrac <- function(poles_data){
 
 callModule(plotDownloadRate, paste0("Poles_Attrac","_Haut"),
            plotFun = reactive(
-             Poles_Attrac(filtredHaut$poles)
+             Poles_Attrac(filtredHaut$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Poles_Attrac","_Haut"),
            user = input$userName,
@@ -148,7 +162,9 @@ callModule(plotDownloadRate, paste0("Poles_Attrac","_Haut"),
 
 callModule(plotDownloadRate, paste0("Poles_Attrac","_Bas"),
            plotFun = reactive(
-             Poles_Attrac(filtredBas$poles)
+             Poles_Attrac(filtredBas$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Poles_Attrac","_Bas"),
            user = input$userName,
@@ -194,7 +210,9 @@ output$Poles_RT_Filter <- renderPlot({
 
 callModule(plotDownloadRate, paste0("Poles_RT","_Haut"),
            plotFun = reactive(
-             Poles_RT(filtredHaut$poles)
+             Poles_RT(filtredHaut$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Poles_RT","_Haut"),
            user = input$userName,
@@ -202,7 +220,9 @@ callModule(plotDownloadRate, paste0("Poles_RT","_Haut"),
 
 callModule(plotDownloadRate, paste0("Poles_RT","_Bas"),
            plotFun = reactive(
-             Poles_RT(filtredBas$poles)
+             Poles_RT(filtredBas$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Poles_RT","_Bas"),
            user = input$userName,

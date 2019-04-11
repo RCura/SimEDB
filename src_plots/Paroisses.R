@@ -23,7 +23,9 @@ output$Paroisses_Nb_Filter <- renderPlot({
 
 callModule(plotDownloadRate, paste0("Paroisses_Nb","_Haut"),
            plotFun = reactive(
-             Paroisses_Nb(filtredHaut$paroisses)
+             Paroisses_Nb(filtredHaut$paroisses) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
              ),
            plotName = paste0("Paroisses_Nb","_Haut"),
            user = input$userName,
@@ -31,7 +33,9 @@ callModule(plotDownloadRate, paste0("Paroisses_Nb","_Haut"),
 
 callModule(plotDownloadRate, paste0("Paroisses_Nb","_Bas"),
            plotFun = reactive(
-             Paroisses_Nb(filtredBas$paroisses)
+             Paroisses_Nb(filtredBas$paroisses) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
              ),
            plotName = paste0("Paroisses_Nb","_Bas"),
            user = input$userName,
@@ -60,7 +64,9 @@ Paroisses_Compo <- function(paroisses_data){
 
 callModule(plotDownloadRate, paste0("Paroisses_Compo","_Haut"),
            plotFun = reactive(
-             Paroisses_Compo(filtredHaut$paroisses)
+             Paroisses_Compo(filtredHaut$paroisses) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Paroisses_Compo","_Haut"),
            user = input$userName,
@@ -68,7 +74,9 @@ callModule(plotDownloadRate, paste0("Paroisses_Compo","_Haut"),
 
 callModule(plotDownloadRate, paste0("Paroisses_Compo","_Bas"),
            plotFun = reactive(
-             Paroisses_Compo(filtredBas$paroisses)
+             Paroisses_Compo(filtredBas$paroisses) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Paroisses_Compo","_Bas"),
            user = input$userName,
@@ -97,7 +105,9 @@ Paroisses_Promo <- function(paroisses_data){
 
 callModule(plotDownloadRate, paste0("Paroisses_Promo","_Haut"),
            plotFun = reactive(
-             Paroisses_Promo(filtredHaut$paroisses)
+             Paroisses_Promo(filtredHaut$paroisses) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Paroisses_Promo","_Haut"),
            user = input$userName,
@@ -105,7 +115,9 @@ callModule(plotDownloadRate, paste0("Paroisses_Promo","_Haut"),
 
 callModule(plotDownloadRate, paste0("Paroisses_Promo","_Bas"),
            plotFun = reactive(
-             Paroisses_Promo(filtredBas$paroisses)
+             Paroisses_Promo(filtredBas$paroisses) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Paroisses_Promo","_Bas"),
            user = input$userName,
@@ -138,7 +150,9 @@ Paroisses_Superficie <- function(paroisses_data){
 
 callModule(plotDownloadRate, paste0("Paroisses_Superficie","_Haut"),
            plotFun = reactive(
-             Paroisses_Superficie(filtredHaut$paroisses)
+             Paroisses_Superficie(filtredHaut$paroisses) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Paroisses_Superficie","_Haut"),
            user = input$userName,
@@ -146,7 +160,9 @@ callModule(plotDownloadRate, paste0("Paroisses_Superficie","_Haut"),
 
 callModule(plotDownloadRate, paste0("Paroisses_Superficie","_Bas"),
            plotFun = reactive(
-             Paroisses_Superficie(filtredBas$paroisses)
+             Paroisses_Superficie(filtredBas$paroisses) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Paroisses_Superficie","_Bas"),
            user = input$userName,

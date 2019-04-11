@@ -34,14 +34,18 @@ FP_TypeDeplacements <- function(FP_data){
 
 callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Haut"),
            plotFun = reactive(
-             FP_TypeDeplacements(filtredHaut$FP)
+             FP_TypeDeplacements(filtredHaut$FP) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("FP_TypeDeplacements","_Haut"),
            user = input$userName,
            seeds = filtredSeedsHaut_plotly())
 callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Bas"),
            plotFun = reactive(
-             FP_TypeDeplacements(filtredBas$FP)
+             FP_TypeDeplacements(filtredBas$FP) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("FP_TypeDeplacements","_Bas"),
            user = input$userName,
@@ -122,14 +126,18 @@ FP_Concentration <- function(results_data){
 
 callModule(plotDownloadRate, paste0("FP_Concentration","_Haut"),
            plotFun = reactive(
-             FP_Concentration(filtredHaut$results)
+             FP_Concentration(filtredHaut$results) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("FP_Concentration","_Haut"),
            user = input$userName,
            seeds = filtredSeedsHaut_plotly())
 callModule(plotDownloadRate, paste0("FP_Concentration","_Bas"),
            plotFun = reactive(
-             FP_Concentration(filtredBas$results)
+             FP_Concentration(filtredBas$results) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("FP_Concentration","_Bas"),
            user = input$userName,
@@ -226,14 +234,18 @@ FP_Satisfaction <- function(FP_data){
 
 callModule(plotDownloadRate, paste0("FP_Satisfaction","_Haut"),
            plotFun = reactive(
-             FP_Satisfaction(filtredHaut$FP)
+             FP_Satisfaction(filtredHaut$FP) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("FP_Satisfaction","_Haut"),
            user = input$userName,
            seeds = filtredSeedsHaut_plotly())
 callModule(plotDownloadRate, paste0("FP_Satisfaction","_Bas"),
            plotFun = reactive(
-             FP_Satisfaction(filtredBas$FP)
+             FP_Satisfaction(filtredBas$FP) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("FP_Satisfaction","_Bas"),
            user = input$userName,

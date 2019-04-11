@@ -17,7 +17,9 @@ Seigneurs_Nb <- function(seigneurs_data){
 
 callModule(plotDownloadRate, paste0("Seigneurs_Nb","_Haut"),
            plotFun = reactive(
-             Seigneurs_Nb(filtredHaut$seigneurs)
+             Seigneurs_Nb(filtredHaut$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Nb","_Haut"),
            user = input$userName,
@@ -25,7 +27,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Nb","_Haut"),
 
 callModule(plotDownloadRate, paste0("Seigneurs_Nb","_Bas"),
            plotFun = reactive(
-             Seigneurs_Nb(filtredBas$seigneurs)
+             Seigneurs_Nb(filtredBas$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Nb","_Bas"),
            user = input$userName,
@@ -94,7 +98,9 @@ Seigneurs_Chateaux <- function(seigneurs_data){
 
 callModule(plotDownloadRate, paste0("Seigneurs_Chateaux","_Haut"),
            plotFun = reactive(
-             Seigneurs_Chateaux(filtredHaut$seigneurs)
+             Seigneurs_Chateaux(filtredHaut$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Chateaux","_Haut"),
            user = input$userName,
@@ -102,7 +108,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Chateaux","_Haut"),
 
 callModule(plotDownloadRate, paste0("Seigneurs_Chateaux","_Bas"),
            plotFun = reactive(
-             Seigneurs_Chateaux(filtredBas$seigneurs)
+             Seigneurs_Chateaux(filtredBas$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Chateaux","_Bas"),
            user = input$userName,
@@ -158,7 +166,9 @@ Seigneurs_Vassaux <- function(seigneurs_data){
 
 callModule(plotDownloadRate, paste0("Seigneurs_Vassaux","_Haut"),
            plotFun = reactive(
-             Seigneurs_Vassaux(filtredHaut$seigneurs)
+             Seigneurs_Vassaux(filtredHaut$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Vassaux","_Haut"),
            user = input$userName,
@@ -166,7 +176,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Vassaux","_Haut"),
 
 callModule(plotDownloadRate, paste0("Seigneurs_Vassaux","_Bas"),
            plotFun = reactive(
-             Seigneurs_Vassaux(filtredBas$seigneurs)
+             Seigneurs_Vassaux(filtredBas$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Vassaux","_Bas"),
            user = input$userName,
@@ -190,7 +202,9 @@ Seigneurs_Redevances <- function(seigneurs_data){
 
 callModule(plotDownloadRate, paste0("Seigneurs_Redevances","_Haut"),
            plotFun = reactive(
-             Seigneurs_Redevances(filtredHaut$seigneurs)
+             Seigneurs_Redevances(filtredHaut$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Redevances","_Haut"),
            user = input$userName,
@@ -198,7 +212,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Redevances","_Haut"),
 
 callModule(plotDownloadRate, paste0("Seigneurs_Redevances","_Bas"),
            plotFun = reactive(
-             Seigneurs_Redevances(filtredBas$seigneurs)
+             Seigneurs_Redevances(filtredBas$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Redevances","_Bas"),
            user = input$userName,
@@ -239,7 +255,9 @@ Seigneurs_Redevances_PS <- function(seigneurs_data){
 
 callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Haut"),
            plotFun = reactive(
-             Seigneurs_Redevances_PS(filtredHaut$seigneurs)
+             Seigneurs_Redevances_PS(filtredHaut$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Redevances_PS","_Haut"),
            user = input$userName,
@@ -247,7 +265,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Haut"),
 
 callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Bas"),
            plotFun = reactive(
-             Seigneurs_Redevances_PS(filtredBas$seigneurs)
+             Seigneurs_Redevances_PS(filtredBas$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Redevances_PS","_Bas"),
            user = input$userName,
@@ -274,7 +294,9 @@ Seigneurs_Puissance <- function(seigneurs_data){
 
 callModule(plotDownloadRate, paste0("Seigneurs_Puissance","_Haut"),
            plotFun = reactive(
-             Seigneurs_Puissance(filtredHaut$seigneurs)
+             Seigneurs_Puissance(filtredHaut$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Puissance","_Haut"),
            user = input$userName,
@@ -282,7 +304,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Puissance","_Haut"),
 
 callModule(plotDownloadRate, paste0("Seigneurs_Puissance","_Bas"),
            plotFun = reactive(
-             Seigneurs_Puissance(filtredBas$seigneurs)
+             Seigneurs_Puissance(filtredBas$seigneurs) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Puissance","_Bas"),
            user = input$userName,
@@ -329,7 +353,9 @@ Seigneurs_Agregats <- function(seigneurs_data, agregats_data){
 callModule(plotDownloadRate, paste0("Seigneurs_Agregats","_Haut"),
            plotFun = reactive(
              Seigneurs_Agregats(seigneurs_data = filtredHaut$seigneurs,
-                                agregats_data = filtredHaut$agregats)
+                                agregats_data = filtredHaut$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Agregats","_Haut"),
            user = input$userName,
@@ -338,7 +364,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Agregats","_Haut"),
 callModule(plotDownloadRate, paste0("Seigneurs_Agregats","_Bas"),
            plotFun = reactive(
              Seigneurs_Agregats(seigneurs_data = filtredHaut$seigneurs,
-                                agregats_data = filtredHaut$agregats)
+                                agregats_data = filtredHaut$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Seigneurs_Agregats","_Bas"),
            user = input$userName,

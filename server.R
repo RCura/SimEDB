@@ -44,6 +44,8 @@ shinyServer(function(session, input, output) {
                                results = NULL, seigneurs = NULL
   )
   
+  tablesParams <- reactiveValues(haut = NULL, bas = NULL, hautTxt = NULL, basTxt = NULL)
+  
   # ---------------- Globally filtered experiments -----------------
   
   ############### DEBUG #################
@@ -104,13 +106,50 @@ shinyServer(function(session, input, output) {
   
   filtredSeedsHaut_plotly <- reactive({
     req(sim$seeds)
+    
+    expressions_filtres <- expression_from_input(input$plotly_brushed_haut)
+    colonnes_filtres <- parametres_from_input(input$plotly_brushed_haut)
+    
+    if ("sim_name" %in% colonnes_filtres){
+      simNames <- NULL
+    } else {
+      simNames <- isolate(selected_experiments_debounced()) %>%
+        as_tibble() %>%
+        set_colnames("sim_name") %>%
+        gather(parametre, valeurs) %>%
+        distinct() %>%
+        arrange(parametre, valeurs)
+    }
 
-    selected_seeds <- parameters_data() %>%
+    selected_table <- parameters_data() %>%
       mutate(seed = as.numeric(seed)) %>%
-      mutate_if(is.character, funs(char_to_num)) %>%
-      filter(!!!(expression_from_input(input$plotly_brushed_haut))) %>%
+      mutate_if(is.character, funs(char = char_to_num)) %>%
+      filter(!!!expressions_filtres)
+    
+    if (length(colonnes_filtres) > 0){
+      tablesParams$haut <- selected_table %>%
+        select(!!!colonnes_filtres) %>%
+        gather(key = parametre, value = valeurs) %>%
+        arrange(parametre, valeurs) %>%
+        bind_rows(simNames) %>%
+        distinct(parametre, valeurs) %>%
+        group_by(parametre) %>%
+        nest() %>%
+        mutate(valeurs = map_chr(data, ~ unlist(.x, use.names = FALSE) %>% paste(., collapse = " ; "))) %>%
+        select(parametre, valeurs)
+    } else {
+      tablesParams$haut <- simNames %>%
+        group_by(parametre) %>%
+        nest() %>%
+        mutate(valeurs = map_chr(data, ~ unlist(.x, use.names = FALSE) %>% paste(., collapse = " ; "))) %>%
+        select(parametre, valeurs)
+    }
+    
+
+    selected_seeds <- selected_table %>%
       mutate(seed = as.character(seed)) %>%
       pull((seed))
+    
     if (length(selected_seeds) >= 1){
       selected_seeds
     } else {
@@ -121,12 +160,48 @@ shinyServer(function(session, input, output) {
   filtredSeedsBas_plotly <- reactive({
     req(sim$seeds)
     
-    selected_seeds <- parameters_data() %>%
+    expressions_filtres <- expression_from_input(input$plotly_brushed_bas)
+    colonnes_filtres <- parametres_from_input(input$plotly_brushed_bas)
+    
+    if ("sim_name" %in% colonnes_filtres){
+      simNames <- NULL
+    } else {
+      simNames <- isolate(selected_experiments_debounced()) %>%
+        as_tibble() %>%
+        set_colnames("sim_name") %>%
+        gather(parametre, valeurs) %>%
+        distinct() %>%
+        arrange(parametre, valeurs)
+    }
+    
+    selected_table <- parameters_data() %>%
       mutate(seed = as.numeric(seed)) %>%
-      mutate_if(is.character, funs(char_to_num)) %>%
-      filter(!!!(expression_from_input(input$plotly_brushed_bas))) %>%
+      mutate_if(is.character, funs(char = char_to_num)) %>%
+      filter(!!!expressions_filtres)
+    
+    if (length(colonnes_filtres) > 0){
+      tablesParams$bas <- selected_table %>%
+        select(!!!colonnes_filtres) %>%
+        gather(key = parametre, value = valeurs) %>%
+        arrange(parametre, valeurs) %>%
+        bind_rows(simNames) %>%
+        distinct(parametre, valeurs) %>%
+        group_by(parametre) %>%
+        nest() %>%
+        mutate(valeurs = map_chr(data, ~ unlist(.x, use.names = FALSE) %>% paste(., collapse = " ; "))) %>%
+        select(parametre, valeurs)
+    } else {
+      tablesParams$bas <- simNames %>%
+        group_by(parametre) %>%
+        nest() %>%
+        mutate(valeurs = map_chr(data, ~ unlist(.x, use.names = FALSE) %>% paste(., collapse = " ; "))) %>%
+        select(parametre, valeurs)
+    }
+    
+    selected_seeds <- selected_table %>%
       mutate(seed = as.character(seed)) %>%
       pull((seed))
+    
     if (length(selected_seeds) >= 1){
       selected_seeds
     } else {
@@ -171,6 +246,45 @@ shinyServer(function(session, input, output) {
         filtredBas[[df]] <- NULL
       }
     }
+  })
+  
+  
+  observe({
+    req(tablesParams$haut)
+    params <- tablesParams$haut
+    
+    if (nrow(params) > 1){
+      selection <- params %>%
+        purrr::transpose() %>%
+        purrr::map(~unlist(.x)) %>%
+        purrr::map(~paste0(.x, collapse = " : [")) %>%
+        paste0(., collapse = "]\n")
+    } else {
+      selection <- params %>%
+        purrr::transpose() %>%
+        purrr::map(~paste0(.x, collapse = " : [")) %>%
+        paste0(., "]")
+    }
+    tablesParams$hautTxt <-  selection
+  })
+  
+  observe({
+    req(tablesParams$bas)
+    params <- tablesParams$bas
+    
+    if (nrow(params) > 1){
+      selection <- params %>%
+        purrr::transpose() %>%
+        purrr::map(~unlist(.x)) %>%
+        purrr::map(~paste0(.x, collapse = " : [")) %>%
+        paste0(., collapse = "]\n")
+    } else {
+      selection <- params %>%
+        purrr::transpose() %>%
+        purrr::map(~paste0(.x, collapse = " : [")) %>%
+        paste0(., "]")
+    }
+    tablesParams$basTxt <-  selection
   })
   
   # Debug module

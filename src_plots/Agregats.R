@@ -13,14 +13,18 @@ Agregats_Nb <- function(agregats_data){
 
 callModule(plotDownloadRate, paste0("Agregats_Nb","_Haut"),
            plotFun = reactive(
-             Agregats_Nb(filtredHaut$agregats)
+             Agregats_Nb(filtredHaut$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Agregats_Nb","_Haut"),
            user = input$userName,
            seeds = filtredSeedsHaut_plotly())
 callModule(plotDownloadRate, paste0("Agregats_Nb","_Bas"),
            plotFun = reactive(
-             Agregats_Nb(filtredBas$agregats)
+             Agregats_Nb(filtredBas$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Agregats_Nb","_Bas"),
            user = input$userName,
@@ -54,14 +58,18 @@ Agregats_Poles <- function(agregats_data){
 
 callModule(plotDownloadRate, paste0("Agregats_Poles","_Haut"),
            plotFun = reactive(
-             Agregats_Poles(filtredHaut$agregats)
+             Agregats_Poles(filtredHaut$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Agregats_Poles","_Haut"),
            user = input$userName,
            seeds = filtredSeedsHaut_plotly())
 callModule(plotDownloadRate, paste0("Agregats_Poles","_Bas"),
            plotFun = reactive(
-             Agregats_Poles(filtredBas$agregats)
+             Agregats_Poles(filtredBas$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Agregats_Poles","_Bas"),
            user = input$userName,
@@ -102,14 +110,18 @@ Agregats_Paroisses <- function(agregats_data, poles_data){
 
 callModule(plotDownloadRate, paste0("Agregats_Paroisses","_Haut"),
            plotFun = reactive(
-             Agregats_Paroisses(agregats_data = filtredHaut$agregats, poles_data = filtredHaut$poles)
+             Agregats_Paroisses(agregats_data = filtredHaut$agregats, poles_data = filtredHaut$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Agregats_Paroisses","_Haut"),
            user = input$userName,
            seeds = filtredSeedsHaut_plotly())
 callModule(plotDownloadRate, paste0("Agregats_Paroisses","_Bas"),
            plotFun = reactive(
-             Agregats_Paroisses(agregats_data = filtredBas$agregats, poles_data = filtredBas$poles)
+             Agregats_Paroisses(agregats_data = filtredBas$agregats, poles_data = filtredBas$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Agregats_Paroisses","_Bas"),
            user = input$userName,
@@ -142,7 +154,9 @@ output$Agregats_CA_Filter <- renderPlot({
 
 callModule(plotDownloadRate, paste0("Agregats_CA","_Haut"),
            plotFun = reactive(
-             Agregats_CA(filtredHaut$agregats)
+             Agregats_CA(filtredHaut$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Agregats_CA","_Haut"),
            user = input$userName,
@@ -150,7 +164,9 @@ callModule(plotDownloadRate, paste0("Agregats_CA","_Haut"),
 
 callModule(plotDownloadRate, paste0("Agregats_CA","_Bas"),
            plotFun = reactive(
-             Agregats_CA(filtredBas$agregats)
+             Agregats_CA(filtredBas$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Agregats_CA","_Bas"),
            user = input$userName,
@@ -194,7 +210,9 @@ output$Agregats_RT_Filter <- renderPlot({
 
 callModule(plotDownloadRate, paste0("Agregats_RT","_Haut"),
            plotFun = reactive(
-             Agregats_RT(filtredHaut$agregats)
+             Agregats_RT(filtredHaut$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Agregats_RT","_Haut"),
            user = input$userName,
@@ -202,7 +220,9 @@ callModule(plotDownloadRate, paste0("Agregats_RT","_Haut"),
 
 callModule(plotDownloadRate, paste0("Agregats_RT","_Bas"),
            plotFun = reactive(
-             Agregats_RT(filtredBas$agregats)
+             Agregats_RT(filtredBas$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("Agregats_RT","_Bas"),
            user = input$userName,

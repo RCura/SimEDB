@@ -41,12 +41,31 @@ expression_from_input <- function(inputJSON){
       select(-listcol) %>%
       mutate(min = map_dbl(range, 1),
              max = map_dbl(range, 2)) %>%
-      select(-range)
+      select(-range) %>%
+      mutate(var = paste0(var, "_char"))
     
     expressions <- with(filterDF, pmap(list(var, min, max),
                                        function(var, min, max){
                                          expr(between(!!sym(var), !!min, !!max))}))
     
     return(expressions)
+  }
+}
+
+parametres_from_input <- function(inputJSON){
+  if (is.null(inputJSON)){
+    return()
+  } else if (!jsonlite::validate(inputJSON)){
+    return()
+  } else {
+    filterColumns <- jsonlite::fromJSON(txt = inputJSON,
+                                        simplifyMatrix = FALSE,
+                                        simplifyDataFrame = FALSE) %>%
+      purrr::compact(.x = ., "constraintrange") %>%
+      tibble(listcol = .) %>%
+      mutate(var = map_chr(listcol, "label")) %>%
+      pull(var)
+    
+    return(filterColumns)
   }
 }
