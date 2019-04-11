@@ -28,7 +28,7 @@ shinyUI(navbarPage(
                                            fluidRow(textInput("userName", "Utilisateur",  value = "Robin")),
                              fluidRow(selectInput("selectedSims",  label = "Experiences",
                                                    choices = all_sim_names,
-                                                   selected = all_sim_names,
+                                                   selected = c("Exp_6_2_Scenario_NbParoissiens", "Exp_6_2_Scenario_SeuilParoisseAgregat"),
                                                    multiple = TRUE)),
                              textOutput("dataVolumeHaut",inline =  TRUE),
                              fluidRow(column(12, style = "background-color: rgba(67, 162, 202, 0.3);",
@@ -212,8 +212,10 @@ shinyUI(navbarPage(
   )
   ),
   tabPanel(title = "Sensitivity Analysis",
-           column(width = 6, div(dataTableOutput("sensitivity_summary"), style = "font-size:75%")),
-           column(width =  6, div(id = "sensitivity_plots"))
+           shinyjqui::jqui_resizable(
+           column(width = 2, div(dataTableOutput("sensitivity_summary"), style = "font-size:75%")),
+           options = list(handles = "e")),
+           column(width =  10, div(id = "sensitivity_plots"))
   )
 )
 )

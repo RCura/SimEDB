@@ -32,7 +32,7 @@ output$simNames <- renderPlot({
 
 # ---------------- ViolinPlots of Sim Results -----------------
 
-Objectifs <- data_frame(
+Objectifs <- tibble(
   Var = c("nb_agregats", "nb_chateaux", "nb_grands_chateaux", "nb_seigneurs",
           "nb_eglises_paroissiales", "distance_eglises_paroissiales",
           "prop_fp_isoles", "ratio_charge_fiscale", "nb_fp", "densite_fp"),

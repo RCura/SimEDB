@@ -52,13 +52,6 @@ plotDownloadRate <- function(input, output, session, plotFunction, plotName, use
   observeEvent(input$rating,{
     req(input$rating)
     currentTime <- Sys.time()
-    formattedTime <- glue::glue("{y}-{m}-{d} {h}:{m}",
-                                y = year(currentTime),
-                                m = month(currentTime),
-                                d = day(currentTime),
-                                h = hour(currentTime),
-                                m = minute(currentTime)
-    )
     filtredSeeds <- as.character(seeds)
     nbSeeds <- length(filtredSeeds)
     rating <- tibble(User = character(nbSeeds),
@@ -68,7 +61,7 @@ plotDownloadRate <- function(input, output, session, plotFunction, plotName, use
                      Seed = character(nbSeeds)
                      ) %>%
       mutate(User = user,
-             Time = formattedTime,
+             Time = currentTime,
              Input = plotName,
              Rating = input$rating,
              Seed = filtredSeeds)
