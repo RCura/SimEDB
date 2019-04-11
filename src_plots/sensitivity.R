@@ -56,7 +56,7 @@ observe({
           filter(param == !!currentParam) %>%
           mutate(Indicateur = stringr::str_wrap(Indicateur, width = 20))
         
-        ggplot(plot_data, aes(valeur, Resultat, group = factor(valeur))) +
+        ggplot(plot_data, aes(factor(valeur), Resultat)) +
           geom_tufteboxplot() +
           facet_wrap( ~Indicateur, scales = "free", nrow = 1) +
           labs(title = currentParam, x = "Valeurs de paramètres", y = "Valeurs des Indicateurs") +
