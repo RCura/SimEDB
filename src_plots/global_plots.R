@@ -2,8 +2,9 @@
 
 count_experiments <- function(parameters_data){
   parameters_data %>%
+    distinct(sim_name, seed) %>%
     group_by(sim_name) %>%
-    summarise(n = n_distinct(seed)) %>%
+    count() %>%
     collect()
 }
 
@@ -103,19 +104,20 @@ summarise_results <- function(reactiveList){
     collect()
   
   surface_monde <- reactiveList[["parameters"]] %>%
-    select(seed, taille_cote_monde) %>%
+    filter(parametre == "taille_cote_monde") %>%
+    select(seed, valeur) %>%
     collect() %>%
-    mutate(superficie_monde = as.numeric(taille_cote_monde)^2) %>%
-    select(-taille_cote_monde)
+    mutate(superficie_monde = as.numeric(valeur)^2) %>%
+    select(-valeur)
   
   reactiveList[["results"]] %>%
     filter(annee == 1200) %>%
     select(-annee) %>%
     collect() %>%
-    left_join(nbSeigneurs, by = c("seed")) %>%
+    left_join(nbSeigneurs, by = "seed") %>%
     left_join(surface_monde, by = "seed") %>%
     mutate(densite_fp = nb_fp / superficie_monde) %>%
-    select(-seed, -superficie_monde) %>%
+    select(-seed,-sim_name, -superficie_monde) %>%
     rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
     summarise_if(is.numeric,funs(
       Moyenne = mean,
@@ -183,17 +185,19 @@ output$summaryTable_Bas <- renderFormattable({
 
 
 output$dataVolumeHaut <- renderText({
-  blob <- filtredHaut$parameters %>% count() %>% collect() %>% pull()
+  blob <- filtredHaut$parameters %>% distinct(seed, sim_name) %>% count() %>% collect() %>% pull()
   sprintf("%s simulations sélectionnées sur un total de %s",
           blob,
-          sim$parameters %>% count() %>% collect() %>% pull())
+          sim$parameters %>% distinct(seed, sim_name) %>% count() %>% collect() %>% pull()
+          )
 })
 
 output$dataVolumeBas <- renderText({
-  blob <- filtredBas$parameters %>% count() %>% collect() %>% pull()
+  blob <- filtredBas$parameters %>% distinct(seed, sim_name) %>% count() %>% collect() %>% pull()
   sprintf("%s simulations sélectionnées sur un total de %s",
           blob,
-          sim$parameters %>% count() %>% collect() %>% pull())
+          sim$parameters %>% distinct(seed, sim_name) %>% count() %>% collect() %>% pull()
+  )
 })
 
 
@@ -202,7 +206,7 @@ output$paramPC_Haut <- renderPlotly({
   parcoords_data <- parameters_data() %>%
     arrange(seed) %>%
     rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = "_")))
-  
+
   parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
 
   p <-  plot_ly(source = 'parcoords_haut') %>%
@@ -224,16 +228,16 @@ output$paramPC_Bas <- renderPlotly({
   parcoords_data <- parameters_data() %>%
     arrange(seed) %>%
     rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = "_")))
-  
+
   parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
-  
+
   p <-  plot_ly(source = 'parcoords_bas') %>%
     add_trace(data = parcoords_data,
               type = 'parcoords',
               dimensions = parcoords_dims,
               line = list(color = "blue")
     )
-  
+
   onRender(p, "function(el, x) {
            el.on('plotly_restyle', function(d) {
            var blob = el.data[0].dimensions.map(function(x){return({label: x.label, constraintrange: x.constraintrange})});
@@ -241,20 +245,3 @@ output$paramPC_Bas <- renderPlotly({
            });
 }")
 })
-
-# 
-# output$paramParCoordsBas <- renderParcoords({
-#   parcoords(parameters_data() %>%
-#               arrange(seed) %>%
-#               select(-seed) %>%
-#               rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = " "))),
-#             color = list(
-#               colorBy = "sim name",
-#               colorScale = htmlwidgets::JS('d3.scale.category10()')
-#             ),
-#             rownames = FALSE,
-#             brushMode = "1d",
-#             reorderable = TRUE,
-#             autoresize = TRUE,
-#             margin = list(top = 50, bottom = 10, left = 50, right = 10))
-# })

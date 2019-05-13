@@ -89,16 +89,39 @@ shinyServer(function(session, input, output) {
   parameters_data <- reactive({
     req(sim$parameters)
     tmp_parameters <- sim$parameters %>% collect()
+    # nonUniqueParams <- tmp_parameters %>%
+    #   gather(key = "Var", value = "Value") %>%
+    #   group_by(Var, Value) %>%
+    #   mutate(Freq = n()) %>%
+    #   ungroup() %>%
+    #   filter(Freq != nrow(tmp_parameters)) %>%
+    #   distinct(Var) %>%
+    #   pull(Var)
+    
+    sim_names <- tmp_parameters %>%
+      select(seed, sim_name) %>%
+      rename(valeur = sim_name) %>%
+      mutate(parametre = "sim_name") %>%
+      select(seed, parametre, valeur) %>%
+      distinct(seed, parametre, valeur)
+    
     nonUniqueParams <- tmp_parameters %>%
-      gather(key = "Var", value = "Value") %>%
-      group_by(Var, Value) %>%
+      select(-sim_name) %>%
+      bind_rows(sim_names) %>%
+      group_by(parametre, valeur) %>%
       mutate(Freq = n()) %>%
       ungroup() %>%
-      filter(Freq != nrow(tmp_parameters)) %>%
-      distinct(Var) %>%
-      pull(Var)
+      filter(Freq != max(Freq)) %>%
+      distinct(parametre) %>%
+      pull(parametre)
     
-    tmp_parameters %>% dplyr::select(!!nonUniqueParams)
+    tmp_parameters %>%
+      select(-sim_name) %>%
+      bind_rows(sim_names) %>%
+      filter(parametre %in% nonUniqueParams) %>%
+      spread(parametre, valeur)
+    
+   # tmp_parameters %>% dplyr::select(!!nonUniqueParams)
   })
   
   # ---------------- Parallel Coordinates Filtering -----------------
@@ -106,6 +129,10 @@ shinyServer(function(session, input, output) {
   
   filtredSeedsHaut_plotly <- reactive({
     req(sim$seeds)
+    
+    if (is.null(input$plotly_brushed_haut)){
+      return(list())
+    }
     
     expressions_filtres <- expression_from_input(input$plotly_brushed_haut)
     colonnes_filtres <- parametres_from_input(input$plotly_brushed_haut)
@@ -160,6 +187,10 @@ shinyServer(function(session, input, output) {
   filtredSeedsBas_plotly <- reactive({
     req(sim$seeds)
     
+    if (is.null(input$plotly_brushed_bas)){
+      return(list())
+    }
+    
     expressions_filtres <- expression_from_input(input$plotly_brushed_bas)
     colonnes_filtres <- parametres_from_input(input$plotly_brushed_bas)
     
@@ -198,6 +229,7 @@ shinyServer(function(session, input, output) {
         select(parametre, valeurs)
     }
     
+    
     selected_seeds <- selected_table %>%
       mutate(seed = as.character(seed)) %>%
       pull((seed))
@@ -214,14 +246,9 @@ shinyServer(function(session, input, output) {
     
     if (length(filtredSeedsHaut_plotly()) > 0) {
       brushedSeeds <- tibble(seed = filtredSeedsHaut_plotly())
-      
       for (df in names(filtredHaut)){
-        # For MonetDB
-        # filtredHaut[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-        # For MapD
         filtredHaut[[df]] <- sim[[df]] %>% filter(seed %in% brushedSeeds$seed)
       }
-      
     } else {
       for (df in names(filtredHaut)){
         filtredHaut[[df]] <- sim[[df]]
@@ -233,17 +260,12 @@ shinyServer(function(session, input, output) {
 
     if (length(filtredSeedsBas_plotly()) > 0) {
       brushedSeeds <- tibble(seed = filtredSeedsBas_plotly())
-      
       for (df in names(filtredBas)){
-        # For MonetDB
-        # filtredBas[[df]] <- sim[[df]] %>% inner_join(brushedSeeds, by = "seed", copy = TRUE)
-        # For MapD
         filtredBas[[df]] <- sim[[df]] %>% filter(seed %in% brushedSeeds$seed)
       }
-      
     } else {
       for (df in names(filtredBas)){
-        filtredBas[[df]] <- NULL
+        filtredBas[[df]] <- sim[[df]]
       }
     }
   })
@@ -286,6 +308,7 @@ shinyServer(function(session, input, output) {
     }
     tablesParams$basTxt <-  selection
   })
+
   
   # Debug module
   #
