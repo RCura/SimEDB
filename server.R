@@ -15,15 +15,25 @@ shinyServer(function(session, input, output) {
   # seigneurs <- tbl(conMapD, "seigneurs_5_1")
   
   
-  seeds <- tbl(conMapD, "seeds_6_1")
-  agregats <- tbl(conMapD, "agregats_6_1")
-  fp <- tbl(conMapD, "fp_6_1")
-  parameters <- tbl(conMapD, "parameters_6_1")
-  paroisses <- tbl(conMapD, "paroisses_6_1")
-  poles <- tbl(conMapD, "poles_6_1")
-  results <- tbl(conMapD, "global_6_1")
-  seigneurs <- tbl(conMapD, "seigneurs_6_1")
-  chateaux <- tbl(conMapD, "chateaux_6_1")
+  # seeds <- tbl(conMapD, "seeds_6_1")
+  # agregats <- tbl(conMapD, "agregats_6_1")
+  # fp <- tbl(conMapD, "fp_6_1")
+  # parameters <- tbl(conMapD, "parameters_6_1")
+  # paroisses <- tbl(conMapD, "paroisses_6_1")
+  # poles <- tbl(conMapD, "poles_6_1")
+  # results <- tbl(conMapD, "global_6_1")
+  # seigneurs <- tbl(conMapD, "seigneurs_6_1")
+  # chateaux <- tbl(conMapD, "chateaux_6_1")
+  
+  seeds <- tbl(conMapD, "seeds_6_3")
+  agregats <- tbl(conMapD, "agregats_6_3")
+  fp <- tbl(conMapD, "fp_6_3")
+  parameters <- tbl(conMapD, "parameters_6_3")
+  paroisses <- tbl(conMapD, "paroisses_6_3")
+  poles <- tbl(conMapD, "poles_6_3")
+  results <- tbl(conMapD, "global_6_3")
+  seigneurs <- tbl(conMapD, "seigneurs_6_3")
+  chateaux <- tbl(conMapD, "chateaux_6_3")
   
   
   # ---------------- Declare reactive values -----------------
