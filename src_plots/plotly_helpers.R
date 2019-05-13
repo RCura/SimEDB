@@ -8,7 +8,11 @@ create_dims <- function(df, index){
       returnList[["tickvals"]] <- values %>% sort() %>% unique() %>% signif(., digits = 2)
     }
   } else {
-    MyFactors <- values %>% as.character() %>% unique() %>% sort() %>% as.factor()
+   if (!is.null(values) && all(as.character(as.numeric(values)) == values)){
+    MyFactors <- values %>% as.numeric() %>% sort() %>% as.character() %>% unique() %>% as_factor()
+   } else {
+      MyFactors <- values %>% as.character() %>% unique() %>% sort() %>% as_factor()
+    }
     returnList[["values"]] <- values %>% factor(levels = levels(MyFactors)) %>% as.numeric()
     returnList[["tickvals"]] <- MyFactors %>% as.numeric() %>% unique()
     returnList[["ticktext"]] <-  levels(MyFactors)
