@@ -84,21 +84,24 @@ FP_DeplacementsDetail <- function(FP_data){
     geom_col(position = "dodge") +
     facet_grid(deplacement_from ~ annee, scales = "free_x") +
     xlab("Temps") + ylab("Part (moyenne) des Foyers Paysans") +
+    xlab("Temps") + ylab("% de migrations\n(min, moyenne, max)") +
     scale_y_continuous(labels = percent) +
-    ggtitle("Détail du type de déplacement des Foyers Paysans") +
-    scale_fill_discrete(name = "Choix de la destination") +
+    ggtitle("Détail du type de migrations des foyers paysans") +
+    scale_fill_discrete(name = "Destination choisie") +
     theme(axis.text.x = element_blank(),
           axis.line.x = element_blank(),
           axis.ticks.x = element_blank()) +
     theme(legend.position = "bottom") +
     guides(fill = guide_legend(title.position = "top")) +
-    labs(subtitle = "Variabilité : Moyenne des réplications")
+    labs(subtitle = "Variabilité : Moyenne/Min/Max des réplications")
 }
 
 
 callModule(plotDownloadRate, paste0("FP_DeplacementsDetail","_Haut"),
            plotFun = reactive(
              FP_DeplacementsDetail(filtredHaut$FP)
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("FP_DeplacementsDetail","_Haut"),
            user = input$userName,
@@ -106,6 +109,8 @@ callModule(plotDownloadRate, paste0("FP_DeplacementsDetail","_Haut"),
 callModule(plotDownloadRate, paste0("FP_DeplacementsDetail","_Bas"),
            plotFun = reactive(
              FP_DeplacementsDetail(filtredBas$FP)
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
            ),
            plotName = paste0("FP_DeplacementsDetail","_Bas"),
            user = input$userName,
@@ -118,9 +123,9 @@ FP_Concentration <- function(results_data){
   
   ggplot(concentration_data, aes(factor(annee), prop_fp_isoles)) +
     geom_tufteboxplot() +
-    ggtitle("Évolution de la part de FP isolés") +
-    xlab("Temps") + ylab("Taux de FP isolés") +
-    scale_y_continuous(labels = scales::percent) +
+    ggtitle("Évolution de la part de foyers paysans isolés") +
+    xlab("Temps") + ylab("Taux de foyers paysans isolés") +
+    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
     labs(subtitle = "Variabilité : Réplications")
 }
 
@@ -225,11 +230,12 @@ FP_Satisfaction <- function(FP_data){
     scale_fill_brewer(name = "Satisfaction", type = "div", palette = "RdYlBu", direction = -1) +
     scale_y_continuous(labels = percent) +
     ggtitle("Évolution de la satisfaction des foyers paysans") +
-    xlab("Temps") + ylab("Distribution de la satisfaction des foyers paysans") +
+    xlab("Temps") + ylab("Distribution (en %)") +
     labs(subtitle = "Variabilité : Ensemble des réplications") +
     theme(legend.position = "bottom") +
     guides(fill = guide_legend(title.position = "top", nrow = 1, title.hjust = 0.5,
-                               label.position = "bottom", label.hjust = 0.5))
+                               label.position = "bottom", label.hjust = 0.5, keywidth = 2)) +
+    theme(strip.text.y = element_text(size = 8),
 }
 
 callModule(plotDownloadRate, paste0("FP_Satisfaction","_Haut"),

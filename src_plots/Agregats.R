@@ -7,7 +7,7 @@ Agregats_Nb <- function(agregats_data){
   ggplot(nombre_agregats, aes(factor(annee), nb)) +
     geom_tufteboxplot() +
     xlab("Temps") + ylab("Nombre d'agrégats") +
-    ggtitle("Évolution du nombre d'agrégats") +
+    ggtitle("Évolution du nombre d'agrégats de population") +
     labs(subtitle = "Variabilité : Réplications")
 }
 
@@ -94,17 +94,14 @@ Agregats_Paroisses <- function(agregats_data, poles_data){
   
   plot_data <-  nb_agregats %>%
     left_join(nb_agregats_paroisses, by = c("seed", "sim_name", "annee")) %>%
-    mutate(taux_agregats = nb_agregats_paroisses / nb_agregats * 100) %>%
-    select(-nb_agregats) %>%
-    gather(key = Type, value = Value, nb_agregats_paroisses, taux_agregats) %>%
-    mutate(Type = if_else(Type == "nb_agregats_paroisses", "Nombre", "Taux (en %)"))
+    mutate(taux_agregats = nb_agregats_paroisses / nb_agregats)
   
   ggplot(plot_data) +
-    aes(factor(annee), Value) +
+    aes(factor(annee), taux_agregats) +
     geom_tufteboxplot() +
-    facet_grid(Type~., scales = "free_y") +
-    xlab("Temps") + ylab("Agrégats contenant au moins une paroisse") +
-    ggtitle("Évolution du nombre d'agrégats contenant au moins une paroisse") +
+    xlab("Temps") + ylab("Part des agrégats\ncontenant au moins une paroisse") +
+    ggtitle("Évolution du taux d'agrégats contenant au moins une paroisse") +
+    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
     labs(subtitle = "Variabilité : Réplications")
 }
 
@@ -130,15 +127,22 @@ callModule(plotDownloadRate, paste0("Agregats_Paroisses","_Bas"),
 Agregats_CA <- function(agregats_data){
   
   nombre_agregats <- agregats_data %>%
-    filter(communaute == "TRUE") %>%
-    group_by(annee, seed) %>%
-    summarise(nb = n()) %>%
-    collect()
+    group_by(seed, sim_name, annee) %>%
+    summarise(nb_agregats = n())
+    
+    taux_agregats <- agregats_data %>%
+      filter(communaute == "TRUE") %>%
+      group_by(seed, sim_name, annee) %>%
+      summarise(nb_coms = n()) %>%
+      left_join(nombre_agregats, by = c("sim_name", "seed", "annee")) %>%
+      mutate(taux = (nb_coms+1E-9) / (nb_agregats+1E-9)) %>%
+      collect()
   
-  ggplot(nombre_agregats, aes(factor(annee), nb)) +
+  ggplot(taux_agregats, aes(factor(annee), taux)) +
     geom_tufteboxplot() +
-    xlab("Temps") + ylab("Nombre d'agrégats") +
-    ggtitle("Évolution du nombre d'agrégats ayant une CA") +
+    xlab("Temps") + ylab("% des agrégats") +
+    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+    ggtitle("Évolution de la part des agrégats ayant une communauté villageoise") +
     labs(subtitle = "Variabilité : Réplications")
 }
 
@@ -165,10 +169,10 @@ callModule(plotDownloadRate, paste0("Agregats_CA","_Bas"),
 Agregats_RT <- function(agregats_data){
   
   rtAgregats <- agregats_data %>%
-    filter(annee %in% c(820, 960, 1060, 1200)) %>%
+    filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
     collect() %>%
     group_by(seed, annee) %>%
-    mutate(rank = min_rank(-nombre_fp_agregat)) %>%
+    mutate(rank = row_number(-nombre_fp_agregat)) %>%
     group_by(annee, rank) %>%
     summarise(Moyenne = mean(nombre_fp_agregat, na.rm = TRUE),
               Q1 = quantile(nombre_fp_agregat, probs = 0.25),
@@ -179,12 +183,12 @@ Agregats_RT <- function(agregats_data){
   ggplot(rtAgregats, aes(rank, Value, group = `Méthode d'agrégation`, colour = `Méthode d'agrégation`)) +
     geom_line(size = 0.3, linetype = "dotted") +
     geom_point(size = 0.3) +
-    scale_color_manual(values = c("black", "red", "blue")) +
+    scale_color_manual(values = c("black", "red", "blue"), name = NULL) +
     facet_grid(~annee, space = "free_x",  scales = "free_x") +
     scale_x_log10() + scale_y_log10() +
-    ggtitle("Évolution rang-taille de la composition des agrégats") +
+    ggtitle("Évolution de la distribution rang-taille des agrégats de population") +
     theme(legend.position = "bottom") +
-    xlab("Rang (log10)") + ylab("Nombre de FP\ncontenus (log10)") +
+    xlab("Rang (log10)") + ylab("Taille des agrégats\n(nombre de foyers paysans)") +
     labs(subtitle = "Variabilité : Moyenne, Q1 et Q3 des Réplications")
 }
 

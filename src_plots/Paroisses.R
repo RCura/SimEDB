@@ -87,7 +87,7 @@ Paroisses_Promo <- function(paroisses_data){
   
   ggplot(paroisses_promo, aes(factor(annee), nb)) +
     geom_tufteboxplot() +
-    facet_wrap(~ mode_promotion, ncol = 1) +
+    facet_wrap(~ mode_promotion, ncol = 1, scales = "free_y") +
     xlab("Temps") + ylab("Nombre de nouvelles paroisses\nà chaque pas de temps") +
     ggtitle("Évolution des modes de création de nouvelles paroisses") +
     labs(subtitle = "Variabilité : Réplications")

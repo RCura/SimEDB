@@ -45,6 +45,13 @@ Seigneurs_Chateaux <- function(seigneurs_data){
   
   # On ne garde que : les GS, les chatelains, et les PS/Chatelains inits
   
+  
+  seigneurs_data %>%
+    filter(annee == 1200) %>%
+    select(seed, sim_name, type, nb_chateaux_proprio, nb_chateaux_gardien) %>%
+    filter(nb_chateaux_proprio > 0 | nb_chateaux_gardien > 0) %>%
+    mutate(nb_chateaux = nb_chateaux_proprio + nb_chateaux_gardien)
+  
   GS <- seigneurs_data %>%
     filter(annee == 1200, type == "Grand Seigneur") %>%
     collect() %>%
