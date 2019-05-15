@@ -7,7 +7,7 @@ Poles_Nb <- function(poles_data){
   ggplot(data = PolesTous, aes(factor(annee), nb_poles)) + 
     geom_tufteboxplot() +
     xlab("Temps") + ylab("Nombre de\npôles") +
-    ggtitle("Évolution du nombre de pôles") +
+    ggtitle("Évolution du nombre de pôles d'attractions") +
     labs(subtitle = "Variabilité : Réplications")
 }
 
@@ -46,21 +46,15 @@ Poles_Agregats <- function(poles_data){
     left_join(tempVar, by=c("seed", "annee")) %>%
     mutate(tx_ag = (nb_pole_ag + 1E-12) / (nb_poles + 1E-12)) %>%
     collect()
-  
-  tousPoles <- ggplot(data = PolesAgregats, aes(factor(annee), nb_pole_ag)) + 
-    geom_tufteboxplot() +
-    xlab("Temps") + ylab("Nombre de pôles\nlocalisés dans un agrégat") +
-    theme(axis.title.x=element_blank())
-  
+
   polesAgregats <- ggplot(data = PolesAgregats, aes(factor(annee), tx_ag)) +
     geom_tufteboxplot() +
     scale_y_continuous(labels = scales::percent) +
     xlab("Temps") + ylab("Taux de pôles\nlocalisés dans un agrégat") +
+    labs(subtitle = "Variabilité : Réplications") +
     theme(axis.title.x=element_blank())
   
-  grid.arrange(tousPoles, polesAgregats, bottom = 'Temps',
-               top = "Évolution de la localisation des pôles
-             Variabilité : Réplications")
+  polesAgregats
 }
 
 callModule(plotDownloadRate, paste0("Poles_Agregats","_Haut"),
@@ -87,14 +81,24 @@ callModule(plotDownloadRate, paste0("Poles_Agregats","_Bas"),
 
 Poles_Compo <- function(poles_data){
   compoPoles <- poles_data %>%
-    filter(annee %in% c(820, 960, 1060, 1200)) %>%
-    group_by(seed, annee, nb_attracteurs) %>%
+    filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
+    group_by(seed, sim_name, annee, nb_attracteurs) %>%
     summarise(nb = n()) %>%
-    collect()
+    collect() %>%
+    arrange(nb_attracteurs) %>%
+    mutate(nb_attracteurs_breaks = case_when(
+      nb_attracteurs > 10 ~ as.character('>10'),
+      nb_attracteurs >= 6 ~ as.character('6-10'),
+      TRUE ~ as.character(nb_attracteurs)
+    )) %>%
+    mutate(nb_attracteurs_breaks = factor(nb_attracteurs_breaks, levels = c("1", "2", "3", "4", "5","6-10", ">10"))) %>%
+    group_by(seed, sim_name, annee, nb_attracteurs_breaks) %>%
+    summarise(nbPoles = sum(nb, na.rm = TRUE))
+   
   
-  ggplot(compoPoles, aes(factor(nb_attracteurs), nb)) +
+  ggplot(compoPoles, aes(nb_attracteurs_breaks, nbPoles)) +
     geom_tufteboxplot() +
-    facet_wrap(~annee, scales = "free", nrow = 1) +
+    facet_wrap(~annee, nrow = 1) +
     xlab("Nombre d'attracteurs") +
     ylab("Fréquence") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -124,15 +128,42 @@ callModule(plotDownloadRate, paste0("Poles_Compo","_Bas"),
 
 
 Poles_Attrac <- function(poles_data){
-  attracPoles <- poles_data %>%
-    filter(annee %in% c(820, 960, 1060, 1200)) %>%
-    group_by(seed, annee, attractivite) %>%
-    summarise(nb = n()) %>%
-    collect()
   
-  ggplot(attracPoles, aes(factor(attractivite), nb)) +
+  attracBreaks <- c(0.0,0.14,0.29,0.44,0.59,0.74,0.89, 1.1)
+  attracLabels <- c("0.15", "0.30", "0.45", "0.60", "0.75", "0.9", ">0.9")
+
+  attracPoles <- poles_data %>%
+    filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
+    select(seed, annee, attractivite) %>%
+    mutate(attrac = as.integer(attractivite * 10)) %>%
+    collect() %>%
+    mutate(attrac = as_factor(attrac / 10)) %>%
+    group_by(seed, annee, attrac) %>%
+    summarise(nb = n())
+  
+  # attracPoles2 <- poles_data %>%
+  #   filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
+  #   select(seed, annee, attractivite) %>%
+  #   mutate(attrac = as.integer(attractivite * 10)) %>%
+  #   collect() %>%
+  #   mutate(attrac = as_factor(attrac / 10)) %>%
+  #   group_by(seed, annee, attrac) %>%
+  #   summarise(nb = n()) %>%
+  #   ungroup() %>%
+  #   group_by(annee, attrac) %>%
+  #   summarise(min = min(nb, na.rm=TRUE),
+  #             max = max(nb, na.rm = TRUE),
+  #             mean = mean(nb, na.rm=TRUE))
+  # 
+  # ggplot(attracPoles2) +
+  #   aes(attrac, mean, fill = attrac) +
+  #   geom_col() +
+  #   geom_errorbar(aes(x = attrac, ymin = min, ymax = max)) +
+  #   facet_wrap(~annee)
+  
+  ggplot(attracPoles, aes(factor(attrac), nb)) +
     geom_tufteboxplot() + 
-    facet_wrap(~annee, scales = "free", nrow = 1) +
+    facet_wrap(~annee, nrow = 1) +
     xlab("Attractivité") +
     ylab("Fréquence") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +

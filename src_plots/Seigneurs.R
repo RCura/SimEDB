@@ -196,72 +196,151 @@ callModule(plotDownloadRate, paste0("Seigneurs_Vassaux","_Bas"),
            seeds = filtredSeedsBas_plotly())
 
 
-Seigneurs_Redevances <- function(seigneurs_data){
-  redevances_seigneurs <- seigneurs_data %>%
+# Seigneurs_Redevances <- function(seigneurs_data){
+#   redevances_seigneurs <- seigneurs_data %>%
+#     filter(annee == 1200) %>%
+#     select(seed, annee, type, nb_fp_assujettis) %>%
+#     collect() %>%
+#     mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur")))
+#   
+#   ggplot(redevances_seigneurs, aes(type, nb_fp_assujettis)) +
+#     geom_tufteboxplot() +
+#     scale_y_log10(breaks = c(10,50,100, 500,1000, 2000)) +
+#     xlab("Types de seigneurs") + ylab("Nombre de FP assujetis\n(Échelle logarithmique)") +
+#     ggtitle("Distribution des redevances en fin de simulation") +
+#     labs(subtitle = "Variabilité : Seigneurs et réplications")
+# }
+# 
+# callModule(plotDownloadRate, paste0("Seigneurs_Redevances","_Haut"),
+#            plotFun = reactive(
+#              Seigneurs_Redevances(filtredHaut$seigneurs) +
+#                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+#                theme(plot.caption = element_text(size = 6, hjust = 0))
+#            ),
+#            plotName = paste0("Seigneurs_Redevances","_Haut"),
+#            user = input$userName,
+#            seeds = filtredSeedsHaut_plotly())
+# 
+# callModule(plotDownloadRate, paste0("Seigneurs_Redevances","_Bas"),
+#            plotFun = reactive(
+#              Seigneurs_Redevances(filtredBas$seigneurs) +
+#                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+#                theme(plot.caption = element_text(size = 6, hjust = 0))
+#            ),
+#            plotName = paste0("Seigneurs_Redevances","_Bas"),
+#            user = input$userName,
+#            seeds = filtredSeedsBas_plotly())
+
+# Seigneurs_Redevances_PS <- function(seigneurs_data){
+#   x <- "nb_fp_assujettis"
+#   redevancesLevels <- c("0","1-5","6-15","16-30","30-100",">100")
+#   redevancesBreaks <- rlang::exprs(
+#     .data[[x]] == 0 ~ "0",
+#     .data[[x]] <= 5 ~ "1-5",
+#     .data[[x]] <= 15 ~ "6-15",
+#     .data[[x]] <= 30 ~ "16-30",
+#     .data[[x]] <= 100 ~ "30-100",
+#     .data[[x]] > 100 ~ ">100"
+#   )
+#   
+#   redevances_PS <- seigneurs_data %>%
+#     filter(annee == 1200) %>%
+#     filter(!(type %in% "Grand Seigneur")) %>%
+#     select(seed, annee, type, nb_fp_assujettis) %>%
+#     collect() %>%
+#     mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain"))) %>%
+#     mutate(nbFP_cut = case_when(!!!redevancesBreaks)) %>%
+#     mutate(nbFP_cut =  factor(nbFP_cut, levels = redevancesLevels)) %>%
+#     group_by(seed, type,nbFP_cut) %>%
+#     summarise(N = n())
+#   
+#   ggplot(redevances_PS, aes(nbFP_cut, N)) +
+#     geom_tufteboxplot() +
+#     facet_wrap(~type) +
+#     xlab("Nombre de FP assujetis\n(Échelle logarithmique)") +
+#     ylab("Nombre de seigneurs") +
+#     ggtitle("Distribution des redevances en fin de simulation") +
+#     labs(subtitle = "Variabilité : Réplications") +
+#     theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# }
+# 
+# callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Haut"),
+#            plotFun = reactive(
+#              Seigneurs_Redevances_PS(filtredHaut$seigneurs) +
+#                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+#                theme(plot.caption = element_text(size = 6, hjust = 0))
+#            ),
+#            plotName = paste0("Seigneurs_Redevances_PS","_Haut"),
+#            user = input$userName,
+#            seeds = filtredSeedsHaut_plotly())
+# 
+# callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Bas"),
+#            plotFun = reactive(
+#              Seigneurs_Redevances_PS(filtredBas$seigneurs) +
+#                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+#                theme(plot.caption = element_text(size = 6, hjust = 0))
+#            ),
+#            plotName = paste0("Seigneurs_Redevances_PS","_Bas"),
+#            user = input$userName,
+#            seeds = filtredSeedsBas_plotly())
+
+Seigneurs_Redevances_PS <- function(seigneurs_data){ # Nouvelle version pour v6.3
+  global_data <- seigneurs_data %>%
     filter(annee == 1200) %>%
-    select(seed, annee, type, nb_fp_assujettis) %>%
+    select(seed, sim_name, type, nb_chateaux_proprio:nb_chateaux_gardien,nb_fp_assujettis:nb_fp_autres_droits_garde) %>%
     collect() %>%
-    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain", "Grand Seigneur")))
+    mutate(type = case_when(
+      type == "Grand Seigneur" ~ "Grand Seigneur",
+      nb_chateaux_proprio > 0 ~ "Châtelain",
+      nb_chateaux_gardien > 0 ~ "Châtelain",
+      TRUE ~ type
+    )) %>%
+    select(-nb_chateaux_proprio, -nb_chateaux_gardien) %>%
+    gather(Indicateur, NbFP, -seed, -sim_name, -type) %>%
+    mutate(Indicateur = str_remove_all(Indicateur, "nb_fp_")) %>%
+    mutate(type = factor(type, levels = c("Petit Seigneur", "Châtelain", "Grand Seigneur")))
   
-  ggplot(redevances_seigneurs, aes(type, nb_fp_assujettis)) +
-    geom_tufteboxplot() +
-    scale_y_log10(breaks = c(10,50,100, 500,1000, 2000)) +
-    xlab("Types de seigneurs") + ylab("Nombre de FP assujetis\n(Échelle logarithmique)") +
-    ggtitle("Distribution des redevances en fin de simulation") +
-    labs(subtitle = "Variabilité : Seigneurs et réplications")
-}
-
-callModule(plotDownloadRate, paste0("Seigneurs_Redevances","_Haut"),
-           plotFun = reactive(
-             Seigneurs_Redevances(filtredHaut$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
-           ),
-           plotName = paste0("Seigneurs_Redevances","_Haut"),
-           user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
-
-callModule(plotDownloadRate, paste0("Seigneurs_Redevances","_Bas"),
-           plotFun = reactive(
-             Seigneurs_Redevances(filtredBas$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
-           ),
-           plotName = paste0("Seigneurs_Redevances","_Bas"),
-           user = input$userName,
-           seeds = filtredSeedsBas_plotly())
-
-Seigneurs_Redevances_PS <- function(seigneurs_data){
-  x <- "nb_fp_assujettis"
-  redevancesLevels <- c("0","1-5","6-15","16-30","30-100",">100")
-  redevancesBreaks <- rlang::exprs(
-    .data[[x]] == 0 ~ "0",
-    .data[[x]] <= 5 ~ "1-5",
-    .data[[x]] <= 15 ~ "6-15",
-    .data[[x]] <= 30 ~ "16-30",
-    .data[[x]] <= 100 ~ "30-100",
-    .data[[x]] > 100 ~ ">100"
-  )
+  assujettis <- global_data %>%
+    filter(Indicateur == "assujettis") %>%
+    mutate(Indicateur = "FP assujettis") %>%
+    mutate(type_prelevement = "Direct")
   
-  redevances_PS <- seigneurs_data %>%
-    filter(annee == 1200) %>%
-    filter(!(type %in% "Grand Seigneur")) %>%
-    select(seed, annee, type, nb_fp_assujettis) %>%
-    collect() %>%
-    mutate(type = factor(type, levels = c("Petit Seigneur", "Chatelain"))) %>%
-    mutate(nbFP_cut = case_when(!!!redevancesBreaks)) %>%
-    mutate(nbFP_cut =  factor(nbFP_cut, levels = redevancesLevels)) %>%
-    group_by(seed, type,nbFP_cut) %>%
-    summarise(N = n())
+  plot_data <- global_data %>%
+    filter(Indicateur != "assujettis") %>%
+    mutate(type_prelevement = if_else(str_detect(Indicateur, "_garde"),
+                                      true = "Garde",
+                                      false = 'Direct')) %>%
+    mutate(Indicateur = str_remove(Indicateur, "_garde")) %>%
+    mutate(Indicateur = case_when(
+      Indicateur == "autres_droits" ~ "Autres droits",
+      Indicateur == "foncier" ~ "Droits Fonciers",
+      Indicateur == "haute_justice" ~ "Haute Justice",
+      TRUE ~ Indicateur
+    )) %>%
+    bind_rows(assujettis) %>%
+    mutate(Indicateur = factor(Indicateur, levels = c("Autres droits", "Droits Fonciers", "Haute Justice", "FP assujettis"))) %>%
+    filter(NbFP > 0)
+    mutate(NbFP = NbFP+.5)
+
+  library(grid)
+  ggplot(plot_data) +
+    aes(NbFP, fill = type_prelevement) +
+    geom_histogram(alpha = .5, bins = 20) +
+    facet_wrap(type~Indicateur, scales = "free", labeller = labeller(.multi_line = FALSE), ncol = 4, nrow = 3) +
+    scale_x_log10() +
+    scale_y_log10() +
+    xlab("Nombre de foyers paysans assujettis par seigneur en fin de simulation") +
+    ylab("Fréquence") +
+    ggtitle("Distribution des droits prélevés par les seigneurs") +
+    scale_fill_discrete(name = "Type de prélèvement") +
+    theme(strip.text = element_text(size = 7),
+          axis.text.x = element_text(size = 7),
+          axis.text.y = element_text(size = 7),
+          #legend.position = "bottom"
+          panel.spacing.y = unit(0, "lines"),
+    ) +
+    labs(subtitle = "Variabilité : Réplications")
   
-  ggplot(redevances_PS, aes(nbFP_cut, N)) +
-    geom_tufteboxplot() +
-    facet_wrap(~type) +
-    xlab("Nombre de FP assujetis\n(Échelle logarithmique)") +
-    ylab("Nombre de seigneurs") +
-    ggtitle("Distribution des redevances en fin de simulation") +
-    labs(subtitle = "Variabilité : Réplications") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 }
 
 callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Haut"),

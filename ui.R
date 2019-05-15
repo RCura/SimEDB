@@ -85,8 +85,10 @@ shinyUI(navbarPage(
                                               plotDownloadRateUI("Agregats_Nb_Bas", position = "bas")
                                      ),
                                      tabPanel("Distribution",
+                                              tags$h4("Distribution des agrégats par classe de taille en fin de simulation"),
                                               tableOutput("Agregats_Distribution_Haut"),
                                               tags$hr(),
+                                              tags$h4("Distribution des agrégats par classe de taille en fin de simulation"),
                                               tableOutput("Agregats_Distribution_Bas")
                                               ),
                                      tabPanel("Pôles", 
@@ -98,6 +100,11 @@ shinyUI(navbarPage(
                                               plotDownloadRateUI("Agregats_Paroisses_Haut", position = "haut"),
                                               tags$hr(),
                                               plotDownloadRateUI("Agregats_Paroisses_Bas", position = "bas")
+                                     ),
+                                     tabPanel("Paroisses (composition)", 
+                                              plotDownloadRateUI("Agregats_NbParoisses_Haut", position = "haut"),
+                                              tags$hr(),
+                                              plotDownloadRateUI("Agregats_NbParoisses_Bas", position = "bas")
                                      ),
                                      tabPanel("Communauté", 
                                               plotDownloadRateUI("Agregats_CA_Haut", position = "haut"),
@@ -126,11 +133,11 @@ shinyUI(navbarPage(
                                      #          tags$hr(),
                                      #          plotDownloadRateUI("Seigneurs_Vassaux_Bas", position = "bas")
                                      # ),
-                                     tabPanel("Redevances (global)",
-                                              plotDownloadRateUI("Seigneurs_Redevances_Haut", position = "haut"),
-                                              tags$hr(),
-                                              plotDownloadRateUI("Seigneurs_Redevances_Bas", position = "bas")
-                                     ),
+                                     # tabPanel("Redevances (global)",
+                                     #          plotDownloadRateUI("Seigneurs_Redevances_Haut", position = "haut"),
+                                     #          tags$hr(),
+                                     #          plotDownloadRateUI("Seigneurs_Redevances_Bas", position = "bas")
+                                     #),
                                      tabPanel("Redevances (détail)",
                                               plotDownloadRateUI("Seigneurs_Redevances_PS_Haut", position = "haut"),
                                               tags$hr(),
@@ -140,7 +147,8 @@ shinyUI(navbarPage(
                                               plotDownloadRateUI("Seigneurs_Puissance_Haut", position = "haut"),
                                               tags$hr(),
                                               plotDownloadRateUI("Seigneurs_Puissance_Bas", position = "bas")
-                                     )#,
+                                     )
+                         #,
                                      # tabPanel("Agrégats",
                                      #          plotDownloadRateUI("Seigneurs_Agregats_Haut", position = "haut"),
                                      #          tags$hr(),

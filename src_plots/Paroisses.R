@@ -1,19 +1,28 @@
-Paroisses_Nb <- function(paroisses_data){
-  nombre_paroisses <- paroisses_data %>%
-    group_by(annee, seed) %>%
-    summarise(nb = n()) %>%
-    collect()
+Paroisses_Nb <- function(results_data){
+  nombre_paroisses <- results_data %>%
+    select(annee, seed, nb_eglises, nb_eglises_paroissiales) %>%
+    mutate(nb_eglises_non_paroissiales = nb_eglises - nb_eglises_paroissiales) %>%
+    select(-nb_eglises) %>%
+    collect() %>%
+    gather(key = Type, value = Nb, -annee, -seed) %>%
+    mutate(Type = case_when(
+      Type == "nb_eglises_non_paroissiales" ~ "Eglises non paroissiales",
+      Type == "nb_eglises_paroissiales" ~ "Eglises paroissiales",
+      TRUE ~ as.character(Type)
+    ))
   
-  ggplot(nombre_paroisses, aes(factor(annee), nb)) +
+  ggplot(nombre_paroisses, aes(factor(annee), Nb)) +
     geom_tufteboxplot() +
-    xlab("Temps") + ylab("Nombre de paroisses") +
+    facet_wrap(~fct_rev(Type), ncol = 1, scales="free_y") + 
+    xlab("Temps") + ylab("Nombre d'églises") +
     ggtitle("Évolution du nombre de paroisses") +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 }
 
 callModule(plotDownloadRate, paste0("Paroisses_Nb","_Haut"),
            plotFun = reactive(
-             Paroisses_Nb(filtredHaut$paroisses) +
+             Paroisses_Nb(filtredHaut$results) +
                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
                theme(plot.caption = element_text(size = 6, hjust = 0))
              ),
@@ -23,7 +32,7 @@ callModule(plotDownloadRate, paste0("Paroisses_Nb","_Haut"),
 
 callModule(plotDownloadRate, paste0("Paroisses_Nb","_Bas"),
            plotFun = reactive(
-             Paroisses_Nb(filtredBas$paroisses) +
+             Paroisses_Nb(filtredBas$results) +
                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
                theme(plot.caption = element_text(size = 6, hjust = 0))
              ),
@@ -33,11 +42,12 @@ callModule(plotDownloadRate, paste0("Paroisses_Nb","_Bas"),
 
 
 Paroisses_Compo <- function(paroisses_data){
-  fidelesBreaks <- c(-1,0,10,30,50,100,1000)
-  fidelesLabels <- c("0", "1-10", "11-30", "31-50", "51-100", ">100")
+  fidelesBreaks <- c(-1,0,10,30,50,100,1000, 10E3)
+  fidelesLabels <- c("0", "1-10", "11-30", "31-50", "51-100", "101-1000", ">1000")
   
   paroisses_breaks <- paroisses_data %>%
-    filter(annee %in% c(820, 960, 1060, 1200)) %>%
+    filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
+    select(seed, annee, nb_fideles) %>%
     collect() %>%
     mutate(NbFidelesBreaks = cut(nb_fideles, breaks = fidelesBreaks, labels = fidelesLabels)) %>%
     group_by(seed, annee, NbFidelesBreaks) %>%
@@ -45,11 +55,12 @@ Paroisses_Compo <- function(paroisses_data){
   
   ggplot(paroisses_breaks, aes(factor(NbFidelesBreaks), NbParoisses)) +
     geom_tufteboxplot() +
-    facet_wrap(~annee, scales = "free") +
+    facet_wrap(~annee, scales = "free_y") +
     xlab("Nombre de paroissiens") + ylab("Fréquence") +
     scale_x_discrete(drop = FALSE) +
-    ggtitle("Evolution de la composition des paroisses") +
-    labs(subtitle = "Variabilité : Réplications")
+    ggtitle("Évolution du nombre de foyers paysans par paroisse") +
+    labs(subtitle = "Variabilité : Réplications") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 }
 
 callModule(plotDownloadRate, paste0("Paroisses_Compo","_Haut"),
@@ -88,9 +99,10 @@ Paroisses_Promo <- function(paroisses_data){
   ggplot(paroisses_promo, aes(factor(annee), nb)) +
     geom_tufteboxplot() +
     facet_wrap(~ mode_promotion, ncol = 1, scales = "free_y") +
-    xlab("Temps") + ylab("Nombre de nouvelles paroisses\nà chaque pas de temps") +
+    xlab("Temps") + ylab("Nouvelles paroisses") +
     ggtitle("Évolution des modes de création de nouvelles paroisses") +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 }
 
 callModule(plotDownloadRate, paste0("Paroisses_Promo","_Haut"),
@@ -120,7 +132,7 @@ Paroisses_Superficie <- function(paroisses_data){
   superficieLabels <- c("<1", "1-5", "6-10", "11-20", "21-50", "51-100", "101-500", ">500")
   
   paroisses_sup_breaks <-  paroisses_data %>%
-    filter(annee %in% c(820, 960, 1060, 1200)) %>%
+    filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
     collect() %>%
     mutate(NbSuperficiesBreaks = cut(superficie,
                                      breaks = superficieBreaks,
@@ -132,8 +144,8 @@ Paroisses_Superficie <- function(paroisses_data){
   ggplot(paroisses_sup_breaks, aes(factor(NbSuperficiesBreaks), NbParoisses)) +
     geom_tufteboxplot() +
     facet_wrap(~annee) +
-    xlab("Aire d'attraction des églises paroissiales (km²)") + ylab("Fréquence") +
-    ggtitle("Évolution de l'aire d'attraction des églises paroissiales") +
+    xlab("Superficie de l'aire de desserte des églises paroissiales (km²)") + ylab("Fréquence") +
+    ggtitle("Évolution de l'aire de desserte des églises paroissiales") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     labs(subtitle = "Variabilité : Réplications")
 }

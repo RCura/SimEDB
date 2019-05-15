@@ -124,6 +124,68 @@ callModule(plotDownloadRate, paste0("Agregats_Paroisses","_Bas"),
            user = input$userName,
            seeds = filtredSeedsBas_plotly())
 
+
+Agregats_NbParoisses <- function(poles_data){
+  Agregats_NbParoisses_data <- poles_data %>%
+    filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
+    filter(monagregat > -1) %>%
+    filter(nb_ca < 2) %>% # On enlève les pôles contenant plusieur CA (il y en a 2k / 285k par exemple)
+    select(seed, sim_name, annee, nb_paroisses) %>%
+    group_by(seed, sim_name, annee, nb_paroisses) %>%
+    summarise(nb = n()) %>%
+    collect() %>%
+    arrange(nb_paroisses) %>%
+    mutate(nb_paroisses_breaks = case_when(
+      nb_paroisses > 10 ~ as.character('>10'),
+      nb_paroisses >= 6 ~ as.character('6-10'),
+      TRUE ~ as.character(nb_paroisses)
+    )) %>%
+    mutate(nb_paroisses_breaks = factor(nb_paroisses_breaks,
+                                        levels = c("0", "1", "2", "3", "4", "5","6-10", ">10"))) %>%
+    group_by(seed, sim_name, annee, nb_paroisses_breaks) %>%
+    summarise(nbPolesAg = sum(nb, na.rm = TRUE))
+  
+  
+    ggplot(Agregats_NbParoisses_data) +
+    aes(nb_paroisses_breaks, nbPolesAg) +
+    geom_tufteboxplot() +
+    facet_wrap(~annee, nrow = 1) +
+    xlab("Nombre de paroisses par agrégat") +
+    ylab("Fréquence") +
+    ggtitle("Distribution des paroisses par agrégat\n(agrégats membre d'un pôle uniquement)")  +
+    labs(subtitle = "Variabilité : Réplications") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+      
+  
+  
+  ggplot(plot_data) +
+    aes(factor(annee), taux_agregats) +
+    geom_tufteboxplot() +
+    xlab("Temps") + ylab("Part des agrégats\ncontenant au moins une paroisse") +
+    ggtitle("Évolution du taux d'agrégats contenant au moins une paroisse") +
+    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+    labs(subtitle = "Variabilité : Réplications")
+}
+
+callModule(plotDownloadRate, paste0("Agregats_NbParoisses","_Haut"),
+           plotFun = reactive(
+             Agregats_Paroisses(poles_data = filtredHaut$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
+           ),
+           plotName = paste0("Agregats_NbParoisses","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+callModule(plotDownloadRate, paste0("Agregats_NbParoisses","_Bas"),
+           plotFun = reactive(
+             Agregats_Paroisses(poles_data = filtredBas$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
+               theme(plot.caption = element_text(size = 6, hjust = 0))
+           ),
+           plotName = paste0("Agregats_NbParoisses","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
+
 Agregats_CA <- function(agregats_data){
   
   nombre_agregats <- agregats_data %>%
@@ -232,14 +294,17 @@ output$Agregats_Distribution_Haut <- renderTable({
     mutate(tx_agregats = nb_agregats / nb_total_agregats) %>%
     select(-nb_total_agregats) %>%
     group_by(nb_fp_breaks) %>%
-    summarise(NbAgregats_moyen = mean(nb_agregats, na.rm = TRUE),
-              TxAgregats_moyen = mean(tx_agregats, na.rm = TRUE)) %>%
-    rename(Taille_Agregats = nb_fp_breaks ) %>%
+    summarise(`Nombre moyen` = mean(nb_agregats, na.rm = TRUE),
+              `Taux moyen` = mean(tx_agregats, na.rm = TRUE)) %>%
+    rename(`Nombre de foyers paysans` = nb_fp_breaks ) %>%
     t() %>%
-    as_tibble(rownames = "Type")
+    as_tibble(rownames = "Type") %>%
+    set_colnames(.[1,]) %>%
+    slice(-1)
   
-  colnames(distrib_agregats) <- distrib_agregats[1,]
-  distrib_agregats[-1,]
+    distrib_agregats[1,2:6] <- as.character(round(as.numeric(distrib_agregats[1,2:6]), digits = 2))
+    distrib_agregats[2,2:6] <- paste0(as.character(round(as.numeric(distrib_agregats[2,2:6]) * 100, digits = 1)), "%")
+    distrib_agregats
 })
 
 output$Agregats_Distribution_Bas <- renderTable({
@@ -261,12 +326,15 @@ output$Agregats_Distribution_Bas <- renderTable({
     mutate(tx_agregats = nb_agregats / nb_total_agregats) %>%
     select(-nb_total_agregats) %>%
     group_by(nb_fp_breaks) %>%
-    summarise(NbAgregats_moyen = mean(nb_agregats, na.rm = TRUE),
-              TxAgregats_moyen = mean(tx_agregats, na.rm = TRUE)) %>%
-    rename(Taille_Agregats = nb_fp_breaks ) %>%
+    summarise(`Nombre moyen` = mean(nb_agregats, na.rm = TRUE),
+              `Taux moyen` = mean(tx_agregats, na.rm = TRUE)) %>%
+    rename(`Nombre de foyers paysans` = nb_fp_breaks ) %>%
     t() %>%
-    as_tibble(rownames = "Type")
+    as_tibble(rownames = "Type") %>%
+    set_colnames(.[1,]) %>%
+    slice(-1)
   
-  colnames(distrib_agregats) <- distrib_agregats[1,]
-  distrib_agregats[-1,]
+  distrib_agregats[1,2:6] <- as.character(round(as.numeric(distrib_agregats[1,2:6]), digits = 2))
+  distrib_agregats[2,2:6] <- paste0(as.character(round(as.numeric(distrib_agregats[2,2:6]) * 100, digits = 1)), "%")
+  distrib_agregats
 })
