@@ -1,6 +1,9 @@
 create_dims <- function(df, index){
-  label <- stringi::stri_replace_all(colnames(df), fixed = " ", replacement = "\n")[index]
+  label <- colnames(df)[index]
   values <- df %>% select(index) %>% pull()
+  # if (all(as.character(as.numeric(values)) == values)){
+  #   values <- as.numeric(values)
+  # }
   returnList <- list(label = label, values = values, visible = TRUE, multiselect = FALSE)
   if (is.numeric(values)){
     returnList[["range"]] <- c(min(values), max(values))

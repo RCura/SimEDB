@@ -118,10 +118,9 @@ shinyServer(function(session, input, output) {
     nonUniqueParams <- tmp_parameters %>%
       select(-sim_name) %>%
       bind_rows(sim_names) %>%
-      group_by(parametre, valeur) %>%
-      mutate(Freq = n()) %>%
-      ungroup() %>%
-      filter(Freq != max(Freq)) %>%
+      group_by(parametre) %>%
+      summarise(nb = n_distinct(valeur)) %>%
+      filter(nb > 1) %>%
       distinct(parametre) %>%
       pull(parametre)
     
@@ -157,9 +156,37 @@ shinyServer(function(session, input, output) {
         distinct() %>%
         arrange(parametre, valeurs)
     }
-
+    
+    
+    # toutNum <- function(x){
+    #   suppressWarnings(all(!is.na(as.numeric(as.character(x)))))
+    # }
+    # '%ni%' <- Negate('%in%')
+    # 
+    # #numericParameters <- params_data %>%
+    # numericParameters <- parameters_data() %>%
+    #   select(-seed) %>%
+    #   gather(Param, Valeur) %>%
+    #   group_by(Param, Valeur) %>%
+    #   tally() %>%
+    #   group_by(Param) %>%
+    #   summarise(num = if_else(toutNum(Valeur), TRUE, FALSE)) %>%
+    #   filter(num) %>%
+    #   pull(Param)
+    # 
+    # #characterParameters <- params_data %>%
+    # characterParameters <- parameters_data() %>%
+    #   select(-seed) %>%
+    #   gather(Param, Valeur) %>%
+    #   distinct(Param) %>%
+    #   filter(Param %ni% numericParameters) %>%
+    #   pull(Param)
+    
+    #selected_table <- params_data %>%
     selected_table <- parameters_data() %>%
       mutate(seed = as.numeric(seed)) %>%
+      # mutate_at(vars(numericParameters), as.numeric) %>%
+      # mutate_at(vars(characterParameters), char_to_num) %>%
       mutate_if(is.character, funs(char = char_to_num)) %>%
       filter(!!!expressions_filtres)
     
@@ -167,6 +194,7 @@ shinyServer(function(session, input, output) {
       tablesParams$haut <- selected_table %>%
         select(!!!colonnes_filtres) %>%
         gather(key = parametre, value = valeurs) %>%
+        mutate(valeurs = as.character(valeurs)) %>%
         arrange(parametre, valeurs) %>%
         bind_rows(simNames) %>%
         distinct(parametre, valeurs) %>%
