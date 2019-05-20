@@ -11,13 +11,13 @@ create_dims <- function(df, index){
       returnList[["tickvals"]] <- values %>% sort() %>% unique() %>% signif(., digits = 2)
     }
   } else {
-   # if (!is.null(values) && all(as.character(as.numeric(values)) == values)){
-   #  MyFactors <- values %>% as.numeric() %>% sort() %>% as.character() %>% unique() %>% as_factor()
-   # } else {
-      MyFactors <- values %>% as.character() %>% unique() %>% sort() %>% as_factor()
-    # }
+    MyFactors <- values %>% as.character() %>% unique() %>% sort() %>% as_factor()
+   if (!is.null(values) && all(as.character(as.numeric(levels(MyFactors))) == levels(MyFactors))){
+    MyFactorsLvls <- levels(MyFactors) %>% as.numeric() %>% sort() %>% as.character()
+    MyFactors <- fct_relevel(MyFactors, MyFactorsLvls)
+   }
     returnList[["values"]] <- values %>% factor(levels = levels(MyFactors)) %>% as.numeric()
-    returnList[["tickvals"]] <- MyFactors %>% as.numeric() %>% unique()
+    returnList[["tickvals"]] <- MyFactors %>% as.numeric() %>% sort()
     returnList[["ticktext"]] <-  levels(MyFactors)
   }
   if (label == "seed"){
@@ -28,6 +28,10 @@ create_dims <- function(df, index){
 
 char_to_num <- function(x){
   MyFactors <- as.character(x) %>% unique() %>% sort() %>% as.factor()
+  if (all(as.character(as.numeric(levels(MyFactors))) == levels(MyFactors))){
+    MyFactorsLvls <- levels(MyFactors) %>% as.numeric() %>% sort() %>% as.character()
+    MyFactors <- fct_relevel(MyFactors, MyFactorsLvls)
+  }
   values <- x %>% factor(levels = levels(MyFactors)) %>% as.numeric()
   return(values)
 }
