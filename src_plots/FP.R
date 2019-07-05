@@ -48,9 +48,10 @@
 FP_TypeDeplacements_agg <- function(FP_data){
     types_migrations <- FP_data %>%
     select(seed, sim_name, annee, deplacement_fixe, deplacement_lointain, deplacement_local) %>%
-    rename(Fixe = deplacement_fixe,
-           Lointain = deplacement_lointain,
+    mutate(`Deplacement (Total)` = 1 - (deplacement_fixe)) %>%
+    rename(Lointain = deplacement_lointain,
            Local = deplacement_local) %>%
+    select(-deplacement_fixe) %>%
     collect() %>%
     gather(key = type_migration, value = taux, -seed, -sim_name, -annee)
     
@@ -150,17 +151,31 @@ callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Bas"),
 #            seeds = filtredSeedsBas_plotly())
 
 FP_DeplacementsDetail_agg <- function(FP_data){
+  
+  taux_deplacements <- FP_data %>%
+    select(seed, sim_name, annee, deplacement_fixe) %>%
+    filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
+    mutate(taux_deplacement = 1 - deplacement_fixe) %>%
+    select(-deplacement_fixe)
 
   details_deplacement <- FP_data %>%
     select(seed, sim_name, annee, starts_with("from_")) %>%
     filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
-    group_by(annee) %>%
+    left_join(taux_deplacements, by = c("seed", "sim_name", "annee")) %>%
+    mutate(from_isole_to_agregat_local = from_isole_to_agregat_local / taux_deplacement,
+           from_isole_to_agregat_lointain = from_isole_to_agregat_lointain / taux_deplacement,
+           from_isole_to_pole_local_hors_agregat = from_isole_to_pole_local_hors_agregat / taux_deplacement,
+           from_agregat_to_agregat_local = from_agregat_to_agregat_local / taux_deplacement,
+           from_agregat_to_agregat_lointain = from_agregat_to_agregat_lointain / taux_deplacement,
+           from_agregat_to_pole_local_hors_agregat = from_agregat_to_pole_local_hors_agregat / taux_deplacement) %>%
     rename_at(vars(starts_with("from_")), gsub, pattern = "_", replacement = ".") %>%
-    summarise_at(vars(starts_with("from.")), funs(mean = mean, 
+    collect() %>% # mis ici car bug sinon oO
+    group_by(annee) %>%
+    summarise_at(vars(starts_with("from.")), list(mean = mean, 
                                                   min = min,
                                                   max = max),
                  na.rm=TRUE) %>%
-    collect() %>%
+#    collect() %>%
     gather(type_deplacement, taux, -annee) %>%
     separate(type_deplacement, into = c("Origine", "To"), sep = ".to.") %>%
     mutate(Origine = gsub(Origine, pattern = "from.", replacement = "")) %>%
@@ -174,11 +189,12 @@ FP_DeplacementsDetail_agg <- function(FP_data){
     )) %>%
     spread(Indicateur, taux)
   
+  
   ggplot(details_deplacement, aes(To, mean, fill = To, group = To)) + 
     geom_col(position = "dodge") +
     geom_errorbar(aes(ymin = min, ymax = max), width=.2) +
     facet_grid(Origine ~ annee, scales = "free_x", labeller = labeller(.rows = label_both)) +
-    xlab("Temps") + ylab("% de migrations\n(min, moyenne, max)") +
+    xlab("Temps") + ylab("% des migrations\n(min, moyenne, max)") +
     scale_y_continuous(labels = percent) +
     ggtitle("Détail du type de migrations des foyers paysans") +
     scale_fill_discrete(name = "Destination choisie") +
