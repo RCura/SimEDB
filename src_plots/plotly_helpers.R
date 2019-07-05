@@ -12,8 +12,8 @@ create_dims <- function(df, index){
     }
   } else {
     MyFactors <- values %>% as.character() %>% unique() %>% sort() %>% as_factor()
-   if (!is.null(values) && all(as.character(as.numeric(levels(MyFactors))) == levels(MyFactors))){
-    MyFactorsLvls <- levels(MyFactors) %>% as.numeric() %>% sort() %>% as.character()
+   if (!is.null(values) && isTRUE(all(as.character(as.numeric(levels(MyFactors))) == levels(MyFactors)))){
+    MyFactorsLvls <- levels(MyFactors) %>% as.numeric() %>% sort() %>% sprintf(fmt = "%.7f", .)
     MyFactors <- fct_relevel(MyFactors, MyFactorsLvls)
    }
     returnList[["values"]] <- values %>% factor(levels = levels(MyFactors)) %>% as.numeric()
@@ -26,15 +26,17 @@ create_dims <- function(df, index){
   return(returnList)
 }
 
-char_to_num <- function(x){
-  MyFactors <- as.character(x) %>% unique() %>% sort() %>% as.factor()
-  if (all(as.character(as.numeric(levels(MyFactors))) == levels(MyFactors))){
-    MyFactorsLvls <- levels(MyFactors) %>% as.numeric() %>% sort() %>% as.character()
-    MyFactors <- fct_relevel(MyFactors, MyFactorsLvls)
-  }
-  values <- x %>% factor(levels = levels(MyFactors)) %>% as.numeric()
-  return(values)
-}
+
+
+# char_to_num <- function(x){
+#   MyFactors <- as.character(x) %>% unique() %>% sort() %>% as.factor()
+#   if (all(as.character(as.numeric(levels(MyFactors))) == levels(MyFactors))){
+#     MyFactorsLvls <- levels(MyFactors) %>% as.numeric() %>% sort() %>% as.character()
+#     MyFactors <- fct_relevel(MyFactors, MyFactorsLvls)
+#   }
+#   values <- x %>% factor(levels = levels(MyFactors)) %>% as.numeric()
+#   return(values)
+# }
 
 expression_from_input <- function(inputJSON){
   if (is.null(inputJSON)){

@@ -291,9 +291,11 @@ shinyServer(function(session, input, output) {
 
   
   observe({
-    
     if (length(filtredSeedsHaut_plotly()) > 0) {
-      brushedSeeds <- tibble(seed = filtredSeedsHaut_plotly())
+      brushedSeeds <- tibble(seed = filtredSeedsHaut_plotly()) %>%
+        mutate(seed = if_else(condition = nchar(seed) < 10,
+                              true = sprintf("%.7f", as.numeric(seed)),
+                              false = seed))
       for (df in names(filtredHaut)){
         filtredHaut[[df]] <- sim[[df]] %>% filter(seed %in% brushedSeeds$seed)
       }
@@ -305,9 +307,11 @@ shinyServer(function(session, input, output) {
   })
   
   observe({
-
     if (length(filtredSeedsBas_plotly()) > 0) {
-      brushedSeeds <- tibble(seed = filtredSeedsBas_plotly())
+      brushedSeeds <- tibble(seed = filtredSeedsBas_plotly()) %>%
+        mutate(seed = if_else(condition = nchar(seed) < 10,
+                              true = sprintf("%.7f", as.numeric(seed)),
+                              false = seed))
       for (df in names(filtredBas)){
         filtredBas[[df]] <- sim[[df]] %>% filter(seed %in% brushedSeeds$seed)
       }
@@ -356,7 +360,70 @@ shinyServer(function(session, input, output) {
     }
     tablesParams$basTxt <-  selection
   })
+  
+  output$paramPC_Haut <- renderPlotly({
+    parcoords_data <- parameters_data() %>%
+      arrange(seed) %>%
+      rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = "_")))
+    
+    parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
+    
+    p <-  plot_ly(source = 'parcoords_haut') %>%
+      add_trace(data = parcoords_data,
+                type = 'parcoords',
+                dimensions = parcoords_dims,
+                line = list(color = "blue")
+      )
+    
+    onRender(p, "function(el, x) {
+    el.on('plotly_restyle', function(d) {
+      var blob = el.data[0].dimensions.map(function(x){return({label: x.label, constraintrange: x.constraintrange})});
+      Shiny.setInputValue('plotly_brushed_haut', JSON.stringify(blob));
+    });
+  }")
+  })
+  
+  output$paramPC_Bas <- renderPlotly({
+    parcoords_data <- parameters_data() %>%
+      arrange(seed) %>%
+      rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = "_")))
+    
+    parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
+    
+    p <-  plot_ly(source = 'parcoords_bas') %>%
+      add_trace(data = parcoords_data,
+                type = 'parcoords',
+                dimensions = parcoords_dims,
+                line = list(color = "blue")
+      )
+    
+    onRender(p, "function(el, x) {
+           el.on('plotly_restyle', function(d) {
+           var blob = el.data[0].dimensions.map(function(x){return({label: x.label, constraintrange: x.constraintrange})});
+           Shiny.setInputValue('plotly_brushed_bas', JSON.stringify(blob));
+           });
+}")
+  })
+  
+  char_to_num <- function(x){
+    MyFactors <- as.character(x) %>% unique() %>% sort() %>% as.factor()
+    if (isTRUE(all(as.character(as.numeric(levels(MyFactors))) == levels(MyFactors)))){
+      MyFactorsLvls <- levels(MyFactors) %>% as.numeric() %>% sort() %>% as.character()
+      MyFactors <- fct_relevel(MyFactors, MyFactorsLvls)
+    }
+    values <- x %>% factor(levels = levels(MyFactors)) %>% as.numeric()
+    return(values)
+  }
 
+  
+  output$dataVolumeHaut <- renderText({
+    print(123)
+    blob <- filtredHaut$parameters %>% distinct(seed, sim_name) %>% count() %>% collect() %>% pull()
+    sprintf("%s simulations sélectionnées sur un total de %s",
+            blob,
+            sim$parameters %>% distinct(seed, sim_name) %>% count() %>% collect() %>% pull()
+    )
+  })
   
   # Debug module
   #
