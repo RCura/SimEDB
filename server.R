@@ -53,16 +53,15 @@ shinyServer(function(session, input, output) {
   
   sim <- reactiveValues(agregats = agregats, FP =  fp, parameters = parameters,
                         paroisses = paroisses, poles = poles, results = results,
-                        seigneurs = seigneurs, seeds = seeds)
+                        seigneurs = seigneurs, seeds = seeds, chateaux = chateaux)
   
   filtredHaut <- reactiveValues(agregats = NULL, FP = NULL, parameters = NULL,
                                 paroisses = NULL, poles = NULL,
-                                results = NULL, seigneurs = NULL)
+                                results = NULL, seigneurs = NULL, chateaux = NULL)
   
   filtredBas <- reactiveValues(agregats = NULL, FP = NULL, parameters = NULL,
                                paroisses = NULL, poles = NULL,
-                               results = NULL, seigneurs = NULL
-  )
+                               results = NULL, seigneurs = NULL, chateaux = NULL)
   
   tablesParams <- reactiveValues(haut = NULL, bas = NULL, hautTxt = NULL, basTxt = NULL)
   
@@ -104,6 +103,7 @@ shinyServer(function(session, input, output) {
     sim$poles <- poles %>% filter(sim_name %in% simNames)
     sim$results <- results %>% filter(sim_name %in% simNames)
     sim$seigneurs <- seigneurs %>% filter(sim_name %in% simNames)
+    sim$chateaux <- chateaux %>% filter(sim_name %in% simNames)
   })
   
   parameters_data <- reactive({
@@ -372,12 +372,15 @@ shinyServer(function(session, input, output) {
   source("src_plots/Seigneurs.R", local = TRUE, encoding = 'utf8')
   source("src_plots/Poles.R", local = TRUE, encoding = 'utf8')
   source("src_plots/Paroisses.R", local = TRUE, encoding = 'utf8')
+  source("src_plots/Chateaux.R", local = TRUE, encoding = 'utf8')
   source("src_plots/sensitivity.R", local = TRUE, encoding = "utf8")
   
   # ---------------- Disconnect onSessionEnded -----------------
   # Cf. https://shiny.rstudio.com/reference/shiny/latest/onStop.html
   onStop(function(){
     dbDisconnect(conMapD)
+    rm(conMapD)
+    gc()
     }
   )
 

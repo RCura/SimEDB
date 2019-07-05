@@ -122,11 +122,11 @@ shinyUI(navbarPage(
                                               tags$hr(),
                                               plotDownloadRateUI("Seigneurs_Nb_Bas", position = "bas")
                                      ),
-                                     tabPanel("Chateaux", 
-                                              plotDownloadRateUI("Seigneurs_Chateaux_Haut", position = "haut"),
-                                              tags$hr(),
-                                              plotDownloadRateUI("Seigneurs_Chateaux_Bas", position = "bas")
-                                     ),
+                                     # tabPanel("Chateaux", 
+                                     #          plotDownloadRateUI("Seigneurs_Chateaux_Haut", position = "haut"),
+                                     #          tags$hr(),
+                                     #          plotDownloadRateUI("Seigneurs_Chateaux_Bas", position = "bas")
+                                     # ),
                                      # tabPanel("Vassaux", 
                                      #          plotDownloadRateUI("Seigneurs_Vassaux_Haut", position = "haut"),
                                      #          tags$hr(),
@@ -154,6 +154,24 @@ shinyUI(navbarPage(
                                      #          plotDownloadRateUI("Seigneurs_Agregats_Bas", position = "bas")
                                      # )
                          )),
+                tabPanel("Châteaux",
+                         tabsetPanel(id = "chateauxPlots",
+                                     tabPanel("Évolution",
+                                              plotDownloadRateUI("Chateaux_Nb_Haut", position = "haut"),
+                                              tags$hr(),
+                                              plotDownloadRateUI("Chateaux_Nb_Bas", position = "bas")
+                                              ),
+                                     tabPanel("Détail (constructeurs)",
+                                              plotDownloadRateUI("Chateaux_Proprio_Haut", position = "haut"),
+                                              tags$hr(),
+                                              plotDownloadRateUI("Chateaux_Proprio_Bas", position = "bas")
+                                              ),
+                                     tabPanel("Détail (type)",
+                                              plotDownloadRateUI("Chateaux_Type_Haut", position = "haut"),
+                                              tags$hr(),
+                                              plotDownloadRateUI("Chateaux_Type_Bas", position = "bas")
+                                     )
+                           )),
                 tabPanel("Pôles",
                          tabsetPanel(id = "polesPlots", 
                                      tabPanel("Nombre", 
