@@ -1,23 +1,23 @@
-CREATE TABLE seeds_6_3 (
+CREATE TABLE seeds_6_4 (
 seed TEXT ENCODING DICT(16),
 sim_name TEXT ENCODING DICT(8)
 );
 
 
-CREATE TABLE parameters_6_3 (
+CREATE TABLE parameters_6_4 (
 seed TEXT,
 sim_name TEXT,
-SHARED DICTIONARY (seed) REFERENCES seeds_6_3(seed),
-SHARED DICTIONARY (sim_name) REFERENCES seeds_6_3(sim_name),
+SHARED DICTIONARY (seed) REFERENCES seeds_6_4(seed),
+SHARED DICTIONARY (sim_name) REFERENCES seeds_6_4(sim_name),
 parametre TEXT ENCODING DICT(8),
 valeur TEXT ENCODING DICT(16)
 );
 
-CREATE TABLE global_6_3 (
+CREATE TABLE global_6_4 (
 seed TEXT,
 sim_name TEXT,
-SHARED DICTIONARY (seed) REFERENCES seeds_6_3(seed),
-SHARED DICTIONARY (sim_name) REFERENCES seeds_6_3(sim_name),
+SHARED DICTIONARY (seed) REFERENCES seeds_6_4(seed),
+SHARED DICTIONARY (sim_name) REFERENCES seeds_6_4(sim_name),
 annee SMALLINT,
 nb_fp INTEGER,
 nb_agregats INTEGER,
@@ -34,11 +34,11 @@ total_duration INTEGER,
 ratio_charge_fiscale FLOAT
 );
 
-CREATE TABLE seigneurs_6_3 (
+CREATE TABLE seigneurs_6_4 (
 seed TEXT,
 sim_name TEXT,
-SHARED DICTIONARY (seed) REFERENCES seeds_6_3(seed),
-SHARED DICTIONARY (sim_name) REFERENCES seeds_6_3(sim_name),
+SHARED DICTIONARY (seed) REFERENCES seeds_6_4(seed),
+SHARED DICTIONARY (sim_name) REFERENCES seeds_6_4(sim_name),
 annee SMALLINT,
 id_seigneur INTEGER,
 type TEXT ENCODING DICT(8),
@@ -57,11 +57,11 @@ monagregat INTEGER,
 geom TEXT ENCODING DICT
 );
 
-CREATE TABLE agregats_6_3 (
+CREATE TABLE agregats_6_4 (
 seed TEXT,
 sim_name TEXT,
-SHARED DICTIONARY (seed) REFERENCES seeds_6_3(seed),
-SHARED DICTIONARY (sim_name) REFERENCES seeds_6_3(sim_name),
+SHARED DICTIONARY (seed) REFERENCES seeds_6_4(seed),
+SHARED DICTIONARY (sim_name) REFERENCES seeds_6_4(sim_name),
 annee SMALLINT,
 id_agregat INTEGER,
 nombre_fp_agregat SMALLINT,
@@ -72,11 +72,11 @@ geom TEXT ENCODING DICT
 );
 
 
-CREATE TABLE poles_6_3 (
+CREATE TABLE poles_6_4 (
 seed TEXT,
 sim_name TEXT,
-SHARED DICTIONARY (seed) REFERENCES seeds_6_3(seed),
-SHARED DICTIONARY (sim_name) REFERENCES seeds_6_3(sim_name),
+SHARED DICTIONARY (seed) REFERENCES seeds_6_4(seed),
+SHARED DICTIONARY (sim_name) REFERENCES seeds_6_4(sim_name),
 annee SMALLINT,
 id_pole INTEGER,
 attractivite FLOAT,
@@ -90,11 +90,11 @@ nb_ca SMALLINT,
 geom TEXT ENCODING DICT
 );
 
-CREATE TABLE fp_6_3 (
+CREATE TABLE fp_6_4 (
 seed TEXT,
 sim_name TEXT,
-SHARED DICTIONARY (seed) REFERENCES seeds_6_3(seed),
-SHARED DICTIONARY (sim_name) REFERENCES seeds_6_3(sim_name),
+SHARED DICTIONARY (seed) REFERENCES seeds_6_4(seed),
+SHARED DICTIONARY (sim_name) REFERENCES seeds_6_4(sim_name),
 annee SMALLINT,
 nb_fp INTEGER,
 taux_fp_isoles FLOAT,
@@ -152,11 +152,11 @@ deci_8_sprot FLOAT,
 deci_9_sprot FLOAT
 );
 
-CREATE TABLE paroisses_6_3 (
+CREATE TABLE paroisses_6_4 (
 seed TEXT,
 sim_name TEXT,
-SHARED DICTIONARY (seed) REFERENCES seeds_6_3(seed),
-SHARED DICTIONARY (sim_name) REFERENCES seeds_6_3(sim_name),
+SHARED DICTIONARY (seed) REFERENCES seeds_6_4(seed),
+SHARED DICTIONARY (sim_name) REFERENCES seeds_6_4(sim_name),
 annee SMALLINT,
 id_paroisse INTEGER,
 moneglise INTEGER,
@@ -168,11 +168,11 @@ satisfaction_paroisse SMALLINT,
 geom TEXT ENCODING DICT
 );
 
-CREATE TABLE chateaux_6_3 (
+CREATE TABLE chateaux_6_4 (
 seed TEXT,
 sim_name TEXT,
-SHARED DICTIONARY (seed) REFERENCES seeds_6_3(seed),
-SHARED DICTIONARY (sim_name) REFERENCES seeds_6_3(sim_name),
+SHARED DICTIONARY (seed) REFERENCES seeds_6_4(seed),
+SHARED DICTIONARY (sim_name) REFERENCES seeds_6_4(sim_name),
 annee SMALLINT,
 id_chateau INTEGER,
 type TEXT ENCODING DICT(8),

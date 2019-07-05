@@ -11,8 +11,8 @@ library(ssh)
 outputs_path <- "/data/user/c/rcura/"
 setwd(outputs_path)
 
-prefixe_files <- "6_3_Obj50k"
-suffixe_tables <- "_6_3"
+prefixe_files <- "6_5_1"
+suffixe_tables <- "_6_4"
 nb_replications_to_keep <- 20
 
 options( java.parameters = c("-Xss2560k", "-Xmx8g") ) # Needed fix for rJava (JDBC) + ggplot2
@@ -31,20 +31,32 @@ session_ssh <- ssh_connect("rcura@mapd.cura.info")
 ########################################################
 
 set.seed(2)
-finished_seeds <- read_csv(file = sprintf("%s_results_global.csv", prefixe_files)) %>%
-  filter(annee == 1200) %>%
+finished_seeds <- read_csv(file = sprintf("%s_results_global.csv", prefixe_files),  col_types = cols(seed = "c")) %>%
+  mutate(seed = as.character(round(digits = 12,as.numeric(seed)))) %>%
+  mutate(seed = str_sub(seed, start = 1, end = 9)) %>%
+  filter(annee == "1200") %>%
   pull(seed)
 
-params <- read_csv(file = sprintf("%s_parameters.csv", prefixe_files)) %>%
+params <- read_csv(file = sprintf("%s_parameters.csv", prefixe_files),  col_types = cols(seed = "c")) %>%
+  mutate(seed = as.character(round(digits = 12,as.numeric(seed)))) %>%
+  mutate(seed = str_sub(seed, start = 1, end = 9)) %>%
   filter(seed %in% finished_seeds) %>%
   group_by_at(vars(-seed)) %>%
   mutate(unique_experiment = runif(n = 1)) %>%
   ungroup()
 
+# read_csv(file = sprintf("%s_parameters.csv", prefixe_files), col_types = cols(.default = "c")) %>%
+#   mutate(seed = str_sub(seed, start = 1, end = 9)) %>%
+#   filter(seed %in% finished_seeds) %>%
+#   gather(param, valeur, -seed, -sim_name) %>%
+#   group_by(param, valeur) %>%
+#   tally()
+
 nb_experiments <- params %>%
   select(seed, unique_experiment) %>%
   group_by(unique_experiment) %>%
   nrow()
+
 if (nb_experiments > nb_replications_to_keep){
   seeds_to_keep <- params %>%
     select(seed, unique_experiment) %>%
@@ -57,7 +69,6 @@ if (nb_experiments > nb_replications_to_keep){
     group_by(unique_experiment) %>%
     pull(seed)
 }
-seeds_to_keep <- as.character(seeds_to_keep)
 rm(finished_seeds)
 
 
@@ -75,11 +86,12 @@ rm(finished_seeds)
 #   gather(parametre, valeur, -seed, -sim_name)
 
 
-params <- read_csv(file = sprintf("%s_parameters.csv", prefixe_files)) %>%
-  mutate(seed = as.character(seed)) %>%
+params <- read_csv(file = sprintf("%s_parameters.csv", prefixe_files),  col_types = cols(seed = "c")) %>%
+  mutate(seed = as.character(round(digits = 12,as.numeric(seed)))) %>%
+  mutate(seed = str_sub(seed, start = 1, end = 9)) %>%
   filter(seed %in% seeds_to_keep)
 params_mapd <- params %>%
-  gather(parameter, valeur, -seed, -sim_name)
+  gather(parametre, valeur, -seed, -sim_name)
 
 fileToWrite <- sprintf("~/mapd-docker-storage/data/mapd_import/%s_MapD_parameters.csv.gz", prefixe_files)
 fileToRead <- str_replace(fileToWrite, pattern = "~/mapd-docker-storage/", replacement = "/mapd-storage/")
@@ -99,8 +111,9 @@ rm(params, params_mapd, sqlQuery)
 
 ############# AGREGATS #############
 
-results_agregats <- read_csv(file = sprintf("%s_results_agregats.csv", prefixe_files), quote = '"') %>%
-  mutate(seed = as.character(seed)) %>%
+results_agregats <- read_csv(file = sprintf("%s_results_agregats.csv", prefixe_files), quote = '"', col_types = cols(seed = "c")) %>%
+  mutate(seed = as.character(round(digits = 12,as.numeric(seed)))) %>%
+  mutate(seed = str_sub(seed, start = 1, end = 9)) %>%
   filter(seed %in% seeds_to_keep)
 
 agregats_mapd <- results_agregats
@@ -122,8 +135,9 @@ rm(results_agregats, agregats_mapd, sqlQuery)
 
 ############# GLOBAL #############
 
-results_global <-read_csv(file = sprintf("%s_results_global.csv", prefixe_files)) %>%
-  mutate(seed = as.character(seed)) %>%
+results_global <-read_csv(file = sprintf("%s_results_global.csv", prefixe_files), col_types = cols(seed = "c")) %>%
+  mutate(seed = as.character(round(digits = 12,as.numeric(seed)))) %>%
+  mutate(seed = str_sub(seed, start = 1, end = 9)) %>%
   filter(seed %in% seeds_to_keep)
 
 
@@ -176,8 +190,9 @@ rm(results_global, results_mapd, seeds_mapd,sqlQuery)
 
 ############# SEIGNEURS #############
 
-results_seigneurs <- read_csv(file = sprintf("%s_results_seigneurs.csv", prefixe_files)) %>%
-  mutate(seed = as.character(seed)) %>%
+results_seigneurs <- read_csv(file = sprintf("%s_results_seigneurs.csv", prefixe_files), col_types = cols(seed = "c")) %>%
+  mutate(seed = as.character(round(digits = 12,as.numeric(seed)))) %>%
+  mutate(seed = str_sub(seed, start = 1, end = 9)) %>%
   filter(seed %in% seeds_to_keep)
 
 seigneurs_mapd <- results_seigneurs
@@ -199,8 +214,9 @@ rm(results_seigneurs, seigneurs_mapd, sqlQuery)
 
 ############# PAROISSES #############
 
-results_paroisses <- read_csv(file = sprintf("%s_results_paroisses.csv", prefixe_files)) %>%
-  mutate(seed = as.character(seed)) %>%
+results_paroisses <- read_csv(file = sprintf("%s_results_paroisses.csv", prefixe_files), col_types = cols(seed = "c")) %>%
+  mutate(seed = as.character(round(digits = 12,as.numeric(seed)))) %>%
+  mutate(seed = str_sub(seed, start = 1, end = 9)) %>%
   filter(seed %in% seeds_to_keep)
 
 paroisses_mapd <- results_paroisses
@@ -213,8 +229,8 @@ scp_upload(session = session_ssh, files = fileToWrite, to = "~/mapd-docker-stora
 file.remove(fileToWrite)
 
 connectToMapD()
-sprintf("COPY paroisses%s FROM '%s';", suffixe_tables, fileToRead)
 sqlQuery <- DBI::dbSendQuery(conn = conMapD, sprintf("COPY paroisses%s FROM '%s';", suffixe_tables, fileToRead))
+sprintf("COPY paroisses%s FROM '%s';", suffixe_tables, fileToRead)
 print(DBI::dbFetch(sqlQuery))
 dbDisconnect(conMapD)
 
@@ -222,8 +238,9 @@ rm(results_paroisses, paroisses_mapd, sqlQuery)
 
 ############# POLES #############
 
-results_poles <- read_csv(file = sprintf("%s_results_poles.csv", prefixe_files)) %>%
-  mutate(seed = as.character(seed)) %>%
+results_poles <- read_csv(file = sprintf("%s_results_poles.csv", prefixe_files), col_types = cols(seed = "c")) %>%
+  mutate(seed = as.character(round(digits = 12,as.numeric(seed)))) %>%
+  mutate(seed = str_sub(seed, start = 1, end = 9)) %>%
   filter(seed %in% seeds_to_keep)
 
 poles_mapd <- results_poles
@@ -246,8 +263,9 @@ rm(results_poles, poles_mapd, sqlQuery)
 
 ############# CHATEAUX #############
 
-results_chateaux <- read_csv(file = sprintf("%s_results_chateaux.csv", prefixe_files)) %>%
-  mutate(seed = as.character(seed)) %>%
+results_chateaux <- read_csv(file = sprintf("%s_results_chateaux.csv", prefixe_files), col_types = cols(seed = "c")) %>%
+  mutate(seed = as.character(round(digits = 12,as.numeric(seed)))) %>%
+  mutate(seed = str_sub(seed, start = 1, end = 9)) %>%
   filter(seed %in% seeds_to_keep)
 
 chateaux_mapd <- results_chateaux
@@ -269,8 +287,9 @@ rm(results_chateaux, chateaux_mapd, sqlQuery)
 
 ############# FP #############
 
-results_fp <- read_csv(file = sprintf("%s_results_FP_summarised.csv", prefixe_files)) %>%
-  mutate(seed = as.character(seed)) %>%
+results_fp <- read_csv(file = sprintf("%s_results_FP_summarised.csv", prefixe_files), col_types = cols(seed = "c")) %>%
+  mutate(seed = as.character(round(digits = 12,as.numeric(seed)))) %>%
+  mutate(seed = str_sub(seed, start = 1, end = 9)) %>%
   filter(seed %in% seeds_to_keep)
 
 

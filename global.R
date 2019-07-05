@@ -1,13 +1,15 @@
 source("packages.R")
-
+gc()
 options( java.parameters = c("-Xss2560k", "-Xmx7g") ) # Needed fix for rJava (JDBC) + ggplot2
 
-drv <- JDBC("com.mapd.jdbc.MapDDriver",
-            "/data/user/c/rcura/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
+drv <- JDBC("com.omnisci.jdbc.OmniSciDriver",
+            "/data/user/c/rcura/omnisci-jdbc-4.6.1.jar",
             identifier.quote="'")
-conMapD <- dbConnect(drv, "jdbc:mapd:mapdi.cura.info:9091:mapd", "mapd", "HyperInteractive")
+gc()
+conMapD <- dbConnect(drv, "jdbc:omnisci:mapdi.cura.info:9091:mapd", "mapd", "HyperInteractive")
 #parameters <- tbl(conMapD, "parameters_6_1")
-parameters <- tbl(conMapD, "parameters_6_3")
+#parameters <- tbl(conMapD, "parameters_6_3")
+parameters <- tbl(conMapD, "parameters_6_4")
 
 all_sim_names <- parameters %>%
   select(sim_name) %>%
