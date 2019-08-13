@@ -8,14 +8,14 @@ Agregats_Nb <- function(agregats_data){
     geom_tufteboxplot() +
     xlab("Temps") + ylab("Nombre d'agrégats") +
     ggtitle("Évolution du nombre d'agrégats de population") +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb()
 }
 
 callModule(plotDownloadRate, paste0("Agregats_Nb","_Haut"),
            plotFun = reactive(
              Agregats_Nb(filtredHaut$agregats) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Agregats_Nb","_Haut"),
            user = input$userName,
@@ -23,8 +23,7 @@ callModule(plotDownloadRate, paste0("Agregats_Nb","_Haut"),
 callModule(plotDownloadRate, paste0("Agregats_Nb","_Bas"),
            plotFun = reactive(
              Agregats_Nb(filtredBas$agregats) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Agregats_Nb","_Bas"),
            user = input$userName,
@@ -53,14 +52,14 @@ Agregats_Poles <- function(agregats_data){
     scale_y_continuous(labels = percent, limits = c(0,1)) +
     xlab("Temps") + ylab("Taux d'agrégats\n contenant un pôle") +
     ggtitle("Évolution du taux d'agrégats avec pôle") +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb()
 }
 
 callModule(plotDownloadRate, paste0("Agregats_Poles","_Haut"),
            plotFun = reactive(
              Agregats_Poles(filtredHaut$agregats) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Agregats_Poles","_Haut"),
            user = input$userName,
@@ -68,8 +67,7 @@ callModule(plotDownloadRate, paste0("Agregats_Poles","_Haut"),
 callModule(plotDownloadRate, paste0("Agregats_Poles","_Bas"),
            plotFun = reactive(
              Agregats_Poles(filtredBas$agregats) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Agregats_Poles","_Bas"),
            user = input$userName,
@@ -102,23 +100,23 @@ Agregats_Paroisses <- function(agregats_data, poles_data){
     xlab("Temps") + ylab("Part des agrégats\ncontenant au moins une paroisse") +
     ggtitle("Évolution du taux d'agrégats contenant au moins une paroisse") +
     scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb()
 }
 
 callModule(plotDownloadRate, paste0("Agregats_Paroisses","_Haut"),
            plotFun = reactive(
              Agregats_Paroisses(agregats_data = filtredHaut$agregats, poles_data = filtredHaut$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Agregats_Paroisses","_Haut"),
            user = input$userName,
            seeds = filtredSeedsHaut_plotly())
+
 callModule(plotDownloadRate, paste0("Agregats_Paroisses","_Bas"),
            plotFun = reactive(
              Agregats_Paroisses(agregats_data = filtredBas$agregats, poles_data = filtredBas$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Agregats_Paroisses","_Bas"),
            user = input$userName,
@@ -154,24 +152,13 @@ Agregats_NbParoisses <- function(poles_data){
     ylab("Fréquence") +
     ggtitle("Distribution des paroisses par agrégat\n(agrégats membre d'un pôle uniquement)")  +
     labs(subtitle = "Variabilité : Réplications") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-      
-  
-  
-  ggplot(plot_data) +
-    aes(factor(annee), taux_agregats) +
-    geom_tufteboxplot() +
-    xlab("Temps") + ylab("Part des agrégats\ncontenant au moins une paroisse") +
-    ggtitle("Évolution du taux d'agrégats contenant au moins une paroisse") +
-    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
-    labs(subtitle = "Variabilité : Réplications")
+    theme_simedb_rotate_x()
 }
 
 callModule(plotDownloadRate, paste0("Agregats_NbParoisses","_Haut"),
            plotFun = reactive(
              Agregats_Paroisses(poles_data = filtredHaut$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Agregats_NbParoisses","_Haut"),
            user = input$userName,
@@ -179,8 +166,7 @@ callModule(plotDownloadRate, paste0("Agregats_NbParoisses","_Haut"),
 callModule(plotDownloadRate, paste0("Agregats_NbParoisses","_Bas"),
            plotFun = reactive(
              Agregats_Paroisses(poles_data = filtredBas$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Agregats_NbParoisses","_Bas"),
            user = input$userName,
@@ -205,14 +191,14 @@ Agregats_CA <- function(agregats_data){
     xlab("Temps") + ylab("% des agrégats") +
     scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
     ggtitle("Évolution de la part des agrégats ayant une communauté villageoise") +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb()
 }
 
 callModule(plotDownloadRate, paste0("Agregats_CA","_Haut"),
            plotFun = reactive(
              Agregats_CA(filtredHaut$agregats) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Agregats_CA","_Haut"),
            user = input$userName,
@@ -221,8 +207,7 @@ callModule(plotDownloadRate, paste0("Agregats_CA","_Haut"),
 callModule(plotDownloadRate, paste0("Agregats_CA","_Bas"),
            plotFun = reactive(
              Agregats_CA(filtredBas$agregats) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Agregats_CA","_Bas"),
            user = input$userName,
@@ -249,16 +234,15 @@ Agregats_RT <- function(agregats_data){
     facet_grid(~annee, space = "free_x",  scales = "free_x") +
     scale_x_log10() + scale_y_log10() +
     ggtitle("Évolution de la distribution rang-taille des agrégats de population") +
-    theme(legend.position = "bottom") +
     xlab("Rang (log10)") + ylab("Taille des agrégats\n(nombre de foyers paysans)") +
-    labs(subtitle = "Variabilité : Moyenne, Q1 et Q3 des Réplications")
+    labs(subtitle = "Variabilité : Moyenne, Q1 et Q3 des Réplications") +
+    theme_simedb()
 }
 
 callModule(plotDownloadRate, paste0("Agregats_RT","_Haut"),
            plotFun = reactive(
              Agregats_RT(filtredHaut$agregats) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Agregats_RT","_Haut"),
            user = input$userName,
@@ -267,19 +251,16 @@ callModule(plotDownloadRate, paste0("Agregats_RT","_Haut"),
 callModule(plotDownloadRate, paste0("Agregats_RT","_Bas"),
            plotFun = reactive(
              Agregats_RT(filtredBas$agregats) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Agregats_RT","_Bas"),
            user = input$userName,
            seeds = filtredSeedsBas_plotly())
 
 
-output$Agregats_Distribution_Haut <- renderTable({
-  req(filtredHaut$agregats)
+agregats_distribution <- function(agregats_data){
   nb_fp_breaks <- c(-1,100, 200, 300, 400, 1E12)
   nb_fp_labels <- c("<100", "101-200", "201-300", "301-400", ">400")
-  agregats_data <- filtredHaut$agregats
   
   distrib_agregats <- agregats_data %>%
     filter(annee == 1200) %>%
@@ -302,9 +283,10 @@ output$Agregats_Distribution_Haut <- renderTable({
     set_colnames(.[1,]) %>%
     slice(-1)
   
-    distrib_agregats[1,2:6] <- as.character(round(as.numeric(distrib_agregats[1,2:6]), digits = 2))
-    distrib_agregats[2,2:6] <- paste0(as.character(round(as.numeric(distrib_agregats[2,2:6]) * 100, digits = 1)), "%")
-    distrib_agregats
+  distrib_agregats[1,2:6] <- as.character(round(as.numeric(distrib_agregats[1,2:6]), digits = 2))
+  distrib_agregats[2,2:6] <- paste0(as.character(round(as.numeric(distrib_agregats[2,2:6]) * 100, digits = 1)), "%")
+  distrib_agregats
+}
 })
 
 output$Agregats_Distribution_Bas <- renderTable({

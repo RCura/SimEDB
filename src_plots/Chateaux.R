@@ -9,14 +9,14 @@ Chateaux_Nb <- function(chateaux_data){
     xlab("Temps") + ylab("Nombre de\nchâteaux") +
     ggtitle("Évolution du nombre de châteaux") +
     labs(subtitle = "Variabilité : Réplications") +
-    scale_y_continuous(breaks = seq(0,100, 10), minor_breaks = seq(0,100, 5))
+    scale_y_continuous(breaks = seq(0,100, 10), minor_breaks = seq(0,100, 5)) +
+    theme_simedb()
 }
 
 callModule(plotDownloadRate, paste0("Chateaux_Nb","_Haut"),
            plotFun = reactive(
              Chateaux_Nb(filtredHaut$chateaux) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Poles_Nb","_Haut"),
            user = input$userName,
@@ -25,8 +25,7 @@ callModule(plotDownloadRate, paste0("Chateaux_Nb","_Haut"),
 callModule(plotDownloadRate, paste0("Chateaux_Nb","_Bas"),
            plotFun = reactive(
              Chateaux_Nb(filtredBas$chateaux) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Poles_Nb","_Bas"),
            user = input$userName,
@@ -55,7 +54,7 @@ Chateaux_Proprio <- function(chateaux_data){
     ggtitle("Origine des châteaux") +
     labs(subtitle = "Variabilité : Réplications") +
     scale_colour_manual(values = cols, aesthetics = c("colour", "fill")) +
-    theme_bw() +
+    theme_simedb() +
     theme(panel.grid.major.x = element_blank()) +
     scale_y_continuous(breaks = seq(0,100, 10), minor_breaks = seq(0,100, 5))
 }
@@ -63,8 +62,7 @@ Chateaux_Proprio <- function(chateaux_data){
 callModule(plotDownloadRate, paste0("Chateaux_Proprio","_Haut"),
            plotFun = reactive(
              Chateaux_Proprio(filtredHaut$chateaux) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Poles_Nb","_Haut"),
            user = input$userName,
@@ -73,8 +71,7 @@ callModule(plotDownloadRate, paste0("Chateaux_Proprio","_Haut"),
 callModule(plotDownloadRate, paste0("Chateaux_Proprio","_Bas"),
            plotFun = reactive(
              Chateaux_Proprio(filtredBas$chateaux) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Poles_Nb","_Bas"),
            user = input$userName,
@@ -103,7 +100,7 @@ Chateaux_Type <- function(chateaux_data){
     ggtitle("Types des châteaux") +
     labs(subtitle = "Variabilité : Réplications") +
     scale_colour_manual(values = cols, aesthetics = c("colour", "fill")) +
-    theme_bw() +
+    theme_simedb()+
     theme(panel.grid.major.x = element_blank()) +
     scale_y_continuous(breaks = seq(0,100, 10), minor_breaks = seq(0,100, 5))
     
@@ -112,8 +109,7 @@ Chateaux_Type <- function(chateaux_data){
 callModule(plotDownloadRate, paste0("Chateaux_Type","_Haut"),
            plotFun = reactive(
              Chateaux_Type(filtredHaut$chateaux) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Poles_Nb","_Haut"),
            user = input$userName,
@@ -122,8 +118,7 @@ callModule(plotDownloadRate, paste0("Chateaux_Type","_Haut"),
 callModule(plotDownloadRate, paste0("Chateaux_Type","_Bas"),
            plotFun = reactive(
              Chateaux_Type(filtredBas$chateaux) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Poles_Nb","_Bas"),
            user = input$userName,

@@ -16,14 +16,14 @@ Seigneurs_Nb <- function(seigneurs_data){
     ylab("Nombre de seigneurs") +
     xlab("Temps") +
     labs(title = "Évolution du nombre de seigneurs",
-         subtitle = "Variabilité : Réplications")
+         subtitle = "Variabilité : Réplications") +
+    theme_simedb()
 }
 
 callModule(plotDownloadRate, paste0("Seigneurs_Nb","_Haut"),
            plotFun = reactive(
              Seigneurs_Nb(filtredHaut$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Seigneurs_Nb","_Haut"),
            user = input$userName,
@@ -32,8 +32,7 @@ callModule(plotDownloadRate, paste0("Seigneurs_Nb","_Haut"),
 callModule(plotDownloadRate, paste0("Seigneurs_Nb","_Bas"),
            plotFun = reactive(
              Seigneurs_Nb(filtredBas$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Seigneurs_Nb","_Bas"),
            user = input$userName,
@@ -87,18 +86,13 @@ Seigneurs_Chateaux <- function(seigneurs_data){
     geom_tufteboxplot() +
     facet_wrap(~TypePossession, scales = "free") +
     ggtitle("Grands Seigneurs") + 
-    theme(axis.title.y = element_blank(), axis.title.x = element_blank()) +
-    theme(plot.title = element_text(size = rel(1), face = "italic")) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  
+    theme_simedb_seigneurs()
   
   plotChat <- ggplot(data = Chat, aes(NbChateauxBreaks, NbSeigneurs)) +
     geom_tufteboxplot() + 
     facet_wrap(~TypePossession, scales = "free") +
-    ggtitle("Chatelains") + 
-    theme(axis.title.y = element_blank(),axis.title.x = element_blank()) +
-    theme(plot.title = element_text(size = rel(1), face = "italic")) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    ggtitle("Chatelains") +
+    theme_simedb_seigneurs()
   
   grid.arrange(plotChat, plotGS, nrow = 2,
                bottom = "Nombre de châteaux", left = "Fréquence",
@@ -110,8 +104,7 @@ Seigneurs_Chateaux <- function(seigneurs_data){
 callModule(plotDownloadRate, paste0("Seigneurs_Chateaux","_Haut"),
            plotFun = reactive(
              Seigneurs_Chateaux(filtredHaut$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Seigneurs_Chateaux","_Haut"),
            user = input$userName,
@@ -120,80 +113,71 @@ callModule(plotDownloadRate, paste0("Seigneurs_Chateaux","_Haut"),
 callModule(plotDownloadRate, paste0("Seigneurs_Chateaux","_Bas"),
            plotFun = reactive(
              Seigneurs_Chateaux(filtredBas$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Seigneurs_Chateaux","_Bas"),
            user = input$userName,
            seeds = filtredSeedsBas_plotly())
 
-Seigneurs_Vassaux <- function(seigneurs_data){
-  myBreaks <- c(-1,0,1,2,3,4,5,10,25,50,1000)
-  myLabels <- c("0","1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
-  
-  debiteurs_seigneurs <- seigneurs_data %>%
-    filter(annee == 1200) %>%
-    select(seed, annee, type, seigneur_initial, nbdebiteurs) %>%
-    collect() %>%
-    mutate(initial = if_else(seigneur_initial == "TRUE", "Initialement\nPrésent", "Arrivé\nen cours")) %>%
-    mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
-    mutate(nbDebiteursBreaks =  cut(nbdebiteurs, breaks = myBreaks, labels =  myLabels)) %>%  
-    group_by(seed, type, initial, nbDebiteursBreaks) %>%
-    summarise(StatsDebiteurs = n())
-  
-  debInitCPS <- debiteurs_seigneurs %>% filter(type != "Grand Seigneur", initial == "Initialement\nPrésent")
-  debNonCPS <- debiteurs_seigneurs %>% filter(type != "Grand Seigneur", initial == "Arrivé\nen cours")
-  debGS <- debiteurs_seigneurs %>% filter(type == "Grand Seigneur")
-  
-  plotInitCPS <- ggplot(debInitCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
-    geom_tufteboxplot() +
-    facet_grid(initial ~ type, scales="free", space = "free_x") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
-    theme(plot.title = element_text(size = rel(1), face = "italic"))
-  
-  plotNonCPS <- ggplot(debNonCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
-    geom_tufteboxplot() +
-    facet_grid(initial ~ type, scales="free", space = "free_x") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
-    theme(plot.title = element_text(size = rel(1), face = "italic"))
-  
-  plotGS <- ggplot(debGS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
-    geom_tufteboxplot() +
-    facet_wrap(~type) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(axis.title.y=element_blank(),axis.title.x=element_blank()) +
-    theme(plot.title = element_text(size = rel(1), face = "italic"))
-  
-  lay <- rbind(c(1,1,1,3),
-               c(2,2,2,3))
-  
-  grid.arrange(plotNonCPS, plotInitCPS, plotGS, nrow = 1, layout_matrix = lay,
-               bottom = "Nombre de Vassaux", left = "Fréquence",
-               top = "Distribution du nombre de vassaux selon les types de seigneurs
-               Variabilité : Réplications")
-}
-
-callModule(plotDownloadRate, paste0("Seigneurs_Vassaux","_Haut"),
-           plotFun = reactive(
-             Seigneurs_Vassaux(filtredHaut$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
-           ),
-           plotName = paste0("Seigneurs_Vassaux","_Haut"),
-           user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
-
-callModule(plotDownloadRate, paste0("Seigneurs_Vassaux","_Bas"),
-           plotFun = reactive(
-             Seigneurs_Vassaux(filtredBas$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
-           ),
-           plotName = paste0("Seigneurs_Vassaux","_Bas"),
-           user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+# Seigneurs_Vassaux <- function(seigneurs_data){
+#   myBreaks <- c(-1,0,1,2,3,4,5,10,25,50,1000)
+#   myLabels <- c("0","1", "2", "3", "4", "5","6;10", "11;25", "26;50", ">50")
+#   
+#   debiteurs_seigneurs <- seigneurs_data %>%
+#     filter(annee == 1200) %>%
+#     select(seed, annee, type, date_apparition, nbdebiteurs) %>%
+#     collect() %>%
+#     mutate(initial = if_else(date_apparition == "800", "Initialement\nPrésent", "Arrivé\nen cours")) %>%
+#     mutate(initial = factor(initial, levels = c("Arrivé\nen cours", "Initialement\nPrésent"))) %>%
+#     mutate(nbDebiteursBreaks =  cut(nbdebiteurs, breaks = myBreaks, labels =  myLabels)) %>%  
+#     group_by(seed, type, initial, nbDebiteursBreaks) %>%
+#     summarise(StatsDebiteurs = n())
+#   
+#   debInitCPS <- debiteurs_seigneurs %>% filter(type != "Grand Seigneur", initial == "Initialement\nPrésent")
+#   debNonCPS <- debiteurs_seigneurs %>% filter(type != "Grand Seigneur", initial == "Arrivé\nen cours")
+#   debGS <- debiteurs_seigneurs %>% filter(type == "Grand Seigneur")
+#   
+#   plotInitCPS <- ggplot(debInitCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
+#     geom_tufteboxplot() +
+#     facet_grid(initial ~ type, scales="free", space = "free_x") +
+#     theme_simedb_seigneurs()
+#   
+#   plotNonCPS <- ggplot(debNonCPS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
+#     geom_tufteboxplot() +
+#     facet_grid(initial ~ type, scales="free", space = "free_x") +
+#     theme_simedb_seigneurs()
+#   
+#   plotGS <- ggplot(debGS, aes(nbDebiteursBreaks, StatsDebiteurs)) +
+#     geom_tufteboxplot() +
+#     facet_wrap(~type) +
+#     theme_simedb_seigneurs()
+#   
+#   lay <- rbind(c(1,1,1,3),
+#                c(2,2,2,3))
+#   
+#   grid.arrange(plotNonCPS, plotInitCPS, plotGS, nrow = 1, layout_matrix = lay,
+#                bottom = "Nombre de Vassaux", left = "Fréquence",
+#                top = "Distribution du nombre de vassaux selon les types de seigneurs
+#                Variabilité : Réplications")
+# }
+# 
+# callModule(plotDownloadRate, paste0("Seigneurs_Vassaux","_Haut"),
+#            plotFun = reactive(
+#              Seigneurs_Vassaux(filtredHaut$seigneurs) +
+#                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
+#            ),
+#            plotName = paste0("Seigneurs_Vassaux","_Haut"),
+#            user = input$userName,
+#            seeds = filtredSeedsHaut_plotly())
+# 
+# callModule(plotDownloadRate, paste0("Seigneurs_Vassaux","_Bas"),
+#            plotFun = reactive(
+#              Seigneurs_Vassaux(filtredBas$seigneurs) +
+#                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
+#            ),
+#            plotName = paste0("Seigneurs_Vassaux","_Bas"),
+#            user = input$userName,
+#            seeds = filtredSeedsBas_plotly())
 
 
 # Seigneurs_Redevances <- function(seigneurs_data){
@@ -319,7 +303,7 @@ Seigneurs_Redevances_PS <- function(seigneurs_data){ # Nouvelle version pour v6.
     )) %>%
     bind_rows(assujettis) %>%
     mutate(Indicateur = factor(Indicateur, levels = c("Autres droits", "Droits Fonciers", "Haute Justice", "FP assujettis"))) %>%
-    filter(NbFP > 0)
+    filter(NbFP > 0) %>%
     mutate(NbFP = NbFP+.5)
 
   library(grid)
@@ -333,21 +317,21 @@ Seigneurs_Redevances_PS <- function(seigneurs_data){ # Nouvelle version pour v6.
     ylab("Fréquence") +
     ggtitle("Distribution des droits prélevés par les seigneurs") +
     scale_fill_discrete(name = "Type de prélèvement") +
+    labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb() +
     theme(strip.text = element_text(size = 7),
           axis.text.x = element_text(size = 7),
           axis.text.y = element_text(size = 7),
           #legend.position = "bottom"
-          panel.spacing.y = unit(0, "lines"),
-    ) +
-    labs(subtitle = "Variabilité : Réplications")
+          panel.spacing.y = unit(0, "lines")
+    )
   
 }
 
 callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Haut"),
            plotFun = reactive(
              Seigneurs_Redevances_PS(filtredHaut$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Seigneurs_Redevances_PS","_Haut"),
            user = input$userName,
@@ -356,8 +340,7 @@ callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Haut"),
 callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Bas"),
            plotFun = reactive(
              Seigneurs_Redevances_PS(filtredBas$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Seigneurs_Redevances_PS","_Bas"),
            user = input$userName,
@@ -377,16 +360,15 @@ Seigneurs_Puissance <- function(seigneurs_data){
     geom_tufteboxplot() +
     facet_grid(type~TypeIndic, scales = "free") +
     xlab("Temps") + ylab("Puissance") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     ggtitle("Évolution de puissance des seigneurs\n(Puissance > 0, ≈50% des seigneurs)") +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb_rotate_x()
 }
 
 callModule(plotDownloadRate, paste0("Seigneurs_Puissance","_Haut"),
            plotFun = reactive(
              Seigneurs_Puissance(filtredHaut$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Seigneurs_Puissance","_Haut"),
            user = input$userName,
@@ -395,8 +377,7 @@ callModule(plotDownloadRate, paste0("Seigneurs_Puissance","_Haut"),
 callModule(plotDownloadRate, paste0("Seigneurs_Puissance","_Bas"),
            plotFun = reactive(
              Seigneurs_Puissance(filtredBas$seigneurs) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Seigneurs_Puissance","_Bas"),
            user = input$userName,
@@ -437,15 +418,15 @@ Seigneurs_Agregats <- function(seigneurs_data, agregats_data){
          y = "Nombre d'agrégats",
          title = "Nombre de seigneurs par agrégat en fin de simulation",
          subtitle = "Variabilité : Réplications",
-         caption = "N.B : Sont considérés comme dans un agrégat les seigneurs localisés à moins de 200m")
+         caption = "N.B : Sont considérés comme dans un agrégat les seigneurs localisés à moins de 200m") +
+    theme_simedb()
 }
 
 callModule(plotDownloadRate, paste0("Seigneurs_Agregats","_Haut"),
            plotFun = reactive(
              Seigneurs_Agregats(seigneurs_data = filtredHaut$seigneurs,
                                 agregats_data = filtredHaut$agregats) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Seigneurs_Agregats","_Haut"),
            user = input$userName,
@@ -455,8 +436,7 @@ callModule(plotDownloadRate, paste0("Seigneurs_Agregats","_Bas"),
            plotFun = reactive(
              Seigneurs_Agregats(seigneurs_data = filtredHaut$seigneurs,
                                 agregats_data = filtredHaut$agregats) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Seigneurs_Agregats","_Bas"),
            user = input$userName,

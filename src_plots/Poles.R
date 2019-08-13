@@ -8,14 +8,14 @@ Poles_Nb <- function(poles_data){
     geom_tufteboxplot() +
     xlab("Temps") + ylab("Nombre de\npôles") +
     ggtitle("Évolution du nombre de pôles d'attractions") +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb()
 }
 
 callModule(plotDownloadRate, paste0("Poles_Nb","_Haut"),
            plotFun = reactive(
              Poles_Nb(filtredHaut$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Poles_Nb","_Haut"),
            user = input$userName,
@@ -24,8 +24,7 @@ callModule(plotDownloadRate, paste0("Poles_Nb","_Haut"),
 callModule(plotDownloadRate, paste0("Poles_Nb","_Bas"),
            plotFun = reactive(
              Poles_Nb(filtredBas$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Poles_Nb","_Bas"),
            user = input$userName,
@@ -52,6 +51,7 @@ Poles_Agregats <- function(poles_data){
     scale_y_continuous(labels = scales::percent) +
     xlab("Temps") + ylab("Taux de pôles\nlocalisés dans un agrégat") +
     labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb() +
     theme(axis.title.x=element_blank())
   
   polesAgregats
@@ -60,8 +60,7 @@ Poles_Agregats <- function(poles_data){
 callModule(plotDownloadRate, paste0("Poles_Agregats","_Haut"),
            plotFun = reactive(
              Poles_Agregats(filtredHaut$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Poles_Agregats","_Haut"),
            user = input$userName,
@@ -70,8 +69,7 @@ callModule(plotDownloadRate, paste0("Poles_Agregats","_Haut"),
 callModule(plotDownloadRate, paste0("Poles_Agregats","_Bas"),
            plotFun = reactive(
              Poles_Agregats(filtredBas$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Poles_Agregats","_Bas"),
            user = input$userName,
@@ -101,16 +99,15 @@ Poles_Compo <- function(poles_data){
     facet_wrap(~annee, nrow = 1) +
     xlab("Nombre d'attracteurs") +
     ylab("Fréquence") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     ggtitle("Évolution du nombre d'attracteurs des pôles") +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb_rotate_x()
 }
 
 callModule(plotDownloadRate, paste0("Poles_Compo","_Haut"),
            plotFun = reactive(
              Poles_Compo(filtredHaut$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Poles_Compo","_Haut"),
            user = input$userName,
@@ -119,8 +116,7 @@ callModule(plotDownloadRate, paste0("Poles_Compo","_Haut"),
 callModule(plotDownloadRate, paste0("Poles_Compo","_Bas"),
            plotFun = reactive(
              Poles_Compo(filtredBas$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Poles_Compo","_Bas"),
            user = input$userName,
@@ -166,16 +162,15 @@ Poles_Attrac <- function(poles_data){
     facet_wrap(~annee, nrow = 1) +
     xlab("Attractivité") +
     ylab("Fréquence") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     ggtitle("Évolution de l'attractivité des pôles") +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb_rotate_x()
 }
 
 callModule(plotDownloadRate, paste0("Poles_Attrac","_Haut"),
            plotFun = reactive(
              Poles_Attrac(filtredHaut$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Poles_Attrac","_Haut"),
            user = input$userName,
@@ -184,8 +179,7 @@ callModule(plotDownloadRate, paste0("Poles_Attrac","_Haut"),
 callModule(plotDownloadRate, paste0("Poles_Attrac","_Bas"),
            plotFun = reactive(
              Poles_Attrac(filtredBas$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Poles_Attrac","_Bas"),
            user = input$userName,
@@ -214,16 +208,15 @@ Poles_RT <- function(poles_data){
     facet_grid(~annee, space = "free_x",  scales = "free_x") +
     scale_x_log10() + scale_y_log10() +
     ggtitle("Évolution rang-taille de la composition des pôles") +
-    theme(legend.position = "bottom") +
     xlab("Rang (log10)") + ylab("Nombre d'attracteurs (log10)") +
-    labs(subtitle = "Variabilité : Moyenne, Q1 et Q3 des Réplications")
+    labs(subtitle = "Variabilité : Moyenne, Q1 et Q3 des Réplications")+
+    theme_simedb()
 }
 
 callModule(plotDownloadRate, paste0("Poles_RT","_Haut"),
            plotFun = reactive(
              Poles_RT(filtredHaut$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Poles_RT","_Haut"),
            user = input$userName,
@@ -232,8 +225,7 @@ callModule(plotDownloadRate, paste0("Poles_RT","_Haut"),
 callModule(plotDownloadRate, paste0("Poles_RT","_Bas"),
            plotFun = reactive(
              Poles_RT(filtredBas$poles) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Poles_RT","_Bas"),
            user = input$userName,

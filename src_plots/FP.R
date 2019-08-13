@@ -55,18 +55,17 @@ FP_TypeDeplacements_agg <- function(FP_data){
     collect() %>%
     gather(key = type_migration, value = taux, -seed, -sim_name, -annee)
     
-
   p1 <- ggplot(types_migrations, aes(factor(annee), taux, col = type_migration)) +
     geom_tufteboxplot(size = 1) +
     geom_line() +
     facet_wrap(~ type_migration) +
     scale_y_continuous(labels = percent) +
     scale_color_discrete(guide = FALSE) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(legend.position = "bottom") +
     xlab("Temps") + ylab("% de migration") +
     ggtitle("Migrations des foyers paysans") +
-    labs(subtitle = "Variabilité : foyers paysans et réplications")
+    labs(subtitle = "Variabilité : foyers paysans et réplications") +
+    theme_simedb_rotate_x()
+    
   p1
 }
 
@@ -74,8 +73,7 @@ FP_TypeDeplacements_agg <- function(FP_data){
 callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Haut"),
            plotFun = reactive(
              FP_TypeDeplacements_agg(filtredHaut$FP) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("FP_TypeDeplacements","_Haut"),
            user = input$userName,
@@ -83,8 +81,7 @@ callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Haut"),
 callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Bas"),
            plotFun = reactive(
              FP_TypeDeplacements_agg(filtredBas$FP) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("FP_TypeDeplacements","_Bas"),
            user = input$userName,
@@ -198,20 +195,16 @@ FP_DeplacementsDetail_agg <- function(FP_data){
     scale_y_continuous(labels = percent) +
     ggtitle("Détail du type de migrations des foyers paysans") +
     scale_fill_discrete(name = "Destination choisie") +
-    theme(axis.text.x = element_blank(),
-          axis.line.x = element_blank(),
-          axis.ticks.x = element_blank()) +
-    theme(legend.position = "bottom") +
     guides(fill = guide_legend(title.position = "top")) +
-    labs(subtitle = "Variabilité : Moyenne/Min/Max des réplications")
+    labs(subtitle = "Variabilité : Moyenne/Min/Max des réplications") +
+    theme_simedb_no_x()
 }
 
 
 callModule(plotDownloadRate, paste0("FP_DeplacementsDetail","_Haut"),
            plotFun = reactive(
              FP_DeplacementsDetail_agg(filtredHaut$FP) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("FP_DeplacementsDetail","_Haut"),
            user = input$userName,
@@ -219,8 +212,7 @@ callModule(plotDownloadRate, paste0("FP_DeplacementsDetail","_Haut"),
 callModule(plotDownloadRate, paste0("FP_DeplacementsDetail","_Bas"),
            plotFun = reactive(
              FP_DeplacementsDetail_agg(filtredBas$FP) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("FP_DeplacementsDetail","_Bas"),
            user = input$userName,
@@ -236,14 +228,14 @@ FP_Concentration <- function(results_data){
     ggtitle("Évolution de la part de foyers paysans isolés") +
     xlab("Temps") + ylab("Taux de foyers paysans isolés") +
     scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb()
 }
 
 callModule(plotDownloadRate, paste0("FP_Concentration","_Haut"),
            plotFun = reactive(
              FP_Concentration(filtredHaut$results) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("FP_Concentration","_Haut"),
            user = input$userName,
@@ -251,8 +243,7 @@ callModule(plotDownloadRate, paste0("FP_Concentration","_Haut"),
 callModule(plotDownloadRate, paste0("FP_Concentration","_Bas"),
            plotFun = reactive(
              FP_Concentration(filtredBas$results) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("FP_Concentration","_Bas"),
            user = input$userName,
@@ -395,7 +386,7 @@ FP_Satisfaction_agg <- function(FP_data){
     ggtitle("Évolution de la satisfaction des foyers paysans") +
     xlab("Temps") + ylab("Distribution (en %)") +
     labs(subtitle = "Variabilité : Ensemble des réplications") +
-    theme(legend.position = "bottom") +
+    theme_simedb() +
     guides(fill = guide_legend(title.position = "top", nrow = 1, title.hjust = 0.5,
                                label.position = "bottom", label.hjust = 0.5, keywidth = 2)) +
     theme(strip.text.y = element_text(size = 8),
@@ -406,8 +397,7 @@ FP_Satisfaction_agg <- function(FP_data){
 callModule(plotDownloadRate, paste0("FP_Satisfaction","_Haut"),
            plotFun = reactive(
              FP_Satisfaction_agg(filtredHaut$FP) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("FP_Satisfaction","_Haut"),
            user = input$userName,
@@ -415,8 +405,7 @@ callModule(plotDownloadRate, paste0("FP_Satisfaction","_Haut"),
 callModule(plotDownloadRate, paste0("FP_Satisfaction","_Bas"),
            plotFun = reactive(
              FP_Satisfaction_agg(filtredBas$FP) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("FP_Satisfaction","_Bas"),
            user = input$userName,

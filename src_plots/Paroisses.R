@@ -17,14 +17,13 @@ Paroisses_Nb <- function(results_data){
     xlab("Temps") + ylab("Nombre d'églises") +
     ggtitle("Évolution du nombre de paroisses") +
     labs(subtitle = "Variabilité : Réplications") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    theme_simedb_rotate_x()
 }
 
 callModule(plotDownloadRate, paste0("Paroisses_Nb","_Haut"),
            plotFun = reactive(
              Paroisses_Nb(filtredHaut$results) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
              ),
            plotName = paste0("Paroisses_Nb","_Haut"),
            user = input$userName,
@@ -33,8 +32,7 @@ callModule(plotDownloadRate, paste0("Paroisses_Nb","_Haut"),
 callModule(plotDownloadRate, paste0("Paroisses_Nb","_Bas"),
            plotFun = reactive(
              Paroisses_Nb(filtredBas$results) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
              ),
            plotName = paste0("Paroisses_Nb","_Bas"),
            user = input$userName,
@@ -60,14 +58,13 @@ Paroisses_Compo <- function(paroisses_data){
     scale_x_discrete(drop = FALSE) +
     ggtitle("Évolution du nombre de foyers paysans par paroisse") +
     labs(subtitle = "Variabilité : Réplications") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    theme_simedb_rotate_x()
 }
 
 callModule(plotDownloadRate, paste0("Paroisses_Compo","_Haut"),
            plotFun = reactive(
              Paroisses_Compo(filtredHaut$paroisses) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Paroisses_Compo","_Haut"),
            user = input$userName,
@@ -76,8 +73,7 @@ callModule(plotDownloadRate, paste0("Paroisses_Compo","_Haut"),
 callModule(plotDownloadRate, paste0("Paroisses_Compo","_Bas"),
            plotFun = reactive(
              Paroisses_Compo(filtredBas$paroisses) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Paroisses_Compo","_Bas"),
            user = input$userName,
@@ -102,14 +98,13 @@ Paroisses_Promo <- function(paroisses_data){
     xlab("Temps") + ylab("Nouvelles paroisses") +
     ggtitle("Évolution des modes de création de nouvelles paroisses") +
     labs(subtitle = "Variabilité : Réplications") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    theme_simedb_rotate_x()
 }
 
 callModule(plotDownloadRate, paste0("Paroisses_Promo","_Haut"),
            plotFun = reactive(
              Paroisses_Promo(filtredHaut$paroisses) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Paroisses_Promo","_Haut"),
            user = input$userName,
@@ -118,8 +113,7 @@ callModule(plotDownloadRate, paste0("Paroisses_Promo","_Haut"),
 callModule(plotDownloadRate, paste0("Paroisses_Promo","_Bas"),
            plotFun = reactive(
              Paroisses_Promo(filtredBas$paroisses) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Paroisses_Promo","_Bas"),
            user = input$userName,
@@ -146,15 +140,14 @@ Paroisses_Superficie <- function(paroisses_data){
     facet_wrap(~annee) +
     xlab("Superficie de l'aire de desserte des églises paroissiales (km²)") + ylab("Fréquence") +
     ggtitle("Évolution de l'aire de desserte des églises paroissiales") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(subtitle = "Variabilité : Réplications")
+    labs(subtitle = "Variabilité : Réplications") +
+    theme_simedb_rotate_x()
 }
 
 callModule(plotDownloadRate, paste0("Paroisses_Superficie","_Haut"),
            plotFun = reactive(
              Paroisses_Superficie(filtredHaut$paroisses) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Paroisses_Superficie","_Haut"),
            user = input$userName,
@@ -163,8 +156,7 @@ callModule(plotDownloadRate, paste0("Paroisses_Superficie","_Haut"),
 callModule(plotDownloadRate, paste0("Paroisses_Superficie","_Bas"),
            plotFun = reactive(
              Paroisses_Superficie(filtredBas$paroisses) +
-               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt)) +
-               theme(plot.caption = element_text(size = 6, hjust = 0))
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Paroisses_Superficie","_Bas"),
            user = input$userName,
