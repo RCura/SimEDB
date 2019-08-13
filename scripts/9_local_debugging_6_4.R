@@ -1,6 +1,6 @@
-source("packages.R")
+options( java.parameters = c("-Xss2560k", "-Xmx7g") ) # Needed fix for rJava (JDBC) + ggplot2
 
-options( java.parameters = c("-Xss2560k") ) # Needed fix for rJava (JDBC) + ggplot2
+source("packages.R")
 
 # drv <- JDBC("com.mapd.jdbc.MapDDriver",
 #             "/data/user/c/rcura/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
@@ -11,8 +11,8 @@ drv2 <- JDBC("com.omnisci.jdbc.OmniSciDriver",
             identifier.quote="'")
 
 
-conMapD <- dbConnect(drv, "jdbc:mapd:mapdi.cura.info:9091:mapd", "mapd", "HyperInteractive")
-#conMapD <- dbConnect(drv2, "jdbc:omnisci:mapdi.cura.info:6274:omnisci", "admin", "HyperInteractive")
+#conMapD <- dbConnect(drv2, "jdbc:mapd:mapdi.cura.info:9091:mapd", "mapd", "HyperInteractive")
+conMapD <- dbConnect(drv2, "jdbc:omnisci:mapdi.cura.info:6274:omnisci", "admin", "HyperInteractive")
 
 seeds <- tbl(conMapD, "seeds_6_4")
 agregats <- tbl(conMapD, "agregats_6_4")
@@ -28,7 +28,7 @@ chateaux <- tbl(conMapD, "chateaux_6_4")
 ##############################################################
 ##############################################################
 
-sample_sim_name <- "6_5"
+sample_sim_name <- "6_5_1"
 
 FP_data <- fp %>% filter(sim_name %in% !!sample_sim_name)
 results_data <- results %>% filter(sim_name %in% !!sample_sim_name)

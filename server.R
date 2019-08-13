@@ -1,11 +1,14 @@
 library(shiny)
+options(warn=1)
+#options(shiny.fullstacktrace = TRUE)
+options(shiny.error = browser)
 
 shinyServer(function(session, input, output) {
   
   # Connection to DB system (for MapD at least)
   # drv declared in global
-  conMapD <- dbConnect(drv, "jdbc:omnisci:mapdi.cura.info:9091:mapd", "mapd", "HyperInteractive")
-  # seeds <- tbl(conMapD, "seeds_5_1")
+  conMapD <- dbConnect(omnisci_driver, "jdbc:omnisci:mapdi.cura.info:6274:omnisci", "admin", "HyperInteractive")
+  # seeds <- tbl(conMapD, "seeds_5_1")runA
   # agregats <- tbl(conMapD, "agregats_5_1")
   # fp <- tbl(conMapD, "fp_5_1")
   # parameters <- tbl(conMapD, "parameters_5_1")
@@ -144,7 +147,16 @@ shinyServer(function(session, input, output) {
   })
   
   # ---------------- Parallel Coordinates Filtering -----------------
-
+  
+  # Update filtredSeeds
+  update_SimNames <- function(selected_expe){
+    selected_expe %>%
+      as_tibble() %>%
+      set_colnames("sim_name") %>%
+      gather(parametre, valeurs) %>%
+      distinct() %>%
+      arrange(parametre, valeurs)
+  }
   
   filtredSeedsHaut_plotly <- reactive({
     req(sim$seeds)
@@ -159,12 +171,7 @@ shinyServer(function(session, input, output) {
     if ("sim_name" %in% colonnes_filtres){
       simNames <- NULL
     } else {
-      simNames <- isolate(selected_experiments_debounced()) %>%
-        as_tibble() %>%
-        set_colnames("sim_name") %>%
-        gather(parametre, valeurs) %>%
-        distinct() %>%
-        arrange(parametre, valeurs)
+      simNames <- update_SimNames(isolate(selected_experiments_debounced()))
     }
     
     
@@ -197,7 +204,7 @@ shinyServer(function(session, input, output) {
       mutate(seed = as.numeric(seed)) %>%
       # mutate_at(vars(numericParameters), as.numeric) %>%
       # mutate_at(vars(characterParameters), char_to_num) %>%
-      mutate_if(is.character, funs(char = char_to_num)) %>%
+      mutate_if(is.character, list(char = char_to_num)) %>%
       filter(!!!expressions_filtres)
     
     if (length(colonnes_filtres) > 0){
@@ -234,30 +241,25 @@ shinyServer(function(session, input, output) {
   
   filtredSeedsBas_plotly <- reactive({
     req(sim$seeds)
-    
+
     if (is.null(input$plotly_brushed_bas)){
       return(list())
     }
-    
+
     expressions_filtres <- expression_from_input(input$plotly_brushed_bas)
     colonnes_filtres <- parametres_from_input(input$plotly_brushed_bas)
-    
+
     if ("sim_name" %in% colonnes_filtres){
       simNames <- NULL
     } else {
-      simNames <- isolate(selected_experiments_debounced()) %>%
-        as_tibble() %>%
-        set_colnames("sim_name") %>%
-        gather(parametre, valeurs) %>%
-        distinct() %>%
-        arrange(parametre, valeurs)
+      simNames <- update_SimNames(isolate(selected_experiments_debounced()))
     }
-    
+
     selected_table <- parameters_data() %>%
       mutate(seed = as.numeric(seed)) %>%
-      mutate_if(is.character, funs(char = char_to_num)) %>%
+      mutate_if(is.character, list(char = char_to_num)) %>%
       filter(!!!expressions_filtres)
-    
+
     if (length(colonnes_filtres) > 0){
       tablesParams$bas <- selected_table %>%
         select(!!!colonnes_filtres) %>%
@@ -276,12 +278,12 @@ shinyServer(function(session, input, output) {
         mutate(valeurs = map_chr(data, ~ unlist(.x, use.names = FALSE) %>% paste(., collapse = " ; "))) %>%
         select(parametre, valeurs)
     }
-    
-    
+
+
     selected_seeds <- selected_table %>%
       mutate(seed = as.character(seed)) %>%
       pull((seed))
-    
+
     if (length(selected_seeds) >= 1){
       selected_seeds
     } else {
@@ -296,12 +298,12 @@ shinyServer(function(session, input, output) {
         mutate(seed = if_else(condition = nchar(seed) < 10,
                               true = sprintf("%.7f", as.numeric(seed)),
                               false = seed))
-      for (df in names(filtredHaut)){
-        filtredHaut[[df]] <- sim[[df]] %>% filter(seed %in% brushedSeeds$seed)
+      for (this_df in names(filtredHaut)){
+        filtredHaut[[this_df]] <- sim[[this_df]] %>% filter(seed %in% local(brushedSeeds$seed))
       }
     } else {
-      for (df in names(filtredHaut)){
-        filtredHaut[[df]] <- sim[[df]]
+      for (this_df in names(filtredHaut)){
+        filtredHaut[[this_df]] <- sim[[this_df]]
       }
     }
   })
@@ -312,12 +314,12 @@ shinyServer(function(session, input, output) {
         mutate(seed = if_else(condition = nchar(seed) < 10,
                               true = sprintf("%.7f", as.numeric(seed)),
                               false = seed))
-      for (df in names(filtredBas)){
-        filtredBas[[df]] <- sim[[df]] %>% filter(seed %in% brushedSeeds$seed)
+      for (this_df in names(filtredBas)){
+        filtredBas[[this_df]] <- sim[[this_df]] %>% filter(seed %in% local(brushedSeeds$seed))
       }
     } else {
-      for (df in names(filtredBas)){
-        filtredBas[[df]] <- sim[[df]]
+      for (this_df in names(filtredBas)){
+        filtredBas[[this_df]] <- sim[[this_df]]
       }
     }
   })
@@ -332,7 +334,8 @@ shinyServer(function(session, input, output) {
         purrr::transpose() %>%
         purrr::map(~unlist(.x)) %>%
         purrr::map(~paste0(.x, collapse = " : [")) %>%
-        paste0(., collapse = "]\n")
+        paste0(., collapse = "]\n") %>%
+        paste0(., "]")
     } else {
       selection <- params %>%
         purrr::transpose() %>%
@@ -351,7 +354,8 @@ shinyServer(function(session, input, output) {
         purrr::transpose() %>%
         purrr::map(~unlist(.x)) %>%
         purrr::map(~paste0(.x, collapse = " : [")) %>%
-        paste0(., collapse = "]\n")
+        paste0(., collapse = "]\n") %>%
+        paste0(., "]")
     } else {
       selection <- params %>%
         purrr::transpose() %>%
@@ -359,70 +363,6 @@ shinyServer(function(session, input, output) {
         paste0(., "]")
     }
     tablesParams$basTxt <-  selection
-  })
-  
-  output$paramPC_Haut <- renderPlotly({
-    parcoords_data <- parameters_data() %>%
-      arrange(seed) %>%
-      rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = "_")))
-    
-    parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
-    
-    p <-  plot_ly(source = 'parcoords_haut') %>%
-      add_trace(data = parcoords_data,
-                type = 'parcoords',
-                dimensions = parcoords_dims,
-                line = list(color = "blue")
-      )
-    
-    onRender(p, "function(el, x) {
-    el.on('plotly_restyle', function(d) {
-      var blob = el.data[0].dimensions.map(function(x){return({label: x.label, constraintrange: x.constraintrange})});
-      Shiny.setInputValue('plotly_brushed_haut', JSON.stringify(blob));
-    });
-  }")
-  })
-  
-  output$paramPC_Bas <- renderPlotly({
-    parcoords_data <- parameters_data() %>%
-      arrange(seed) %>%
-      rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = "_")))
-    
-    parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
-    
-    p <-  plot_ly(source = 'parcoords_bas') %>%
-      add_trace(data = parcoords_data,
-                type = 'parcoords',
-                dimensions = parcoords_dims,
-                line = list(color = "blue")
-      )
-    
-    onRender(p, "function(el, x) {
-           el.on('plotly_restyle', function(d) {
-           var blob = el.data[0].dimensions.map(function(x){return({label: x.label, constraintrange: x.constraintrange})});
-           Shiny.setInputValue('plotly_brushed_bas', JSON.stringify(blob));
-           });
-}")
-  })
-  
-  char_to_num <- function(x){
-    MyFactors <- as.character(x) %>% unique() %>% sort() %>% as.factor()
-    if (isTRUE(all(as.character(as.numeric(levels(MyFactors))) == levels(MyFactors)))){
-      MyFactorsLvls <- levels(MyFactors) %>% as.numeric() %>% sort() %>% as.character()
-      MyFactors <- fct_relevel(MyFactors, MyFactorsLvls)
-    }
-    values <- x %>% factor(levels = levels(MyFactors)) %>% as.numeric()
-    return(values)
-  }
-
-  
-  output$dataVolumeHaut <- renderText({
-    print(123)
-    blob <- filtredHaut$parameters %>% distinct(seed, sim_name) %>% count() %>% collect() %>% pull()
-    sprintf("%s simulations sélectionnées sur un total de %s",
-            blob,
-            sim$parameters %>% distinct(seed, sim_name) %>% count() %>% collect() %>% pull()
-    )
   })
   
   # Debug module
@@ -446,7 +386,6 @@ shinyServer(function(session, input, output) {
   # Cf. https://shiny.rstudio.com/reference/shiny/latest/onStop.html
   onStop(function(){
     dbDisconnect(conMapD)
-    rm(conMapD)
     gc()
     }
   )

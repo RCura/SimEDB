@@ -1,12 +1,11 @@
-source("packages.R")
-gc()
 options( java.parameters = c("-Xss2560k", "-Xmx7g") ) # Needed fix for rJava (JDBC) + ggplot2
+source("packages.R")
 
-drv <- JDBC("com.omnisci.jdbc.OmniSciDriver",
-            "/data/user/c/rcura/omnisci-jdbc-4.6.1.jar",
-            identifier.quote="'")
+omnisci_driver <- JDBC("com.omnisci.jdbc.OmniSciDriver",
+                       "/data/user/c/rcura/omnisci-jdbc-4.7.1.jar",
+                       identifier.quote="'")
 gc()
-conMapD <- dbConnect(drv, "jdbc:omnisci:mapdi.cura.info:9091:mapd", "mapd", "HyperInteractive")
+conMapD <- dbConnect(omnisci_driver, "jdbc:omnisci:mapdi.cura.info:6274:omnisci", "admin", "HyperInteractive")
 #parameters <- tbl(conMapD, "parameters_6_1")
 #parameters <- tbl(conMapD, "parameters_6_3")
 parameters <- tbl(conMapD, "parameters_6_4")
@@ -19,6 +18,7 @@ all_sim_names <- parameters %>%
   pull()
 
 dbDisconnect(conMapD)
+rm(conMapD)
 
 source("src_plots/plotDownloadRate_module.R")
 
@@ -58,3 +58,4 @@ theme_simedb_seigneurs <- function(x){
   theme_simedb_rotate_x() +
     theme(axis.title.y = element_blank(), axis.title.x = element_blank()) +
     theme(plot.title = element_text(size = rel(1), face = "italic"))
+}

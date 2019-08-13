@@ -1,6 +1,6 @@
 CREATE TABLE seeds_6_4 (
 seed TEXT ENCODING DICT(16),
-sim_name TEXT ENCODING DICT(8)
+sim_name TEXT ENCODING DICT(16)
 );
 
 
