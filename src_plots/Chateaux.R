@@ -18,7 +18,7 @@ callModule(plotDownloadRate, paste0("Chateaux_Nb","_Haut"),
              Chateaux_Nb(filtredHaut$chateaux) +
                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
-           plotName = paste0("Poles_Nb","_Haut"),
+           plotName = paste0("Chateaux_Nb","_Haut"),
            user = input$userName,
            seeds = filtredSeedsHaut_plotly())
 
@@ -27,7 +27,7 @@ callModule(plotDownloadRate, paste0("Chateaux_Nb","_Bas"),
              Chateaux_Nb(filtredBas$chateaux) +
                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
-           plotName = paste0("Poles_Nb","_Bas"),
+           plotName = paste0("Chateaux_Nb","_Bas"),
            user = input$userName,
            seeds = filtredSeedsBas_plotly())
 
@@ -64,7 +64,7 @@ callModule(plotDownloadRate, paste0("Chateaux_Proprio","_Haut"),
              Chateaux_Proprio(filtredHaut$chateaux) +
                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
-           plotName = paste0("Poles_Nb","_Haut"),
+           plotName = paste0("Chateaux_Proprio","_Haut"),
            user = input$userName,
            seeds = filtredSeedsHaut_plotly())
 
@@ -73,7 +73,7 @@ callModule(plotDownloadRate, paste0("Chateaux_Proprio","_Bas"),
              Chateaux_Proprio(filtredBas$chateaux) +
                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
-           plotName = paste0("Poles_Nb","_Bas"),
+           plotName = paste0("Chateaux_Proprio","_Bas"),
            user = input$userName,
            seeds = filtredSeedsBas_plotly())
 
@@ -111,7 +111,7 @@ callModule(plotDownloadRate, paste0("Chateaux_Type","_Haut"),
              Chateaux_Type(filtredHaut$chateaux) +
                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
-           plotName = paste0("Poles_Nb","_Haut"),
+           plotName = paste0("Chateaux_Type","_Haut"),
            user = input$userName,
            seeds = filtredSeedsHaut_plotly())
 
@@ -120,6 +120,6 @@ callModule(plotDownloadRate, paste0("Chateaux_Type","_Bas"),
              Chateaux_Type(filtredBas$chateaux) +
                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
-           plotName = paste0("Poles_Nb","_Bas"),
+           plotName = paste0("Chateaux_Type","_Bas"),
            user = input$userName,
            seeds = filtredSeedsBas_plotly())

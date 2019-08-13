@@ -80,7 +80,7 @@ Agregats_Paroisses <- function(agregats_data, poles_data){
     ungroup()%>%
     collect()
   
-  nb_agregats_paroisses <- agregats %>%
+  nb_agregats_paroisses <- agregats_data %>%
     select(id_agregat, sim_name, seed, annee, monpole) %>%
     left_join(poles_data %>%
                 select(sim_name, seed, annee, id_pole, monagregat, nb_paroisses),
@@ -157,7 +157,7 @@ Agregats_NbParoisses <- function(poles_data){
 
 callModule(plotDownloadRate, paste0("Agregats_NbParoisses","_Haut"),
            plotFun = reactive(
-             Agregats_Paroisses(poles_data = filtredHaut$poles) +
+             Agregats_NbParoisses(poles_data = filtredHaut$poles) +
                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
            ),
            plotName = paste0("Agregats_NbParoisses","_Haut"),
@@ -165,7 +165,7 @@ callModule(plotDownloadRate, paste0("Agregats_NbParoisses","_Haut"),
            seeds = filtredSeedsHaut_plotly())
 callModule(plotDownloadRate, paste0("Agregats_NbParoisses","_Bas"),
            plotFun = reactive(
-             Agregats_Paroisses(poles_data = filtredBas$poles) +
+             Agregats_NbParoisses(poles_data = filtredBas$poles) +
                labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
            ),
            plotName = paste0("Agregats_NbParoisses","_Bas"),
@@ -287,36 +287,13 @@ agregats_distribution <- function(agregats_data){
   distrib_agregats[2,2:6] <- paste0(as.character(round(as.numeric(distrib_agregats[2,2:6]) * 100, digits = 1)), "%")
   distrib_agregats
 }
+
+output$Agregats_Distribution_Haut <- renderTable({
+  req(filtredHaut$agregats)
+  agregats_distribution(agregats_data = filtredHaut$agregats)
 })
 
 output$Agregats_Distribution_Bas <- renderTable({
   req(filtredBas$agregats)
-  nb_fp_breaks <- c(-1,100, 200, 300, 400, 1E12)
-  nb_fp_labels <- c("<100", "101-200", "201-300", "301-400", ">400")
-  agregats_data <- filtredBas$agregats
-  
-  distrib_agregats <- agregats_data %>%
-    filter(annee == 1200) %>%
-    select(seed, nombre_fp_agregat) %>%
-    collect() %>%
-    mutate(nb_fp_breaks = cut(nombre_fp_agregat, breaks =nb_fp_breaks, labels = nb_fp_labels)) %>%
-    group_by(seed, nb_fp_breaks) %>%
-    summarise(nb_agregats = n()) %>%
-    group_by(seed) %>%
-    mutate(nb_total_agregats = sum(nb_agregats, na.rm = TRUE)) %>%
-    ungroup() %>%
-    mutate(tx_agregats = nb_agregats / nb_total_agregats) %>%
-    select(-nb_total_agregats) %>%
-    group_by(nb_fp_breaks) %>%
-    summarise(`Nombre moyen` = mean(nb_agregats, na.rm = TRUE),
-              `Taux moyen` = mean(tx_agregats, na.rm = TRUE)) %>%
-    rename(`Nombre de foyers paysans` = nb_fp_breaks ) %>%
-    t() %>%
-    as_tibble(rownames = "Type") %>%
-    set_colnames(.[1,]) %>%
-    slice(-1)
-  
-  distrib_agregats[1,2:6] <- as.character(round(as.numeric(distrib_agregats[1,2:6]), digits = 2))
-  distrib_agregats[2,2:6] <- paste0(as.character(round(as.numeric(distrib_agregats[2,2:6]) * 100, digits = 1)), "%")
-  distrib_agregats
+  agregats_distribution(agregats_data = filtredBas$agregats)
 })
