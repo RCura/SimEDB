@@ -1,7 +1,6 @@
 library(shiny)
-options(warn=1)
-#options(shiny.fullstacktrace = TRUE)
-options(shiny.error = browser)
+# options(warn=1)
+# options(shiny.error = browser)
 
 shinyServer(function(session, input, output) {
   

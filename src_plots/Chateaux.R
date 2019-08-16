@@ -56,7 +56,8 @@ Chateaux_Proprio <- function(chateaux_data){
     scale_colour_manual(values = cols, aesthetics = c("colour", "fill")) +
     theme_simedb() +
     theme(panel.grid.major.x = element_blank()) +
-    scale_y_continuous(breaks = seq(0,100, 10), minor_breaks = seq(0,100, 5))
+    scale_y_continuous(breaks = seq(0,100, 10), minor_breaks = seq(0,100, 5)) +
+    guides(fill = FALSE, colour = FALSE)
 }
 
 callModule(plotDownloadRate, paste0("Chateaux_Proprio","_Haut"),
@@ -102,7 +103,8 @@ Chateaux_Type <- function(chateaux_data){
     scale_colour_manual(values = cols, aesthetics = c("colour", "fill")) +
     theme_simedb()+
     theme(panel.grid.major.x = element_blank()) +
-    scale_y_continuous(breaks = seq(0,100, 10), minor_breaks = seq(0,100, 5))
+    scale_y_continuous(breaks = seq(0,100, 10), minor_breaks = seq(0,100, 5)) +
+    guides(fill = FALSE, colour = FALSE)
     
 }
 

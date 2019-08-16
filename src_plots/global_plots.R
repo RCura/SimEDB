@@ -118,8 +118,8 @@ summarise_results <- function(reactiveList){
     left_join(surface_monde, by = "seed") %>%
     mutate(densite_fp = nb_fp / superficie_monde) %>%
     select(-seed,-sim_name, -superficie_monde) %>%
-    rename_all(funs(gsub(x = ., pattern = "_", replacement = "."))) %>%
-    summarise_if(is.numeric,funs(
+    rename_all(~gsub(x = ., pattern = "_", replacement = ".")) %>%
+    summarise_if(is.numeric, .funs = funs(
       Moyenne = mean,
       Mediane = median,
       Q1 = quantile(., na.rm = TRUE, probs = .25),
@@ -217,7 +217,7 @@ output$dataVolumeBas <- renderText({
 output$paramPC_Haut <- renderPlotly({
   parcoords_data <- parameters_data() %>%
     arrange(seed) %>%
-    rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = "_")))
+    rename_all(~str_replace_all(., pattern = "_", replacement = "_"))
 
   parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
 
@@ -239,7 +239,7 @@ output$paramPC_Haut <- renderPlotly({
 output$paramPC_Bas <- renderPlotly({
   parcoords_data <- parameters_data() %>%
     arrange(seed) %>%
-    rename_all(.funs = funs(str_replace_all(., pattern = "_", replacement = "_")))
+    rename_all(~str_replace_all(., pattern = "_", replacement = "_"))
 
   parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
 
