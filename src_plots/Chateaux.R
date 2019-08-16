@@ -105,7 +105,7 @@ Chateaux_Type <- function(chateaux_data){
     theme(panel.grid.major.x = element_blank()) +
     scale_y_continuous(breaks = seq(0,100, 10), minor_breaks = seq(0,100, 5)) +
     guides(fill = FALSE, colour = FALSE)
-    
+  
 }
 
 callModule(plotDownloadRate, paste0("Chateaux_Type","_Haut"),

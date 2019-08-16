@@ -90,6 +90,13 @@ shinyUI(navbarPage(
                                               tags$h4("Distribution des agrégats par classe de taille en fin de simulation"),
                                               tableOutput("Agregats_Distribution_Bas")
                                               ),
+                                     tabPanel("Taille des agrégats principaux",
+                                              tags$h4("Tailles des 4 plus importants agrégats (en nombre de foyers paysans)"),
+                                              tableOutput("Agregats_Taille_Haut"),
+                                              tags$hr(),
+                                              tags$h4("Tailles des 4 plus importants agrégats (en nombre de foyers paysans)"),
+                                              tableOutput("Agregats_Taille_Bas")
+                                     ),
                                      tabPanel("Pôles", 
                                               plotDownloadRateUI("Agregats_Poles_Haut", position = "haut"),
                                               tags$hr(),

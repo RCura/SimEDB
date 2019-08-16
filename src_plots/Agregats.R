@@ -259,8 +259,8 @@ callModule(plotDownloadRate, paste0("Agregats_RT","_Bas"),
 
 
 agregats_distribution <- function(agregats_data){
-  nb_fp_breaks <- c(-1,100, 200, 300, 400, 1E12)
-  nb_fp_labels <- c("<100", "101-200", "201-300", "301-400", ">400")
+  nb_fp_breaks <- c(-1,100, 200, 300, 400, 600, 1E12)
+  nb_fp_labels <- c("<100", "101-200", "201-300", "301-400", "401-600",">600")
   
   distrib_agregats <- agregats_data %>%
     filter(annee == 1200) %>%
@@ -296,4 +296,42 @@ output$Agregats_Distribution_Haut <- renderTable({
 output$Agregats_Distribution_Bas <- renderTable({
   req(filtredBas$agregats)
   agregats_distribution(agregats_data = filtredBas$agregats)
+})
+
+
+
+agregats_taille <- function(agregats_data){
+  agregats_data %>%
+    select(seed, annee, nombre_fp_agregat) %>%
+    filter(annee == 1200) %>%
+    arrange(desc(nombre_fp_agregat)) %>%
+    collect() %>%
+    group_by(seed) %>%
+    mutate(rank = row_number(-nombre_fp_agregat)) %>%
+    ungroup() %>%
+    filter(rank <= 4) %>%
+    group_by(rank) %>%
+    summarise(mean = mean(nombre_fp_agregat, na.rm = TRUE),
+              med = median(nombre_fp_agregat, na.rm = TRUE),
+              sd = sd(nombre_fp_agregat, na.rm = TRUE),
+              min = min(nombre_fp_agregat, na.rm = TRUE),
+              max = max(nombre_fp_agregat, na.rm = TRUE)
+              ) %>%
+    transmute(
+      `Rang de l'agrégat` = rank,
+      Moyenne = as.integer(round(mean)),
+      `Médiane` = as.integer(round(med)),
+      StDev = as.integer(round(sd)),
+      Min = as.integer(round(min)),
+      Max = as.integer(round(max)))
+}
+
+output$Agregats_Taille_Haut <- renderTable({
+  req(filtredHaut$agregats)
+  agregats_taille(agregats_data = filtredHaut$agregats)
+})
+
+output$Agregats_Taille_Bas <- renderTable({
+  req(filtredBas$agregats)
+  agregats_taille(agregats_data = filtredBas$agregats)
 })
