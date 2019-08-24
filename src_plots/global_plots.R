@@ -185,17 +185,6 @@ output$summaryTable_Bas <- renderFormattable({
 
 # ---------------- Parallel Coordinates Plot -----------------
 
-
-char_to_num <- function(x){
-  MyFactors <- as.character(x) %>% unique() %>% sort() %>% as.factor()
-  if (isTRUE(all(as.character(as.numeric(levels(MyFactors))) == levels(MyFactors)))){
-    MyFactorsLvls <- levels(MyFactors) %>% as.numeric() %>% sort() %>% as.character()
-    MyFactors <- fct_relevel(MyFactors, MyFactorsLvls)
-  }
-  values <- x %>% factor(levels = levels(MyFactors)) %>% as.numeric()
-  return(values)
-}
-
 output$dataVolumeHaut <- renderText({
   blob <- filtredHaut$parameters %>% distinct(seed, sim_name) %>% count() %>% collect() %>% pull()
   sprintf("%s simulations sélectionnées sur un total de %s",
