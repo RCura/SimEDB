@@ -230,3 +230,62 @@ callModule(plotDownloadRate, paste0("Poles_RT","_Bas"),
            plotName = paste0("Poles_RT","_Bas"),
            user = input$userName,
            seeds = filtredSeedsBas_plotly())
+
+Poles_Carte <- function(poles_data){
+  
+  random_seeds <- poles_data %>%
+    select(seed) %>%
+    group_by(seed) %>%
+    tally() %>%
+    collect() %>%
+    sample_n(size = 2) %>%
+    pull(seed)
+  
+  poles_choisis <- poles_data %>%
+    filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
+    filter(seed %in% local(random_seeds)) %>%
+    select(seed, annee, attractivite, geom) %>%
+    collect() %>%
+    st_as_sf(wkt = "geom") %>%
+    st_centroid(., ) %>%
+    cbind(st_coordinates(.)) %>%
+    st_drop_geometry() %>%
+    as_tibble() %>%
+    rename(`Année` = annee) %>%
+    arrange(seed) %>%
+    group_by(seed) %>%
+    mutate(Simulation = group_indices()) %>%
+    ungroup() %>%
+    arrange(desc(attractivite))
+  
+  ggplot(poles_choisis) +
+    aes(X, Y, size = attractivite, colour = attractivite) +
+    geom_point() +
+    scale_size_continuous(name = "Attractivité", range = c(0.001, 2.5), breaks = seq(0, 1, 0.2)) +
+    scale_colour_viridis_c(name = "Attractivité", direction = -1,  breaks = seq(0, 1, 0.2), option = "cividis") + # viris for colour-blind
+    guides(color= guide_legend(), size=guide_legend()) +
+    coord_fixed() +
+    facet_grid(Simulation~`Année`, labeller = label_both) +
+    ggtitle("Attractivité des pôles au cours du temps") +
+    xlab("") + ylab("") +
+    labs(subtitle = "Variabilité : Aucune") +
+    theme_simedb_map()
+}
+
+callModule(plotDownloadRate, paste0("Poles_Carte","_Haut"),
+           plotFun = reactive(
+             Poles_Carte(filtredHaut$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
+           ),
+           plotName = paste0("Poles_Carte","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+
+callModule(plotDownloadRate, paste0("Poles_Carte","_Bas"),
+           plotFun = reactive(
+             Poles_Carte(filtredBas$poles) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
+           ),
+           plotName = paste0("Poles_Carte","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())

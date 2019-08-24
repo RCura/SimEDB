@@ -28,7 +28,7 @@ shinyUI(navbarPage(
                                            fluidRow(textInput("userName", "Utilisateur",  value = "Robin")),
                              fluidRow(selectInput("selectedSims",  label = "Experiences",
                                                    choices = all_sim_names,
-                                                  selected = c("6_5", "6_5_1"),
+                                                  selected = c("6_6_Scenarios", "6_6_Scenarios_base"),
                                                    multiple = TRUE)),
                              textOutput("dataVolumeHaut",inline =  TRUE),
                              fluidRow(column(12, style = "background-color: rgba(67, 162, 202, 0.3);",
@@ -121,7 +121,13 @@ shinyUI(navbarPage(
                                               plotDownloadRateUI("Agregats_RT_Haut", position = "haut"),
                                               tags$hr(),
                                               plotDownloadRateUI("Agregats_RT_Bas", position = "bas")
-                                     ))),
+                                     ),
+                                     tabPanel("Répartition",
+                                              plotDownloadRateUI("Agregats_Carte_Haut", position = "haut"),
+                                              tags$hr(),
+                                              plotDownloadRateUI("Agregats_Carte_Bas", position = "bas")
+                                     )
+                                     )),
                 tabPanel("Seigneurs",
                          tabsetPanel(id = "seigneursPlots",
                                      tabPanel("Nombre", 
@@ -205,6 +211,11 @@ shinyUI(navbarPage(
                                               plotDownloadRateUI("Poles_RT_Haut", position = "haut"),
                                               tags$hr(),
                                               plotDownloadRateUI("Poles_RT_Bas", position = "bas")
+                                     ),
+                                     tabPanel("Répartition", 
+                                              plotDownloadRateUI("Poles_Carte_Haut", position = "haut"),
+                                              tags$hr(),
+                                              plotDownloadRateUI("Poles_Carte_Bas", position = "bas")
                                      )
                          )),
                 tabPanel("Paroisses",
@@ -228,6 +239,11 @@ shinyUI(navbarPage(
                                               plotDownloadRateUI("Paroisses_Superficie_Haut", position = "haut"),
                                               tags$hr(),
                                               plotDownloadRateUI("Paroisses_Superficie_Bas", position = "bas")
+                                     ),
+                                     tabPanel("Répartition", 
+                                              plotDownloadRateUI("Paroisses_Carte_Haut", position = "haut"),
+                                              tags$hr(),
+                                              plotDownloadRateUI("Paroisses_Carte_Bas", position = "bas")
                                      )
                          )
                 )

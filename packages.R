@@ -30,4 +30,7 @@ suppressPackageStartupMessages({
   library(plotly) # Parallel coordinates plot
   library(htmlwidgets) # Custom call to onRender() for parallel coordinates
   library(jsonlite) # Handling htmlwidgets::onRender answer
+  
+  # Maps
+  library(sf)
 })

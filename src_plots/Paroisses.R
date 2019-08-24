@@ -161,3 +161,71 @@ callModule(plotDownloadRate, paste0("Paroisses_Superficie","_Bas"),
            plotName = paste0("Paroisses_Superficie","_Bas"),
            user = input$userName,
            seeds = filtredSeedsBas_plotly())
+
+
+Paroisses_Carte <- function(paroisses_data){
+  
+  random_seeds <- paroisses_data %>%
+    select(seed) %>%
+    group_by(seed) %>%
+    tally() %>%
+    collect() %>%
+    sample_n(size = 2) %>%
+    pull(seed)
+  
+  paroisses_choisies <- paroisses_data %>%
+    filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
+    filter(seed %in% local(random_seeds)) %>%
+    select(seed, annee, nb_fideles, geom) %>%
+    collect() %>%
+    st_as_sf(wkt = "geom") %>%
+    mutate(surface_m2 = st_area(.)) %>%
+    mutate(surface_km2 = surface_m2 / 1E6) %>%
+    mutate(densite = nb_fideles / surface_km2) %>%
+    rename(`Année` = annee) %>%
+    arrange(seed) %>%
+    group_by(seed) %>%
+    mutate(Simulation = group_indices()) %>%
+    ungroup() %>%
+    mutate(densite_cut = case_when(
+      densite < 1 ~ "<1",
+      densite <= 10 ~ "1-10",
+      densite <= 25 ~ "11-25",
+      densite <= 50 ~ "26-50",
+      densite <= 100 ~ "51-100",
+      densite > 100~ ">100"
+      )
+    ) %>%
+    mutate(densite_cut = factor(densite_cut, labels = c("<1", "1-10", "11-25", "26-50", "51-100", ">100")))
+    
+  
+  ggplot(paroisses_choisies) +
+    aes(fill = densite_cut) +
+    geom_sf(colour = "black", size = 0.1) +
+    scale_fill_brewer(name = "Densité\n(Foyers paysans / km²)", type = "seq") +
+    guides(fill = guide_legend(nrow = 1)) +
+    coord_sf() +
+    facet_grid(Simulation~`Année`, labeller = label_both) +
+    ggtitle("Densité de paroissiens au cours du temps") +
+    xlab("") + ylab("") +
+    labs(subtitle = "Variabilité : Aucune") +
+    theme_simedb_map()
+}
+
+callModule(plotDownloadRate, paste0("Paroisses_Carte","_Haut"),
+           plotFun = reactive(
+             Paroisses_Carte(filtredHaut$paroisses) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
+           ),
+           plotName = paste0("Paroisses_Carte","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+
+callModule(plotDownloadRate, paste0("Paroisses_Carte","_Bas"),
+           plotFun = reactive(
+             Paroisses_Carte(filtredBas$paroisses) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
+           ),
+           plotName = paste0("Paroisses_Carte","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())

@@ -335,3 +335,63 @@ output$Agregats_Taille_Bas <- renderTable({
   req(filtredBas$agregats)
   agregats_taille(agregats_data = filtredBas$agregats)
 })
+
+
+Agregats_Carte <- function(agregats_data){
+  
+  random_seeds <- agregats_data %>%
+    select(seed) %>%
+    group_by(seed) %>%
+    tally() %>%
+    collect() %>%
+    sample_n(size = 2) %>%
+    pull(seed)
+  
+  agregats_choisis <- agregats_data %>%
+    filter(annee %in% c(820, 900, 1000, 1100, 1200)) %>%
+    filter(seed %in% local(random_seeds)) %>%
+    select(seed, annee, nombre_fp_agregat, communaute, geom) %>%
+    filter(nombre_fp_agregat >= 20) %>%
+    collect() %>%
+    st_as_sf(wkt = "geom") %>%
+    st_centroid(., ) %>%
+    cbind(st_coordinates(.)) %>%
+    st_drop_geometry() %>%
+    as_tibble() %>%
+    rename(`Année` = annee) %>%
+    arrange(seed) %>%
+    group_by(seed) %>%
+    mutate(Simulation = group_indices()) %>%
+    ungroup()
+  
+  ggplot(agregats_choisis) +
+    aes(X, Y, size = nombre_fp_agregat, colour = communaute) +
+    geom_point() +
+    scale_color_manual(values = c("black", "red"), name = "Communauté rurale ?") +
+    scale_size_continuous(name = "Nombre de Foyers Paysans", range = c(.01, 3),
+                          breaks = c(10,50,100, 250, 500, 1000, 2000)) +
+    coord_fixed() +
+    facet_grid(Simulation~`Année`, labeller = label_both) +
+    ggtitle("Population des agrégats au cours du temps") +
+    xlab("") + ylab("") +
+    labs(subtitle = "Variabilité : Aucune / Agrégats représentés : population >= 20") +
+    theme_simedb_map()
+}
+
+callModule(plotDownloadRate, paste0("Agregats_Carte","_Haut"),
+           plotFun = reactive(
+             Agregats_Carte(filtredHaut$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$hautTxt))
+           ),
+           plotName = paste0("Agregats_Carte","_Haut"),
+           user = input$userName,
+           seeds = filtredSeedsHaut_plotly())
+
+callModule(plotDownloadRate, paste0("Agregats_Carte","_Bas"),
+           plotFun = reactive(
+             Agregats_Carte(filtredBas$agregats) +
+               labs(caption =  paste0("Paramètres de la sélection :\n", tablesParams$basTxt))
+           ),
+           plotName = paste0("Agregats_Carte","_Bas"),
+           user = input$userName,
+           seeds = filtredSeedsBas_plotly())
