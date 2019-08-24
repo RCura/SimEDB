@@ -11,7 +11,7 @@ library(glue)
 
 outputs_path <- "/data/user/c/rcura/"
 setwd(outputs_path)
-prefixe_files <- "6_5_1"
+prefixe_files <- "6_6_Scenarios_base"
 suffixe_tables <- "6_4"
 nb_replications_to_keep <- 20
 
@@ -184,5 +184,5 @@ rm(results_fp)
 #### Cleaning ####
 
 ssh_disconnect(session = session_ssh)
-rm(session_ssh, conMapD, connectToMapD)
+rm(session_ssh)
 

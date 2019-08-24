@@ -1,6 +1,8 @@
 options( java.parameters = c("-Xss2560k", "-Xmx7g") ) # Needed fix for rJava (JDBC) + ggplot2
 
 source("packages.R")
+source("src_plots/themes.R")
+
 
 # drv <- JDBC("com.mapd.jdbc.MapDDriver",
 #             "/data/user/c/rcura/mapd-1.0-SNAPSHOT-jar-with-dependencies.jar",
@@ -28,7 +30,7 @@ chateaux <- tbl(conMapD, "chateaux_6_4")
 ##############################################################
 ##############################################################
 
-sample_sim_name <- "6_5_1"
+sample_sim_name <- "6_6_Scenarios_base"
 
 FP_data <- fp %>% filter(sim_name %in% !!sample_sim_name)
 results_data <- results %>% filter(sim_name %in% !!sample_sim_name)
