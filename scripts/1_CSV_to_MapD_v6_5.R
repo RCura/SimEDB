@@ -11,12 +11,12 @@ library(glue)
 
 outputs_path <- "/data/user/c/rcura/"
 setwd(outputs_path)
-prefixe_files <- "6_6_Scenarios_base"
+prefixe_files <- "6_6_Scenarios"
 suffixe_tables <- "6_4"
 nb_replications_to_keep <- 20
 
 
-session_ssh <- ssh_connect("rcura@mapd.cura.info")
+session_ssh <- ssh::ssh_connect("rcura@mapd.cura.info")
 omnisci_driver <- JDBC("com.omnisci.jdbc.OmniSciDriver",
                           "/data/user/c/rcura/omnisci-jdbc-4.7.1.jar",
                           identifier.quote="'")
