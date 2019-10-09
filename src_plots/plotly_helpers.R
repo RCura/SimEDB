@@ -1,7 +1,17 @@
-create_dims <- function(df, index){
+create_dims <- function(df, index, constraints = NULL){
   label <- colnames(df)[index]
   values <- df %>% select(index) %>% pull()
-  returnList <- list(label = label, values = values, visible = TRUE, multiselect = FALSE)
+  
+  constraintrange <- ""
+  if (!is.null(constraints)){
+    constraintPosition <- match(label, map_chr(constraints, "label"))
+    if (!is.na(constraintPosition)){
+      constraintrange <- ifelse(!is.na(constraintPosition), yes = list(constraints[[constraintPosition]]$constraintrange), no = "")
+      constraintrange <- unlist(constraintrange)
+    }
+  }
+  
+  returnList <- list(label = label, values = values, constraintrange = constraintrange, visible = TRUE, multiselect = FALSE)
   if (is.numeric(values)){
     returnList[["range"]] <- c(min(values), max(values))
   } else {

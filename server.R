@@ -2,41 +2,23 @@ library(shiny)
 # options(warn=1)
 # options(shiny.error = browser)
 
-shinyServer(function(session, input, output) {
+shinyServer(function(input, output, session) {
+  
+  setBookmarkExclude(c(
+    "bookmarks",
+    ".clientValue-default-plotlyCrosstalkOpts",
+    "plotly_afterplot-parcoords_bas", 
+    "plotly_afterplot-parcoords_haut",
+    "plotHeight", "plotWidth",
+    "show_resultsPlot",
+    "selectedSims-selectized",
+    "plotly_brushed_haut", "plotly_brushed_bas"
+    ))
   
   # Connection to DB system (for MapD at least)
   # drv declared in global
   conMapD <- dbConnect(omnisci_driver, "jdbc:omnisci:mapdi.cura.info:6274:omnisci", "admin", "HyperInteractive")
-  # seeds <- tbl(conMapD, "seeds_5_1")runA
-  # agregats <- tbl(conMapD, "agregats_5_1")
-  # fp <- tbl(conMapD, "fp_5_1")
-  # parameters <- tbl(conMapD, "parameters_5_1")
-  # paroisses <- tbl(conMapD, "paroisses_5_1")
-  # poles <- tbl(conMapD, "poles_5_1")
-  # results <- tbl(conMapD, "results_5_1")
-  # seigneurs <- tbl(conMapD, "seigneurs_5_1")
-  
-  
-  # seeds <- tbl(conMapD, "seeds_6_1")
-  # agregats <- tbl(conMapD, "agregats_6_1")
-  # fp <- tbl(conMapD, "fp_6_1")
-  # parameters <- tbl(conMapD, "parameters_6_1")
-  # paroisses <- tbl(conMapD, "paroisses_6_1")
-  # poles <- tbl(conMapD, "poles_6_1")
-  # results <- tbl(conMapD, "global_6_1")
-  # seigneurs <- tbl(conMapD, "seigneurs_6_1")
-  # chateaux <- tbl(conMapD, "chateaux_6_1")
-  
-  # seeds <- tbl(conMapD, "seeds_6_3")
-  # agregats <- tbl(conMapD, "agregats_6_3")
-  # fp <- tbl(conMapD, "fp_6_3")
-  # parameters <- tbl(conMapD, "parameters_6_3")
-  # paroisses <- tbl(conMapD, "paroisses_6_3")
-  # poles <- tbl(conMapD, "poles_6_3")
-  # results <- tbl(conMapD, "global_6_3")
-  # seigneurs <- tbl(conMapD, "seigneurs_6_3")
-  # chateaux <- tbl(conMapD, "chateaux_6_3")
-  
+
   seeds <- tbl(conMapD, "seeds_6_4")
   agregats <- tbl(conMapD, "agregats_6_4")
   fp <- tbl(conMapD, "fp_6_4")
@@ -53,6 +35,8 @@ shinyServer(function(session, input, output) {
   oldBrushedHaut <- reactiveVal(value = NA)
   oldBrushedBas <- reactiveVal(value = NA)
   
+  bookmarks <- reactiveValues(constraintsHaut = NULL, constraintsBas = NULL)
+  
   sim <- reactiveValues(agregats = agregats, FP =  fp, parameters = parameters,
                         paroisses = paroisses, poles = poles, results = results,
                         seigneurs = seigneurs, seeds = seeds, chateaux = chateaux)
@@ -66,6 +50,9 @@ shinyServer(function(session, input, output) {
                                results = NULL, seigneurs = NULL, chateaux = NULL)
   
   tablesParams <- reactiveValues(haut = NULL, bas = NULL, hautTxt = NULL, basTxt = NULL)
+  
+  plotWidth <- reactive(input$plotWidth)
+  plotHeight <- reactive(input$plotHeight)
   
   # ---------------- Globally filtered experiments -----------------
   
@@ -160,12 +147,12 @@ shinyServer(function(session, input, output) {
   filtredSeedsHaut_plotly <- reactive({
     req(sim$seeds)
     
-    if (is.null(input$plotly_brushed_haut)){
+    if (is.null(bookmarks$constraintsHaut)){
       return(list())
     }
     
-    expressions_filtres <- expression_from_input(input$plotly_brushed_haut)
-    colonnes_filtres <- parametres_from_input(input$plotly_brushed_haut)
+    expressions_filtres <- expression_from_input(bookmarks$constraintsHaut)
+    colonnes_filtres <- parametres_from_input(bookmarks$constraintsHaut)
     
     if ("sim_name" %in% colonnes_filtres){
       simNames <- NULL
@@ -215,12 +202,12 @@ shinyServer(function(session, input, output) {
   filtredSeedsBas_plotly <- reactive({
     req(sim$seeds)
 
-    if (is.null(input$plotly_brushed_bas)){
+    if (is.null(bookmarks$constraintsBas)){
       return(list())
     }
 
-    expressions_filtres <- expression_from_input(input$plotly_brushed_bas)
-    colonnes_filtres <- parametres_from_input(input$plotly_brushed_bas)
+    expressions_filtres <- expression_from_input(bookmarks$constraintsBas)
+    colonnes_filtres <- parametres_from_input(bookmarks$constraintsBas)
 
     if ("sim_name" %in% colonnes_filtres){
       simNames <- NULL
@@ -365,6 +352,33 @@ shinyServer(function(session, input, output) {
     gc()
     }
   )
+  
+  
+  observe({
+    bookmarks$constraintsHaut <- input$plotly_brushed_haut
+  })
+  observe({
+    bookmarks$constraintsBas <- input$plotly_brushed_bas
+  })  
+  
+ observe({
+   # Trigger this observer every time an input changes
+   reactiveValuesToList(input)
+   session$doBookmark()
+ })
+ onBookmarked(function(url) {
+   updateQueryString(url)
+ })
+
+  onBookmark(session = session, fun = function(state) {
+    state$values$constraintsHaut <- input$plotly_brushed_haut
+    state$values$constraintsBas <- input$plotly_brushed_bas
+  })
+  
+  onRestored(function(state){
+    bookmarks$constraintsHaut <- state$values$constraintsHaut
+    bookmarks$constraintsBas <- state$values$constraintsBas
+  })
 
   
 })

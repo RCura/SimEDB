@@ -20,6 +20,8 @@ all_sim_names <- parameters %>%
 dbDisconnect(conMapD)
 rm(conMapD)
 
+enableBookmarking(store = "url")
+
 source("src_plots/plotDownloadRate_module.R")
 
 

@@ -1,8 +1,9 @@
 library(shiny)
 
+function(request){
 shinyUI(navbarPage(
-  "SimEDB",
-  tabPanel(title = "Simulation Exploration",
+  title= "SimEDB", id = "onglet",
+  tabPanel(title = "Simulation Exploration",value = "exploration",
            tags$head(
              tags$style(HTML("
                              .ui-resizable-handle{
@@ -51,6 +52,9 @@ shinyUI(navbarPage(
   ),
   options = list(handles = "e")),
   mainPanel(
+    fluidRow(
+      textOutput(outputId = "debug")
+    ),
     tabsetPanel(id = "detailPlots",type = "pills",
                 tabPanel("Objectifs généraux",
                          fluidRow(formattableOutput("summaryTable_Haut", width = "95%")),
@@ -289,5 +293,10 @@ shinyUI(navbarPage(
 	   #)#,
            #column(width =  10, div(id = "sensitivity_plots"))
   )
+  # ,
+  # fluidRow(
+  #   bookmarkButton(id = "bookmarks")
+  # )
 )
 )
+}

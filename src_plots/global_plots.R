@@ -208,7 +208,13 @@ output$paramPC_Haut <- renderPlotly({
     arrange(seed) %>%
     rename_all(~str_replace_all(., pattern = "_", replacement = "_"))
 
-  parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
+  constraints <- bookmarks$constraintsHaut
+  
+  if (!is.null(constraints)){
+    constraints <- jsonlite::fromJSON(txt = constraints, simplifyDataFrame = FALSE)
+  }
+  
+  parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x, constraints = constraints))
 
   p <-  plot_ly(source = 'parcoords_haut') %>%
     add_trace(data = parcoords_data,
@@ -219,7 +225,7 @@ output$paramPC_Haut <- renderPlotly({
 
   onRender(p, "function(el, x) {
     el.on('plotly_restyle', function(d) {
-      var blob = el.data[0].dimensions.map(function(x){return({label: x.label, constraintrange: x.constraintrange})});
+      var blob = el.data[0].dimensions.filter(dim => dim.constraintrange != '').map(function(x){return({label: x.label, constraintrange: x.constraintrange})});
       Shiny.setInputValue('plotly_brushed_haut', JSON.stringify(blob));
     });
   }")
@@ -229,8 +235,14 @@ output$paramPC_Bas <- renderPlotly({
   parcoords_data <- parameters_data() %>%
     arrange(seed) %>%
     rename_all(~str_replace_all(., pattern = "_", replacement = "_"))
+  
+  constraints <- bookmarks$constraintsBas
+  
+  if (!is.null(constraints)){
+    constraints <- jsonlite::fromJSON(txt = constraints, simplifyDataFrame = FALSE)
+  }
 
-  parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x))
+  parcoords_dims <- map((1:ncol(parcoords_data)), ~create_dims(parcoords_data, .x, constraints = constraints))
 
   p <-  plot_ly(source = 'parcoords_bas') %>%
     add_trace(data = parcoords_data,
@@ -241,7 +253,7 @@ output$paramPC_Bas <- renderPlotly({
 
   onRender(p, "function(el, x) {
            el.on('plotly_restyle', function(d) {
-           var blob = el.data[0].dimensions.map(function(x){return({label: x.label, constraintrange: x.constraintrange})});
+           var blob = el.data[0].dimensions.filter(dim => dim.constraintrange != '').map(function(x){return({label: x.label, constraintrange: x.constraintrange})});
            Shiny.setInputValue('plotly_brushed_bas', JSON.stringify(blob));
            });
 }")
