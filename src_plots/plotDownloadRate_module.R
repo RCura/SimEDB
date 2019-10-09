@@ -26,7 +26,10 @@ plotDownloadRateUI <- function(id,  position = 'haut') {
 
 
 
-plotDownloadRate <- function(input, output, session, plotFunction, plotName, user, seeds) {
+plotDownloadRate <- function(input, output, session, plotFunction, plotName, user, seeds, plotwidth, plotheight) {
+  
+  setBookmarkExclude(c('rating'))
+  
   output$plot <- renderPlot({
     plotFunction()
   }, res = 100)
@@ -36,7 +39,7 @@ plotDownloadRate <- function(input, output, session, plotFunction, plotName, use
       paste0(plotName, ".pdf")
     },
     content = function(file) {
-      ggsave(file, plotFunction(), width = 20, height = 10, units = "cm", scale = 1.25)
+      ggsave(file, plotFunction(), width = plotwidth(), height = plotheight(), units = "cm", scale = 1.25)
     }
   )
   
@@ -45,7 +48,7 @@ plotDownloadRate <- function(input, output, session, plotFunction, plotName, use
       paste0(plotName, ".png")
     },
     content = function(file) {
-      ggsave(file, plotFunction(), width = 20, height = 10, units = "cm", dpi = 150, scale = 1.25)
+      ggsave(file, plotFunction(), width = plotwidth(), height = plotheight(), units = "cm", dpi = 150, scale = 1.25)
     }
   )
   

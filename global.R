@@ -7,8 +7,7 @@ omnisci_driver <- JDBC("com.omnisci.jdbc.OmniSciDriver",
                        identifier.quote="'")
 gc()
 conMapD <- dbConnect(omnisci_driver, "jdbc:omnisci:mapdi.cura.info:6274:omnisci", "admin", "HyperInteractive")
-#parameters <- tbl(conMapD, "parameters_6_1")
-#parameters <- tbl(conMapD, "parameters_6_3")
+
 parameters <- tbl(conMapD, "parameters_6_4")
 
 all_sim_names <- parameters %>%
@@ -29,4 +28,7 @@ source("src_plots/plotDownloadRate_module.R")
 experiment_plan <- readRDS("data/sensib/experiment_plan.Rds")
 filtered_data <- readRDS("data/sensib/filtered_data.Rds")
 sensibility_summary_table <- readRDS("data/sensib/sensibility_summary_table.Rds")
+
+## global.R ##
+
 

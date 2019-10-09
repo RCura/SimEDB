@@ -57,7 +57,6 @@ FP_TypeDeplacements_agg <- function(FP_data){
     
   p1 <- ggplot(types_migrations, aes(factor(annee), taux, col = type_migration)) +
     geom_tufteboxplot(size = 1) +
-    geom_line() +
     facet_wrap(~ type_migration) +
     scale_y_continuous(labels = percent) +
     scale_color_discrete(guide = FALSE) +
@@ -77,7 +76,10 @@ callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Haut"),
            ),
            plotName = paste0("FP_TypeDeplacements","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
+
 callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Bas"),
            plotFun = reactive(
              FP_TypeDeplacements_agg(filtredBas$FP) +
@@ -85,7 +87,9 @@ callModule(plotDownloadRate, paste0("FP_TypeDeplacements","_Bas"),
            ),
            plotName = paste0("FP_TypeDeplacements","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 
 
@@ -208,7 +212,10 @@ callModule(plotDownloadRate, paste0("FP_DeplacementsDetail","_Haut"),
            ),
            plotName = paste0("FP_DeplacementsDetail","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
+
 callModule(plotDownloadRate, paste0("FP_DeplacementsDetail","_Bas"),
            plotFun = reactive(
              FP_DeplacementsDetail_agg(filtredBas$FP) +
@@ -216,7 +223,9 @@ callModule(plotDownloadRate, paste0("FP_DeplacementsDetail","_Bas"),
            ),
            plotName = paste0("FP_DeplacementsDetail","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 FP_Concentration <- function(results_data){
   concentration_data <- results_data %>%
@@ -239,7 +248,10 @@ callModule(plotDownloadRate, paste0("FP_Concentration","_Haut"),
            ),
            plotName = paste0("FP_Concentration","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
+
 callModule(plotDownloadRate, paste0("FP_Concentration","_Bas"),
            plotFun = reactive(
              FP_Concentration(filtredBas$results) +
@@ -247,7 +259,9 @@ callModule(plotDownloadRate, paste0("FP_Concentration","_Bas"),
            ),
            plotName = paste0("FP_Concentration","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 
 # FP_Satisfaction <- function(FP_data){
@@ -387,7 +401,7 @@ FP_Satisfaction_agg <- function(FP_data){
     xlab("Temps") + ylab("Distribution (en %)") +
     labs(subtitle = "Variabilité : Ensemble des réplications") +
     theme_simedb() +
-    guides(fill = guide_legend(title.position = "top", nrow = 1, title.hjust = 0.5,
+    guides(fill = guide_legend(title.position = "left", nrow = 1, title.hjust = 0, title.vjust = 1,
                                label.position = "bottom", label.hjust = 0.5, keywidth = 2)) +
     theme(strip.text.y = element_text(size = 8),
           axis.text.y = element_text(size = 8))
@@ -401,7 +415,9 @@ callModule(plotDownloadRate, paste0("FP_Satisfaction","_Haut"),
            ),
            plotName = paste0("FP_Satisfaction","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 callModule(plotDownloadRate, paste0("FP_Satisfaction","_Bas"),
            plotFun = reactive(
              FP_Satisfaction_agg(filtredBas$FP) +
@@ -409,4 +425,6 @@ callModule(plotDownloadRate, paste0("FP_Satisfaction","_Bas"),
            ),
            plotName = paste0("FP_Satisfaction","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)

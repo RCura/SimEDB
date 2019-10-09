@@ -20,7 +20,9 @@ callModule(plotDownloadRate, paste0("Chateaux_Nb","_Haut"),
            ),
            plotName = paste0("Chateaux_Nb","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Chateaux_Nb","_Bas"),
            plotFun = reactive(
@@ -29,7 +31,9 @@ callModule(plotDownloadRate, paste0("Chateaux_Nb","_Bas"),
            ),
            plotName = paste0("Chateaux_Nb","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 Chateaux_Proprio <- function(chateaux_data){
   ChateauxProprio <- chateaux_data %>%
@@ -67,7 +71,9 @@ callModule(plotDownloadRate, paste0("Chateaux_Proprio","_Haut"),
            ),
            plotName = paste0("Chateaux_Proprio","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Chateaux_Proprio","_Bas"),
            plotFun = reactive(
@@ -76,7 +82,9 @@ callModule(plotDownloadRate, paste0("Chateaux_Proprio","_Bas"),
            ),
            plotName = paste0("Chateaux_Proprio","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 Chateaux_Type <- function(chateaux_data){
   ChateauxType <- chateaux_data %>%
@@ -115,7 +123,9 @@ callModule(plotDownloadRate, paste0("Chateaux_Type","_Haut"),
            ),
            plotName = paste0("Chateaux_Type","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Chateaux_Type","_Bas"),
            plotFun = reactive(
@@ -124,4 +134,6 @@ callModule(plotDownloadRate, paste0("Chateaux_Type","_Bas"),
            ),
            plotName = paste0("Chateaux_Type","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)

@@ -43,7 +43,11 @@ shinyUI(navbarPage(
                              textOutput("dataVolumeBas",inline =  TRUE),
                              fluidRow(column(12, style = "background-color: rgba(25, 0, 0, 0.3);",
                                              plotlyOutput(outputId = "paramPC_Bas", width = "100%", height = "300px")
-                                             ))
+                                             )),
+                             fluidRow(
+                               column(6, numericInput(inputId = "plotWidth", label = "Largeur" ,value = 20, min = 5, max = 30)),
+                               column(6, numericInput(inputId = "plotHeight", label = "Hauteur", value = 10, min = 5, max = 30))
+                             )
   ),
   options = list(handles = "e")),
   mainPanel(
@@ -55,12 +59,14 @@ shinyUI(navbarPage(
                 ),
                 tabPanel("Foyers Paysans",
                          tabsetPanel(id = "FPPlots", 
-                                     tabPanel("Déplacements", 
+                                     tabPanel(title = "Déplacements",
+                                              value = "deplacements",
                                               plotDownloadRateUI("FP_TypeDeplacements_Haut", position = "haut"),
                                               tags$hr(),
                                               plotDownloadRateUI("FP_TypeDeplacements_Bas", position = "bas")
                                      ),
-                                     tabPanel("Déplacements (détail)", 
+                                     tabPanel(title = "Déplacements (détail)",
+                                              value= "deplacements_detail",
                                               plotDownloadRateUI("FP_DeplacementsDetail_Haut", position = "haut"),
                                               tags$hr(),
                                               plotDownloadRateUI("FP_DeplacementsDetail_Bas", position = "bas")
@@ -225,6 +231,11 @@ shinyUI(navbarPage(
                                               tags$hr(),
                                               plotDownloadRateUI("Paroisses_Nb_Bas", position = "bas")
                                      ),
+                                     tabPanel("Hiérarchie", 
+                                              plotDownloadRateUI("Paroisses_RT_Haut", position = "haut"),
+                                              tags$hr(),
+                                              plotDownloadRateUI("Paroisses_RT_Bas", position = "bas")
+                                     ),
                                      tabPanel("Composition (Nb FP/ paroisse)",
                                               plotDownloadRateUI("Paroisses_Compo_Haut", position = "haut"),
                                               tags$hr(),
@@ -235,10 +246,20 @@ shinyUI(navbarPage(
                                               tags$hr(),
                                               plotDownloadRateUI("Paroisses_Promo_Bas", position = "bas")
                                      ),
+                                     tabPanel("Modes de promotion (cumul)",
+                                              plotDownloadRateUI("Paroisses_Promo_CumSum_Haut", position = "haut"),
+                                              tags$hr(),
+                                              plotDownloadRateUI("Paroisses_Promo_CumSum_Bas", position = "bas")
+                                     ),
                                      tabPanel("Superficie", 
                                               plotDownloadRateUI("Paroisses_Superficie_Haut", position = "haut"),
                                               tags$hr(),
                                               plotDownloadRateUI("Paroisses_Superficie_Bas", position = "bas")
+                                     ),
+                                     tabPanel("Desserte", 
+                                              plotDownloadRateUI("Paroisses_Desserte_Haut", position = "haut"),
+                                              tags$hr(),
+                                              plotDownloadRateUI("Paroisses_Desserte_Bas", position = "bas")
                                      ),
                                      tabPanel("Répartition", 
                                               plotDownloadRateUI("Paroisses_Carte_Haut", position = "haut"),
@@ -260,11 +281,13 @@ shinyUI(navbarPage(
     ))
   )
   ),
-  tabPanel(title = "Sensitivity Analysis",
-           shinyjqui::jqui_resizable(
-           column(width = 2, div(dataTableOutput("sensitivity_summary"), style = "font-size:75%")),
-           options = list(handles = "e")),
-           column(width =  10, div(id = "sensitivity_plots"))
+  tabPanel(title = "Sensitivity Analysis (obsolete)",
+           value = "sensitivity"#,
+           #shinyjqui::jqui_resizable(
+           	#column(width = 2, div(dataTableOutput("sensitivity_summary"), style = "font-size:75%")),
+           	#options = list(handles = "e")
+	   #)#,
+           #column(width =  10, div(id = "sensitivity_plots"))
   )
 )
 )

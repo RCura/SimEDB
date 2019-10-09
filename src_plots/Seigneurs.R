@@ -27,7 +27,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Nb","_Haut"),
            ),
            plotName = paste0("Seigneurs_Nb","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Seigneurs_Nb","_Bas"),
            plotFun = reactive(
@@ -36,7 +38,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Nb","_Bas"),
            ),
            plotName = paste0("Seigneurs_Nb","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 Seigneurs_Chateaux <- function(seigneurs_data){
   breaksGS <- c(-0,1,2,3,4,5,10,25,50,1000)
@@ -108,7 +112,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Chateaux","_Haut"),
            ),
            plotName = paste0("Seigneurs_Chateaux","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Seigneurs_Chateaux","_Bas"),
            plotFun = reactive(
@@ -117,7 +123,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Chateaux","_Bas"),
            ),
            plotName = paste0("Seigneurs_Chateaux","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 # Seigneurs_Vassaux <- function(seigneurs_data){
 #   myBreaks <- c(-1,0,1,2,3,4,5,10,25,50,1000)
@@ -335,7 +343,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Haut"),
            ),
            plotName = paste0("Seigneurs_Redevances_PS","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Bas"),
            plotFun = reactive(
@@ -344,7 +354,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Redevances_PS","_Bas"),
            ),
            plotName = paste0("Seigneurs_Redevances_PS","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 Seigneurs_Puissance <- function(seigneurs_data){
   seigneurs_puissance <- seigneurs_data %>%
@@ -372,7 +384,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Puissance","_Haut"),
            ),
            plotName = paste0("Seigneurs_Puissance","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Seigneurs_Puissance","_Bas"),
            plotFun = reactive(
@@ -381,7 +395,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Puissance","_Bas"),
            ),
            plotName = paste0("Seigneurs_Puissance","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 
 
@@ -430,7 +446,9 @@ callModule(plotDownloadRate, paste0("Seigneurs_Agregats","_Haut"),
            ),
            plotName = paste0("Seigneurs_Agregats","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Seigneurs_Agregats","_Bas"),
            plotFun = reactive(
@@ -440,4 +458,6 @@ callModule(plotDownloadRate, paste0("Seigneurs_Agregats","_Bas"),
            ),
            plotName = paste0("Seigneurs_Agregats","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)

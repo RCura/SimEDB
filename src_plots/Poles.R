@@ -19,7 +19,9 @@ callModule(plotDownloadRate, paste0("Poles_Nb","_Haut"),
            ),
            plotName = paste0("Poles_Nb","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Poles_Nb","_Bas"),
            plotFun = reactive(
@@ -28,7 +30,9 @@ callModule(plotDownloadRate, paste0("Poles_Nb","_Bas"),
            ),
            plotName = paste0("Poles_Nb","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 
 Poles_Agregats <- function(poles_data){
@@ -64,7 +68,9 @@ callModule(plotDownloadRate, paste0("Poles_Agregats","_Haut"),
            ),
            plotName = paste0("Poles_Agregats","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Poles_Agregats","_Bas"),
            plotFun = reactive(
@@ -73,7 +79,9 @@ callModule(plotDownloadRate, paste0("Poles_Agregats","_Bas"),
            ),
            plotName = paste0("Poles_Agregats","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 
 
@@ -111,7 +119,9 @@ callModule(plotDownloadRate, paste0("Poles_Compo","_Haut"),
            ),
            plotName = paste0("Poles_Compo","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Poles_Compo","_Bas"),
            plotFun = reactive(
@@ -120,7 +130,9 @@ callModule(plotDownloadRate, paste0("Poles_Compo","_Bas"),
            ),
            plotName = paste0("Poles_Compo","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 
 Poles_Attrac <- function(poles_data){
@@ -174,7 +186,9 @@ callModule(plotDownloadRate, paste0("Poles_Attrac","_Haut"),
            ),
            plotName = paste0("Poles_Attrac","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Poles_Attrac","_Bas"),
            plotFun = reactive(
@@ -183,7 +197,9 @@ callModule(plotDownloadRate, paste0("Poles_Attrac","_Bas"),
            ),
            plotName = paste0("Poles_Attrac","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 
 Poles_RT <- function(poles_data){
@@ -220,7 +236,9 @@ callModule(plotDownloadRate, paste0("Poles_RT","_Haut"),
            ),
            plotName = paste0("Poles_RT","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Poles_RT","_Bas"),
            plotFun = reactive(
@@ -229,7 +247,9 @@ callModule(plotDownloadRate, paste0("Poles_RT","_Bas"),
            ),
            plotName = paste0("Poles_RT","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 Poles_Carte <- function(poles_data){
   
@@ -239,6 +259,13 @@ Poles_Carte <- function(poles_data){
     tally() %>%
     collect() %>%
     sample_n(size = 2) %>%
+    pull(seed)
+  
+  random_seeds <- poles_data %>%
+    select(seed) %>%
+    group_by(seed) %>%
+    tally() %>%
+    head(2) %>%
     pull(seed)
   
   poles_choisis <- poles_data %>%
@@ -279,7 +306,9 @@ callModule(plotDownloadRate, paste0("Poles_Carte","_Haut"),
            ),
            plotName = paste0("Poles_Carte","_Haut"),
            user = input$userName,
-           seeds = filtredSeedsHaut_plotly())
+           seeds = filtredSeedsHaut_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
 
 callModule(plotDownloadRate, paste0("Poles_Carte","_Bas"),
            plotFun = reactive(
@@ -288,4 +317,6 @@ callModule(plotDownloadRate, paste0("Poles_Carte","_Bas"),
            ),
            plotName = paste0("Poles_Carte","_Bas"),
            user = input$userName,
-           seeds = filtredSeedsBas_plotly())
+           seeds = filtredSeedsBas_plotly(),
+           plotwidth = plotWidth,
+           plotheight = plotHeight)
