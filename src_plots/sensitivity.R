@@ -1,43 +1,20 @@
 sensitivity <- reactiveValues(selected = NULL,
                               plotted = NULL)
 
-
-
-# 
-# plot_data <- filtered_data %>%
-#   gather(key = Indicateur, value = Resultat, -param, -valeur, -seed) %>%
-#   filter(param == sample_n(., 1) %>% pull(param)) %>%
-#   mutate(Indicateur = stringr::str_replace(Indicateur, "_om", "")) %>%
-#   mutate(Indicateur = stringr::str_replace_all(Indicateur, "_", " ")) %>%
-#   mutate(Indicateur = stringr::str_wrap(Indicateur, width = 10))
-# 
-# plot_title <- plot_data %>% pull(param) %>% unique()
-# 
-# ggplot(plot_data, aes(valeur, Resultat, group = factor(valeur))) +
-#   geom_tufteboxplot() +
-#   facet_wrap( ~Indicateur, scales = "free", nrow = 1) +
-#   labs(title = plot_title, x = "Valeurs de paramètres", y = "Valeurs des Indicateurs") +
-#   theme(strip.text = element_text(size = 7),
-#         axis.text = element_text(size = 7),
-#         strip.background = element_blank())
-# 
-# ggplot(plot_data %>% group_by(Indicateur, valeur) %>% summarise(mean = median(Resultat, na.rm = TRUE))) +
-#   geom_point(aes(valeur,  mean)) +
-#   facet_wrap( ~Indicateur, scales = "free", nrow = 1)
-
 output$sensitivity_summary <- DT::renderDataTable({
-  sensibility_summary_table
+  summary_sensib
 }, extensions = "FixedColumns",style = "bootstrap", class = "table-condensed", rownames = TRUE,
  options = list(paging = FALSE, scrollX = TRUE, fixedColumns = TRUE))
 
 
 observe({
   if (length(input$sensitivity_summary_rows_selected) > 0) {
-    sensitivity$selected <- sensibility_summary_table[input$sensitivity_summary_rows_selected, "param"] %>% pull(param)
+    sensitivity$selected <- summary_sensib[input$sensitivity_summary_rows_selected, "param"] %>% pull(param)
   } else {
     sensitivity$selected <- NULL
   }
 })
+
 
 observe({
   req(sensitivity$selected)
@@ -52,17 +29,7 @@ observe({
                ui =  fluidRow(plotOutput(outputId = plotname,  height = "200px"))
       )
       output[[plotname]] <- renderPlot({
-        plot_data <- filtered_data %>%
-          filter(param == !!currentParam) %>%
-          mutate(Indicateur = stringr::str_wrap(Indicateur, width = 20))
-        
-        ggplot(plot_data, aes(factor(valeur), Resultat)) +
-          geom_tufteboxplot() +
-          facet_wrap( ~Indicateur, scales = "free", nrow = 1) +
-          labs(title = currentParam, x = "Valeurs de paramètres", y = "Valeurs des Indicateurs") +
-          theme(strip.text = element_text(size = 7),
-                axis.text = element_text(size = 7),
-                strip.background = element_blank())
+        sensib_plot(data = filtered_data, param = currentParam)
       })
     }
   }
@@ -82,108 +49,105 @@ observe({
 })
 
 
-# Old : 
+rename_and_recode_valeurs <- function(indicateur, valeurs){
+  if (indicateur == "croissance_demo") {
+    base <- c("0", "0.0153", "0.0372", "0.0589", "0.1289")
+    names(base) <- c("0%", "1.53%", "3.72%", "5.89%", "12.89%")
+  }
+  if (indicateur == "dist_minmax_eglise") {
+    base <- c("dynamique_reduit", "statique_reduit", "base", "statique_large", "dynamique_large")
+    names(base) <- base
+  }
+  if (indicateur == "periode_promotion_chateaux") {
+    base <- c("map([800::false,940::true,1020::false])",
+              "map([800::false,940::true,1060::false])", "map([800::false,1000::true,1120::false])",
+              "map([800::false,1100::true])", "map([800::false,940::true])")
+    names(base) <- c("940-1000", "940-1040", "1000-1100", "1100-1200", "940-1200")
+  }
+  if (indicateur == "proba_creation_zp_autres_droits_ps") {
+    base <- c("0.0", "0.05", "0.15", "0.25", "0.35")
+    names(base) <- c("0%", "5%", "15%", "25%", "35%")
+  }
+  if (indicateur == "proba_gain_haute_justice_gs") {
+    base <- c( "map([800::0.0])", "map([800::0.0,1000::0.5])",
+               "map([800::0.0,900::0.1,920::0.2,940::0.3,960::0.4,980::0.5,1000::0.6,1020::0.7,1040::0.8,1060::0.8,1080::0.9,1100::1.0])",
+               "map([800::0.0,900::0.2,1000::1.0])",
+               "map([800::1.0])")
+    names(base) <- c("statique_nul", "croissant_seuil", "croissant_regulier", "base", "statique_fort")
+  }
+  if (indicateur == "rayon_migration_locale_fp") {
+    base <- c("map([800::1000])", "map([800::1000,1000::2500])", "map([800::2500])",
+              "map([800::2500,1000::5000])", "map([800::5000,1000::10000])")
+    names(base) <- c("statique_reduit","dynamique_reduit","base","dynamique_croissant","dynamique_large")
+  }
+  if (indicateur == "taux_prelevement_zp_chateau") {
+    base <- c("0.0", "0.25", "0.5", "0.75", "1.0")
+    names(base) <- c("0%", "25%", "50%", "75%", "100%")
+  }
+  
+  liste_indicateurs_specifiques <- c(
+    "croissance_demo", "dist_minmax_eglise", "periode_promotion_chateaux",
+    "proba_creation_zp_autres_droits_ps", "proba_gain_haute_justice_gs",
+    "rayon_migration_locale_fp", "taux_prelevement_zp_chateau"
+  )
+  if (!indicateur %in% liste_indicateurs_specifiques){
+    base <- gtools::mixedsort(unique(valeurs))
+    names(base) <- gtools::mixedsort(unique(valeurs))
+  }
+  new_factor <- fct_recode(valeurs, base[1], base[2], base[3], base[4], base[5])
+  recoded_factor <- fct_relevel(new_factor, names(base))
+}
 
-########## SENSITIVITY #########
-
-# results_sensivity <- read_csv("data/4_5_OM_results_om.csv", col_types = cols()) %>%
-#   rename(param = sensibility_parameter) %>%
-#   rename(valeur = sensibility_value) %>%
-#   distinct(param, valeur, seed, .keep_all = TRUE) %>%
-#   mutate(valeur = round(valeur, digits = 5))
-# 
-# experiment_plan <- readRDS("data/sensib_params.Rds") %>%
-#   select(param, valeur, seed) %>%
-#   mutate(valeur = round(valeur, digits = 5)) %>%
-#   full_join(results_sensivity, by = c("param", "valeur", "seed")) %>%
-#   select(-sim_name)
-# 
-# rm(results_sensivity)
-# 
-# Objectifs <- data_frame(
-#   Var = c("nb_agregats_om", "nb_chateaux_om", "nb_gros_chateaux_om", "nb_seigneurs_om",
-#           "nb_eglises_paroissiales_om", "distance_eglises_paroissiales_om",
-#           "proportion_fp_isoles_om", "augmentation_charge_fiscale_om"),
-#   RealVar = c("Agrégats", "Châteaux",  "Gros châteaux", "Seigneurs",
-#               "Églises paroissiales", "Distance moyenne entre églises",  
-#               "Part de foyers paysans isolés",
-#               "Augmentation de la charge fiscale des foyers paysans"),
-#   Objectif = c(200, 50, 10, 200, 300, 3000, 0.2, 3)
-# )
-# 
-# filtered_data <- experiment_plan %>%
-#   group_by(param, valeur) %>%
-#   arrange(nb_agregats_om) %>%
-#   filter(row_number() <= 10) %>%
-#   ungroup() %>%
-#   gather(key = Indicateur, value = Resultat, -param, -valeur, -seed) %>%
-#   filter(Indicateur != "nb_eglises_om") %>%
-#   left_join(Objectifs, by = c("Indicateur" = "Var")) %>%
-#   mutate(Indicateur = RealVar) %>%
-#   select(-RealVar, -Objectif) %>%
-#   filter(!is.na(Indicateur))
-# 
-# standardised_data <- filtered_data %>%
-#   group_by(Indicateur) %>%
-#   mutate(StdResult = scale(Resultat,  center = TRUE, scale = TRUE)) %>%
-#   ungroup()
-# 
-# resAB <- standardised_data %>%
-#   group_by(param, valeur, Indicateur) %>%
-#   summarise(sd_intra =  sd(StdResult, na.rm = TRUE)) %>%
-#   group_by(param) %>%
-#   summarise(med_sd_intra = mean(sd_intra, na.rm = TRUE),
-#             Q1_sd_intra = quantile(sd_intra, na.rm = TRUE, probs = .25))
-# 
-# resCD <- standardised_data %>%
-#   group_by(param, valeur, Indicateur) %>%
-#   summarise(avg = mean(StdResult, na.rm = TRUE)) %>%
-#   group_by(param, Indicateur) %>%
-#   summarise(sd_avg = sd(avg, na.rm = TRUE)) %>%
-#   group_by(param) %>%
-#   summarise(avg_sd_avg = mean(sd_avg, na.rm = TRUE),
-#             Q3_sd_avg =  quantile(sd_avg, na.rm = TRUE, probs = .75))
-# 
-# 
-# resEF <- filtered_data %>%
-#   spread(key = Indicateur, value = Resultat) %>%
-#   select(-param, -valeur, -seed) %>%
-#   scale(scale = TRUE, center = Objectifs %>% arrange(RealVar) %>% pull(Objectif)) %>%
-#   as.data.frame() %>%
-#   bind_cols(filtered_data %>%
-#               spread(key = Indicateur, value = Resultat) %>%
-#               select(param, valeur, seed)) %>%
-#   select(param, valeur, seed, everything()) %>%
-#   gather(key = Indicateur, value = StdResultat, -param, -valeur, -seed) %>%
-#   group_by(param) %>%
-#   summarise(avg_ecart =  mean(abs(StdResultat), na.rm = TRUE),
-#             Q1_ecart =  quantile(abs(StdResultat), na.rm = TRUE, probs =  .25))
-# 
-# resG <- filtered_data %>%
-#   group_by(param, valeur, Indicateur) %>%
-#   summarise(nb_failing_seeds = sum(is.na(Resultat), na.rm = TRUE)) %>%
-#   ungroup() %>%
-#   group_by(param) %>%
-#   summarise(percent_failing_seeds = mean(nb_failing_seeds) * 100 / n())
-# 
-# resH <- filtered_data %>%
-#   filter(Indicateur == "Agrégats") %>%
-#   group_by(param, valeur) %>%
-#   summarise(nb_failing_seeds = sum(is.na(Resultat), na.rm = TRUE)) %>%
-#   mutate(is_failing = ifelse(nb_failing_seeds > 0, TRUE, FALSE)) %>%
-#   ungroup() %>%
-#   group_by(param) %>%
-#   summarise(nb_failing_values = sum(is_failing))
-# 
-# sensibility_summary_table <- resAB %>%
-#   left_join(resCD, by = "param") %>%
-#   left_join(resEF, by = "param") %>%
-#   left_join(resG, by = "param") %>%
-#   left_join(resH, by =  "param") %>%
-#   mutate_if(is.numeric, round, digits = 3)
-# 
-# rm(Objectifs, standardised_data, resAB, resCD, resEF, resG, resH)
-# 
-# saveRDS(object = experiment_plan, file = "data/sensib/experiment_plan.Rds")
-# saveRDS(object = filtered_data, file = "data/sensib/filtered_data.Rds")
-# saveRDS(object = sensibility_summary_table, file = "data/sensib/sensibility_summary_table.Rds")
+sensib_plot <- function(data, param){
+  data %>%
+    filter(sensibility_parameter == !!param) %>%
+    gather(Indicateur, Valeur, -sensibility_parameter, -sensibility_value, -type) %>%
+    mutate(Indicateur = fct_recode(as.factor(Indicateur),
+                                   "Nombre\nd'agrégats" = "nb_agregats",
+                                   "Nombre de\ngrands\nchâteaux" = 'nb_grands_chateaux',
+                                   "Nombre\nd'églises\nparoissiales" = "nb_eglises_paroissiales",
+                                   "Distance\nentre\néglises" = "distance_eglises_paroissiales",
+                                   "Taux de\nfoyers paysans\nisolés" = "prop_fp_isoles",
+                                   "Augmentation\nde la charge\nfiscale" = "ratio_charge_fiscale"
+    )) %>%
+    mutate(Indicateur = fct_relevel(Indicateur, c("Nombre\nd'agrégats",
+                                                  "Nombre de\ngrands\nchâteaux",
+                                                  "Nombre\nd'églises\nparoissiales",
+                                                  "Distance\nentre\néglises",
+                                                  "Taux de\nfoyers paysans\nisolés",
+                                                  "Augmentation\nde la charge\nfiscale"
+    ))) %>%
+    mutate(objectif = case_when(
+      Indicateur == "Nombre\nd'agrégats" ~ 200,
+      Indicateur == "Nombre de\ngrands\nchâteaux" ~ 10,
+      Indicateur == "Nombre\nd'églises\nparoissiales" ~ 300,
+      Indicateur == "Distance\nentre\néglises" ~ 3000,
+      Indicateur == "Taux de\nfoyers paysans\nisolés" ~ 0.20,
+      Indicateur == "Augmentation\nde la charge\nfiscale" ~ 3
+    )) %>%
+    rename(Parametre = sensibility_parameter) %>%
+    mutate(sensibility_value = rename_and_recode_valeurs(indicateur = param,
+                                                         valeurs = sensibility_value)) %>%
+    mutate(Indicateur = fct_relabel(Indicateur, ~str_replace_all(.x, "\n", " "))) %>%
+    ggplot() +
+    aes(sensibility_value, Valeur, fill = sensibility_value) +
+    #geom_boxplot(lwd = .1, outlier.size = .75, outlier.shape = 4) +
+    geom_hline(aes(yintercept = objectif), linetype = "dashed", lwd = .5) +
+    geom_violin(lwd = 0.2) + 
+    geom_boxplot(coef = 0, width = 0.2, lwd = 0.2, outlier.shape = NA, colour = "white") +
+    facet_wrap(~Indicateur, scales = "free", drop = TRUE, ncol = 6, labeller = label_wrap_gen(width = 20)) +
+    scale_fill_viridis_d(name = param, end = .8) +
+    labs(x = "", y = "") +
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.title.y = element_text(colour = "black", size = 8, margin = margin(t = 0,r = 15,b = 0,l = 0, unit = "pt")) ) +
+    theme(legend.position="bottom",
+          legend.justification="left",
+          legend.title.align = 0,
+          legend.title = element_text(face = "bold", vjust = 1),
+          legend.key.width = unit(x = .75, units = "cm"),
+          legend.key.height = unit(x = .75, units = "cm"),
+          legend.margin=margin(-20,0,0,0),
+          legend.box.margin=margin(0,0,0,0)) +
+    theme(strip.text.x = element_text(margin = margin(t = 2, r = 2, b = 2, l = 2, unit = "pt")))
+}

@@ -26,10 +26,42 @@ source("src_plots/plotDownloadRate_module.R")
 
 
 ########## SENSITIVITY #########
+filtered_data <- readRDS("data/sensib/sensib_6.6.Rds")
+sensib_data_scaled <- filtered_data %>%
+  mutate(
+    agregats_sc = (nb_agregats - 200) / 10.45,
+    gds_chateaux_sc = (nb_grands_chateaux - 10) / 2.87,
+    eglises_par_sc = (nb_eglises_paroissiales - 300) / 12.96,
+    dist_eglises_par_sc = (distance_eglises_paroissiales - 3000) / 97,
+    prop_isoles_sc = (prop_fp_isoles - 0.2) / 0.08,
+    augm_charge_fisc_sc = (ratio_charge_fiscale - 3) / 0.03
+  ) %>%
+  select_at(vars(ends_with("_sc"), starts_with("sensibility"), "type")) %>%
+  rename_at(vars(ends_with("_sc")), ~str_replace_all(.,"_sc", "")) %>%
+  rename(param = sensibility_parameter)
 
-experiment_plan <- readRDS("data/sensib/experiment_plan.Rds")
-filtered_data <- readRDS("data/sensib/filtered_data.Rds")
-sensibility_summary_table <- readRDS("data/sensib/sensibility_summary_table.Rds")
+sensib_data_gathered <- sensib_data_scaled %>%
+  select(-sensibility_value) %>%
+  gather(Indicateur, Valeur_norm, -param, -type) 
+
+global_sensib <- sensib_data_gathered %>%
+  select(-type) %>%
+  group_by(param) %>%
+  summarise(sensibilite = mean(abs(Valeur_norm), na.rm = TRUE)) %>%
+  ungroup() %>%
+  arrange(desc(sensibilite)) %>%
+  select(param, sensibilite)
+
+summary_sensib <- sensib_data_gathered %>%
+  group_by(param, type, Indicateur) %>%
+  summarise(sensibilite = mean(abs(Valeur_norm), na.rm = TRUE)) %>%
+  ungroup() %>%
+  spread(key = Indicateur, value = sensibilite) %>%
+  left_join(global_sensib, by = "param") %>%
+  select(param, type, sensibilite,
+         agregats, gds_chateaux, eglises_par,
+         dist_eglises_par, prop_isoles, augm_charge_fisc)
+rm(sensib_data_scaled, sensib_data_gathered, global_sensib)
 
 ## global.R ##
 

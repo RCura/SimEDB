@@ -33,4 +33,7 @@ suppressPackageStartupMessages({
   
   # Maps
   library(sf)
+  
+  # Recoding sensibility
+  library(gtools)
 })

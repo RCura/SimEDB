@@ -285,18 +285,15 @@ shinyUI(navbarPage(
     ))
   )
   ),
-  tabPanel(title = "Sensitivity Analysis (obsolete)",
-           value = "sensitivity"#,
-           #shinyjqui::jqui_resizable(
-           	#column(width = 2, div(dataTableOutput("sensitivity_summary"), style = "font-size:75%")),
-           	#options = list(handles = "e")
-	   #)#,
-           #column(width =  10, div(id = "sensitivity_plots"))
+  tabPanel(title = "Sensitivity Analysis",
+           value = "sensitivity",
+           column(width = 5,
+                  div(dataTableOutput("sensitivity_summary"), style = "font-size:75%")
+                  ),
+           column(width =  7,
+                  div(id = "sensitivity_plots")
+                  )
   )
-  # ,
-  # fluidRow(
-  #   bookmarkButton(id = "bookmarks")
-  # )
 )
 )
 }
