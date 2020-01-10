@@ -3,8 +3,8 @@ sensitivity <- reactiveValues(selected = NULL,
 
 output$sensitivity_summary <- DT::renderDataTable({
   summary_sensib
-}, extensions = "FixedColumns",style = "bootstrap", class = "table-condensed", rownames = TRUE,
- options = list(paging = FALSE, scrollX = TRUE, fixedColumns = TRUE))
+}, extensions = list("FixedColumns" = NULL, "Buttons" = NULL),style = "bootstrap", class = "table-condensed", rownames = TRUE,
+ options = list(paging = FALSE, scrollX = TRUE, fixedColumns = TRUE, dom = 'Bfrtip', buttons = list(list(extend = 'colvis', columns = c(2:9)))))
 
 
 observe({
